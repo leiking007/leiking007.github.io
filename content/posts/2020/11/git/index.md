@@ -294,6 +294,24 @@ Git cherry-pick 4c805e2		#复制一个特定的提交到当前分支
    git update-index --no-assume-unchanged <文件路径>
    ```
 
+2. **仓库各部分的详细大小分布**
+
+   ```bash
+   git count-objects -vH
+   
+   : '
+   输出信息：
+   count: 0           # 未打包的松散对象数量
+   size: 0.00 KiB     # 松散对象占用的空间
+   in-pack: 123       # 打包在 packfile 中的对象数量
+   packs: 1           # packfile 的数量
+   size-pack: 4.00 MiB # 打包对象占用的空间
+   prune-packable: 0  # 可被移除的冗余对象数量
+   garbage: 0         # 无关文件数量
+   size-garbage: 0 B  # 无关文件占用的空间
+   '
+   ```
+   
    
 
 
