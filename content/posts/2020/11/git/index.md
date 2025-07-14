@@ -281,3 +281,20 @@ Git cherry-pick 4c805e2		#复制一个特定的提交到当前分支
 - 在本地创建和远程分支对应的分支，使用`Git checkout -b branch-name origin/branch-name`，本地和远程分支的名称最好一致；
 - 建立本地分支和远程分支的关联，使用`Git branch --set-upstream branch-name origin/branch-name`；
 - 从远程抓取分支，使用`Git pull`，如果有冲突，要先处理冲突
+
+## git的其他命令
+
+1. **Git 暂时忽略文件修改**
+
+   ```bash
+   # 暂时停止追踪文件改动
+   git update-index --assume-unchanged <文件路径>
+   
+   # 重新开始追踪该文件的变化
+   git update-index --no-assume-unchanged <文件路径>
+   ```
+
+   
+
+
+
