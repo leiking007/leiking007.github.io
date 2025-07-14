@@ -1,0 +1,73 @@
+{{ define "main" }}
+<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 lg:px-6">
+  <main class="col-span-12 lg:col-span-8 lg:col-start-3">
+    <div class="p-6 rounded">
+      <div class="grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
+        <div class="flex flex-col justify-center col-span-1 text-center lg:text-start">
+          <div class="flex items-center justify-center mb-4 lg:justify-normal">
+            <svg class="icon h-8 w-auto" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path d="M128 31.9488h768c17.7152 0 31.9488 14.336 31.9488 31.9488V975.872c0 17.7152-14.336 31.9488-31.9488 31.9488H128c-17.7152 0-31.9488-14.336-31.9488-31.9488V64c0-17.7152 14.2336-32.0512 31.9488-32.0512z"
+                    fill="#F0EEE2" p-id="4852"></path>
+              <path d="M655.9744 64v240.0256l79.9744-79.9744 79.9744 79.9744V64H655.9744zM128 960h64v-896H128v896z"
+                    fill="#BBAA9C" p-id="4853"></path>
+              <path d="M335.9744 864.0512h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744zM768 560.0256h-48.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744H768c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744z m-256-79.9744c0-8.8064-7.168-15.9744-15.9744-15.9744h-79.9744c-8.8064 0.2048-15.7696 7.5776-15.5648 16.384 0.2048 8.4992 7.0656 15.36 15.5648 15.5648h79.9744c8.8064 0 15.9744-7.168 15.9744-15.9744z m-48.0256-320.1024h64c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-64c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m-304.0256 128h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m560.0256-143.9744h31.9488c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-31.9488c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m207.9744 640H816.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h112.0256c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-16.0768-15.9744z m-303.9232-79.9744h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744z m128-304.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744 15.9744-7.168 15.9744-15.9744-7.168-15.9744-15.9744-15.9744zM224.0512 624.0256c0-8.8064-7.168-15.9744-15.9744-15.9744h-48.0256c-8.8064 0.2048-15.7696 7.5776-15.5648 16.384 0.2048 8.4992 7.0656 15.36 15.5648 15.5648h48.0256c8.704 0 15.872-7.168 15.9744-15.9744z"
+                    fill="#D8D5BA" p-id="4854"></path>
+              <path d="M896 0H128C92.672 0 64 28.672 64 64v896c0 35.328 28.672 64 64 64h768c35.328 0 64-28.672 64-64v-896C960 28.672 931.328 0 896 0zM671.9488 64h128v201.3184l-52.736-52.6336c-6.2464-6.2464-16.384-6.2464-22.6304 0l-52.736 52.6336V64z m-479.9488 896H128v-896h64v896z m704 0H224.0512v-896H640v240.0256c0 8.8064 7.168 15.9744 15.9744 15.9744 4.1984 0 8.2944-1.7408 11.264-4.7104l68.7104-68.7104 68.7104 68.7104c6.2464 6.2464 16.384 6.2464 22.6304 0 2.9696-2.9696 4.7104-7.0656 4.7104-11.264V64H896v896z"
+                    fill="#5F4E56"></path>
+            </svg>
+            <h4 class="ml-2 text-sm font-bold tracking-widest text-tl-primary uppercase">{{.Title}}</h4>
+          </div>
+          {{ with .Site.Params.subtitle }}
+          <h1 class="mb-8 text-4xl font-extrabold leading-tight lg:text-6xl">{{- . -}}</h1>
+          {{ end }}
+          {{ with .Site.Params.describe }}
+          <p class="mb-6 text-tl-base font-normal leading-7 lg:w-3/4 ">{{- . -}}</p>
+          {{ end }}
+        </div>
+        <div class="items-center justify-end hidden col-span-1 md:flex">
+          <img class="w-4/5 rounded-md" src='{{ relURL "images/background-2.jpg" }}' alt="header image">
+        </div>
+      </div>
+    </div>
+    {{/*  获取常规页面  */}}
+    {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+    {{/*  获取所有页面，并且 hidden != true  */}}
+    {{ $notHidden := where .Site.RegularPages "Params.hidden" "!=" true }}
+    {{/*  两数组公共部分  */}}
+    {{ $filtered := ($pages | intersect $notHidden) }}
+    {{/*  分页  */}}
+    {{ $pag := .Paginate ($filtered) (index .Site.Params.pagination "index_paginate" | default 9) }}
+    <div class="prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2">
+      {{.Content}}
+    </div>
+    <div>
+      <div class="grid grid-rows-1 grid-cols-12 md:gap-x-2">
+        {{ range $index, $element := $pag.Pages }}
+        <div class="card duration-200 my-4 mx-2 col-span-12 bg-tl-base-100 border-tl-300">
+          <div class="card-body">
+            <a href="{{ .RelPermalink }}">
+              <p class="text-2xl">{{ .Title }}</p>
+              <small class="text-sm">{{- T "article.last_updated_on"  -}}: {{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}</small>
+              <p class="fs-6">{{ .Summary }}</p>
+              <div class="flex flex-wrap items-center mt-4 justify-starts">
+                {{ if .Params.tags }}
+                {{ range (.GetTerms "tags") }}
+                <a href='{{ .RelPermalink }}'>
+                  <div class="text-xs mr-2 py-1.5 px-4 rounded-2xl hover:shadow-sm bg-tl-base-200">
+                    #{{- .LinkTitle -}}
+                  </div>
+                </a>
+                {{ end }}
+                {{ end }}
+              </div>
+            </a>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+      {{- template "partials/pagination.html" . -}}
+    </div>
+  </main>
+</section>
+{{ end }}
+

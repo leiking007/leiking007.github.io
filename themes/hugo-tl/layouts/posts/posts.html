@@ -1,0 +1,41 @@
+{{ define "main" }}
+{{- $paginator := .Paginate (where .Data.Pages.ByDate.Reverse "Type" "in" .Site.Params.mainSections) (index .Site.Params.pagination "posts_paginate" | default 20) }}
+<div class="col-span-12" id="archive">
+    <h1 class="text-2xl">
+        {{- $length := len .Data.Pages }}
+        {{ i18n "widget.archives.title" | default "archives" }}{{- T "widget.archives.counter_archives" $length -}}
+    </h1>
+    <section class="relative flex flex-col justify-center overflow-hidden">
+        <div class="w-full max-w-6xl mx-auto p-4 md:px-6">
+            <div class="flex flex-col justify-center divide-y divide-slate-200 [&>*]:py-16">
+                <div class="w-full max-w-3xl mx-auto">
+                    {{- range $paginator.Pages.GroupByDate "2006" }}
+                    <!-- Vertical Timeline #1 -->
+                    <div class="-my-6">
+                        <div class="relative pl-8 sm:pl-32 py-6 group">
+                            <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-0 before:h-full before:px-px sm:before:ml-[6.5rem] before:self-start before:-translate-x-1/2 before:translate-y-3 ">
+                                <time class="sm:absolute left-0 translate-y-0.5 inline-flex items-center text-xl font-semibold uppercase w-20 h-6 mb-3 sm:mb-0">
+                                    {{ .Key }}
+                                </time>
+                            </div>
+                            <!-- Content -->
+                            <div>
+                                {{- range .Pages }}
+                                <div>
+                                    <time datetime='{{ .Date.Format "2006-01-02" }}'>
+                                        {{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}
+                                    </time>
+                                    <span> <a href="{{ .RelPermalink }}" class="archive-post-link"> {{ .Title }} </a> </span>
+                                </div>
+                                {{- end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{- end }}
+                </div>
+            </div>
+        </div>
+    </section>
+    {{- template "partials/pagination.html" . -}}
+</div>
+{{ end }}

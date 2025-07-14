@@ -1,0 +1,23 @@
+baseURL: https://139.155.239.250/
+title: Note
+theme: hugo-tl
+defaultContentLanguage: zh-cn  # 没有语言标识的内容将默认为该语言
+languageCode: zh-cn
+hasCJKLanguage: true  # 如果为 true，则自动检测中文/日语/韩语语言的内容。这会使 .Summary 和 .WordCount 对于 CJK 语言表现正确。
+
+copyright: copyright@
+
+enableEmoji: true
+
+pagination:
+  pagerSize: 18
+
+summaryLength: 15  # 摘要长度
+
+uglyURLs: false  # 默认 false;启用时，创建的 URL 格式是 /filename.html 而不是 /filename/
+
+enableRobotsTXT: true  # 默认 false;启用生成 robots.txt 文件
+
+
+build:
+  noJSConfigInAssets: true  # 关闭在 /assets 文件夹中写入一个 jsconfig.json 文件，该文件包含从 js.Build 中的导入映射。此文件旨在帮助在代码编辑器如 VS Code 中进行智能提示/导航。

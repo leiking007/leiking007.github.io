@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh" class="scroll-pt-20 theme-cupcake">
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}
+        {{ .Site.Title }}
+        {{ end }}</title>
+    {{- partial "head.html" . -}}
+    {{- block "head" . -}}{{- end -}}
+</head>
+<body class="bg-tl-base-200 text-tl-base-content">
+<div id="app" class="min-h-screen ">
+    {{- partial "header.html" . -}}
+    {{- block "main" . }}{{- end -}}
+</div>
+{{- partialCached "footer.html" . -}}
+{{- partialCached "lightbox.html" . -}}
+<div x-data="backToTop"
+     x-show="visible"
+     x-init="init"
+     x-on:click="scrollToTop"
+     x-transition.duration.500ms
+     class="md:fixed bottom-12 right-12 hover:text-tl-error">
+    <i class="iconfont icon-top text-3xl"></i>
+</div>
+</body>
+<!--搜索-->
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        new PagefindUI({
+            element: "#search",
+            showSubResults: false,
+            pageSize: 7,
+            howImages: false,
+            excerptLength: 15
+        });
+    });
+</script>
+{{- block "script" . }}{{- end -}}
+</html>

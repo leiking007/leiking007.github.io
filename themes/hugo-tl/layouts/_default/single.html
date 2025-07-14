@@ -1,0 +1,42 @@
+{{ define "main" }}
+    <div class="col-span-12">
+        <section id="main">
+            <h1 id="title">{{ .Title }}</h1>
+            <div>
+                <article id="content">
+                    {{ .Content }}
+                </article>
+            </div>
+        </section>
+        <aside id="meta">
+            <div>
+                <section>
+                    <h4 id="date"> {{ .Date.Format "Mon Jan 2, 2006" }} </h4>
+                    <h5 id="wordcount"> {{ .WordCount }} Words </h5>
+                </section>
+                {{ with .Params.topics }}
+                    <ul id="topics">
+                        {{ range . }}
+                            <li><a href="{{ "topics" | relLangURL }}{{ . | urlize }}">{{ . }}</a></li>
+                        {{ end }}
+                    </ul>
+                {{ end }}
+                {{ with .Params.tags }}
+                    <ul id="tags">
+                        {{ range . }}
+                            <li><a href="{{ "tags" | relLangURL }}{{ . | urlize }}">{{ . }}</a></li>
+                        {{ end }}
+                    </ul>
+                {{ end }}
+            </div>
+            <div>
+                {{ with .PrevInSection }}
+                    <a class="previous" href="{{ .RelPermalink }}"> {{ .Title }}</a>
+                {{ end }}
+                {{ with .NextInSection }}
+                    <a class="next" href="{{ .RelPermalink }}"> {{ .Title }}</a>
+                {{ end }}
+            </div>
+        </aside>
+    </div>
+{{ end }}

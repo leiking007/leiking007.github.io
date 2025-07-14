@@ -1,0 +1,117 @@
+# 用于构建 Hugo 网站并部署到 GitHub Pages 的工作流
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DART_SASS_VERSION: 1.89.2
+      HUGO_VERSION: 0.148.0
+      HUGO_ENVIRONMENT: production
+      TZ: Asia/Shanghai
+      NODE_VERSION: 18.x
+      NODE_DEPENDENCIES_DIR: themes/hugo-tl/
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: 验证依赖路径
+        run: |
+          ls -la
+          if [ ! -f "${{ env.NODE_DEPENDENCIES_DIR }}/package.json" ]; then
+            echo "错误: 依赖路径 '${{ env.NODE_DEPENDENCIES_DIR }}/package.json' 不存在！"
+            exit 1
+          fi
+          echo "依赖路径存在，继续执行..."
+
+      - name: 打印系统信息
+        run: |
+          echo "当前工作目录: $(pwd)"
+          echo "系统信息: $(uname -a)"
+          echo "Node.js 版本: $(node -v || echo '未安装')"
+          echo "npm 版本: $(npm -v || echo '未安装')"
+
+      - name: 安装 Hugo CLI
+        run: |
+          echo "正在安装 Hugo v${HUGO_VERSION}..."
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          hugo version
+
+      - name: 设置 Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.NODE_DEPENDENCIES_DIR }}/package.json'
+
+      - name: 安装 Node.js 依赖
+        run: |
+          echo "正在安装 Node.js 依赖..."
+          cd ${{ env.NODE_DEPENDENCIES_DIR }}
+          npm install
+
+      - name: 配置 Git
+        run: git config core.quotepath false
+
+      - name: 执行 Node.js 构建命令
+        run: |
+          echo "开始构建 Hugo 网站..."
+          start_time=$(date +%s)
+          cd ${{ env.NODE_DEPENDENCIES_DIR }}
+          npm run build
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+          echo "Hugo 构建完成，耗时: ${build_time} 秒"
+
+      - name: 验证构建结果
+        run: |
+          if [ ! -d "public" ]; then
+            echo "错误: 构建产物目录 'public' 不存在！"
+            exit 1
+          fi
+          echo "构建产物目录内容:"
+          ls -lah public
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

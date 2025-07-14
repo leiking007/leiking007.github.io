@@ -1,0 +1,27 @@
+defaultMarkdownHandler: goldmark
+# parser:
+#   attribute:
+#     block: true
+#     title: true
+#   autoHeadingID: true
+#   autoHeadingIDType: github
+goldmark:
+  renderer:
+    unsafe: true
+# https://xyproto.github.io/splash/docs/
+highlight:
+  anchorLineNos: false
+  codeFences: true
+  guessSyntax: true
+  lineNoStart: 1
+  lineNos: true
+  lineNumbersInTable: false
+  noClasses: true
+  noHl: false
+  style: friendly
+  # style: native
+  tabWidth: 2
+tableOfContents:
+  ordered: true
+  endLevel: 4
+  startLevel: 2

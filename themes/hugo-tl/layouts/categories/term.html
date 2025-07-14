@@ -1,0 +1,16 @@
+{{ define "main" }}
+<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 lg:px-6">
+    <div>
+        <main>
+            <h1>{{ .Title }}</h1>
+            {{ range (.Paginate .Pages 9).Pages }}
+            <div class="m-2">
+                <a href="{{ .RelPermalink }}">{{ .Date.Format (default "January 2, 2006" .Site.Params.DateFormat) }} |
+                    {{ .Title }}</a><br>
+            </div>
+            {{ end }}
+            {{- template "partials/pagination.html" . -}}
+        </main>
+    </div>
+</section>
+{{ end }}

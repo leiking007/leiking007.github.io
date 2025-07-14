@@ -1,0 +1,26 @@
+{{ define "main" }}
+<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 lg:px-6">
+    <div>
+        <div class="">
+            {{- partial "tags.html" . -}}
+            <h1 class="text-2xl">{{ .Title }}</h1>
+            <div class="">
+                <main>
+                    {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 9)).Pages }}
+                    <div class="shadow-xl my-4 p-4 card">
+                        <a href="{{ .RelPermalink }}">
+                            <p class=" leading-6">{{- .Title }}</p>
+                            <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                                <p class="text-sm leading-6">lei</p>
+                                <p class="mt-1 text-xs leading-5">日期 <time>{{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}</time></p>
+                            </div>
+                        </a>
+                    </div>
+                    {{ end }}
+                    {{- template "partials/pagination.html" . -}}
+                </main>
+            </div>
+        </div>
+    </div>
+</section>
+{{ end }}

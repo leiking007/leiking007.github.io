@@ -1,0 +1,25 @@
+{{ define "head" }}
+<script type="text/javascript" src='{{ relURL "lib/catchcat/phaser.min.js" }}'></script>
+<script type="text/javascript" src='{{ relURL "lib/catchcat/catch-the-cat.js" }}'></script>
+{{ end }}
+
+{{ define "main" }}
+<div class="col-span-12">
+    <main>
+        <div id="catch-the-cat" class="w-min mx-auto"></div>
+    </main>
+</div>
+{{ end }}
+{{ define "script" }}
+<script>
+    window.game = new CatchTheCatGame({
+        w: 12,
+        h: 12,
+        r: 20,
+        backgroundColor: 0xffffff,
+        parent: 'catch-the-cat',
+        statusBarAlign: 'center',
+        credit: 'github.com/ganlvtech'
+    });
+</script>
+{{ end }}

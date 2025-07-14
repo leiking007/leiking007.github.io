@@ -1,0 +1,9 @@
+<!--<img style="margin: 0 auto;max-height: 24rem;max-width: calc( 100% - 20px)" loading="lazy" src="{{.Page.RelPermalink}}{{ .Destination | safeURL }}" alt="{{ .Text }}" {{ with .Title}} title="{{ . }}" {{ end }} />-->
+{{ $imgUrl := printf "%s%s" .Page.RelPermalink .Destination }}
+<!--<a href="{{ $imgUrl | urls.RelLangURL }}"-->
+<!--   target="_blank">-->
+<!--   -->
+<!--</a>-->
+<img class="my-0 mx-auto max-h-72 max-w-[calc(100%-20px)]"
+     loading="lazy"
+     src="{{ $imgUrl | urls.RelLangURL }}" alt="{{ .Text }}" {{ with .Title}} title="{{ . }}" {{ end }}/>

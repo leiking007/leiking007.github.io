@@ -1,0 +1,33 @@
+article:
+  table_of_contents: 目录
+  last_updated_on: 最后更新于
+  word_count: 约 {{ . }} 字
+  reading_time: 阅读时长{{ . }} 分钟
+  previous_article: 上一篇
+  next_article: 下一篇
+
+notFound:
+  title: 404 错误
+  subtitle: 页面不存在
+
+widget:
+  archives:
+    title: 归档
+    counter_archives: 共计 {{.}} 篇文章
+  tags:
+    title: 标签
+  categories:
+    title: 分类
+  search:
+    title: 搜索
+  about:
+    title: 关于
+
+search:
+  title: 搜索
+  placeholder: 输入关键词搜索...
+  resultTitle: "#PAGES_COUNT 个结果 （用时 #TIME_SECONDS 秒）"
+
+footer:
+  builtWith: Built with {{ .Generator }}
+  designedBy: 主题 {{ .Theme }} 由 {{ .DesignedBy }} 设计

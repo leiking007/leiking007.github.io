@@ -1,0 +1,25 @@
+module:
+  # 以下是默认 mount
+  mounts:
+    - source: content
+      target: content
+    - source: static
+      target: static
+    - source: layouts
+      target: layouts
+    - source: data
+      target: data
+    - source: assets
+      target: assets
+    - source: i18n
+      target: i18n
+    - source: archetypes
+      target: archetypes
+#   ------------ js assets ------------
+    - source: node_modules/crypto-js
+      target: assets/crypto-js
+    - source: node_modules/alpinejs
+      target: assets/alpinejs
+    - source: node_modules/@alpinejs
+      target: assets/@alpinejs
+#   ------------ static ------------

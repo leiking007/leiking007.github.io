@@ -1,0 +1,27 @@
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='{{ relURL "lib/front/iconfont.css" }}'>
+
+<!-- style -->
+{{ $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+<!-- End -->
+
+<!-- search pagefind -->
+<link href="/search/pagefind-ui.css" rel="stylesheet">
+<script src="/search/pagefind-ui.js"></script>
+<!-- End -->
+
+
+<!-- js -->
+{{/*  创建字典，key=minify  value=是否生产环境  key=targetPath value=app.js  */}}
+{{- $opts := dict "minify" hugo.IsProduction -}}
+{{/*  GetRemote 可以获取远程资源  */}}
+{{/*   resources.Concat 将多个资源文件内捆绑在一起   resources.Minify 允许压缩任何CSS、JS、JSON、HTML、SVG或XML资源  */}}
+{{- $mainjs := resources.Get "ts/main.ts" | js.Build $opts | resources.Fingerprint "sha256" -}}
+<script type="text/javascript" src="{{ $mainjs.RelPermalink }}" integrity="{{ $mainjs.Data.Integrity }}" crossorigin="anonymous" defer></script>
+<!-- End -->
+
+
+
