@@ -187,3 +187,74 @@ my_set = { num for num in nums}
 print(my_set)
 ```
 
+## 生成器
+
+在 Python 里，生成器是一种创建迭代器的高效方式，它的实现更为简洁。
+
+**生成器特性**
+
+- **惰性求值**：只有在请求时才会生成值，减少了内存的占用。
+- **单遍迭代**：生成器是不可逆的，遍历结束后就不能再次使用。
+- **状态自动保存**：自动保存上一次执行的状态，简化了迭代逻辑。
+
+**停止生成器**
+
+- 使用 `StopIteration` 异常
+- 使用 `return` 语句
+- 使用生成器对象的 `close()` 方法
+- 通过外部条件控制生成器
+
+**生成器函数**
+
+借助 `yield` 关键字，普通函数能转变为生成器函数。每次调用 `next()` 时，函数会运行到 `yield` 处并返回值，随后暂停执行，保存当前状态。待下次调用 `next()`，函数会从暂停的地方继续执行。
+
+**生成器表达式**
+
+语法和列表推导式相似，不过使用的是圆括号。生成器表达式采用惰性求值，更节省内存。
+
+```python
+# %%
+# 生成器函数
+def square_numbers(nums:list):
+    for num in nums:
+        yield num**2
+
+# 生成器对象
+my_generator = square_numbers([1,2,3,4,5])
+print(my_generator)  # <generator object square_numbers at 0x00000273F74F7D30> 打印的是内存地址
+print(next(my_generator))  # 1
+print(next(my_generator))  # 4
+print(next(my_generator))  # 9
+print(next(my_generator))  # 16
+print(next(my_generator))  # 25
+
+
+# %%
+# 生成器表达式
+my_generator = (num**2 for num in [1,2,3,4,5])
+print(my_generator)  # <generator object <genexpr> at 0x0000024F2AD92A80> 打印的是内存地址
+print(next(my_generator))  # 1
+print(next(my_generator))  # 4
+print(next(my_generator))  # 9
+print(next(my_generator))  # 16
+print(next(my_generator))  # 25
+
+# %%
+# 手动停止生成器
+
+def square_numbers():
+    try:
+        yield '0'
+        yield '1'
+        raise StopIteration   # 手动报错终止生成器
+        yield '2'  # 这行代码不会执行
+    except GeneratorExit:
+        print('GeneratorExit')
+
+#-------------0 使用close关闭生成器------------------
+my_generator = square_numbers()
+print(next(my_generator))  # 0
+my_generator.close() # 关闭生成器，生成器会在当前暂停的 yield 处抛出 GeneratorExit 异常。
+# print(next(my_generator))  # 报错 StopIteration
+```
+
