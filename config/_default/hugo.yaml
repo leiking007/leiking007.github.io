@@ -1,4 +1,4 @@
-baseURL: https://139.155.239.250/
+baseURL: https://leiking007.github.io/
 title: Note
 theme: hugo-tl
 defaultContentLanguage: zh-cn  # 没有语言标识的内容将默认为该语言
