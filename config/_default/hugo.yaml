@@ -21,3 +21,16 @@ enableRobotsTXT: true  # 默认 false;启用生成 robots.txt 文件
 
 build:
   noJSConfigInAssets: true  # 关闭在 /assets 文件夹中写入一个 jsconfig.json 文件，该文件包含从 js.Build 中的导入映射。此文件旨在帮助在代码编辑器如 VS Code 中进行智能提示/导航。
+
+# 输出类型
+outputs:
+  home:
+    - html
+    - rss
+  section:
+    - html
+    - rss
+  taxonomy:
+    - html
+  term:
+    - html
