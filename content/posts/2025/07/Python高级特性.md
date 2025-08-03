@@ -331,5 +331,115 @@ b={
 print({**a,**b})  # 使用**将字典解包成多个参数，打印：{'a': 1, 'b': 2, 'c': 3, 'd': 4}
 ```
 
+## 装饰器
+
+装饰器（Decorator）是一种特殊的语法，用于修改或增强函数或类的功能，而无需修改其源代码。装饰器本质上是一个函数，它接受一个函数作为参数，并返回一个新的函数。
+
+装饰器主要是为了解决**代码复用**和**功能增强**的问题，同时保持代码的简洁性和可读性。
+
+当使用装饰器包装函数时，被装饰后的函数会丢失原函数的一些元信息（如函数名、文档字符串、参数列表等）。`functools.wraps` 是一个装饰器工具，用于解决这个问题 —— 它可以将原函数的元信息 “复制” 到装饰器内部的 `wrapper` 函数上，确保被装饰后的函数保留原函数的身份特征。
+
+```python
+import time
+import functools
+# %%
+# python 中函数也是一个对象，可以作为参数传递，也可以作为返回值
+def square(x):
+    return x**2
+
+def print_fun_return(fun,x):
+    print(f'{fun.__name__} is runing')
+    return fun(x)
+
+x = print_fun_return(square,3)
+print(x)  # 9
+
+# %%
+#  装饰器
+def my_decorator(fun):
+    def wrapper(*args,**kwargs):
+        start_time=time.time()
+        fun(*args,**kwargs)
+        print(f'函数 {fun.__name__} 运行时间为：{time.time() - start_time} second')
+    return wrapper
+
+def square(x):
+    time.sleep(1)
+    return x**2
+
+# 方式一
+square = my_decorator(square)
+square(2)
+
+#方式二
+@my_decorator
+def square(x):
+    time.sleep(1)
+    return x**2
+square(2)
+
+# %%
+# 装饰器生成器（带参数的装饰器）
+def my_decorator(threshold):
+    def decorator(fun):
+        def wrapper(*args,**kwargs):
+            start_time=time.time()
+            fun(*args,**kwargs)
+            if time.time()-start_time > threshold:
+                print(f'函数 {fun.__name__} 运行时间超过阈值 {threshold}')
+        return wrapper
+    return decorator
+
+def square(x):
+    time.sleep(1)
+    return x**2
+
+# 方式一
+square = my_decorator(1)(square)
+square(3)
+
+# 方式二
+@my_decorator(1)
+def square(x):
+    time.sleep(1)
+    return x**2
+square(3)
+
+# %%
+def my_decorator(fun):
+    def wrapper(*args,**kwargs):
+        start_time=time.time()
+        fun(*args,**kwargs)
+        print(f'函数 {fun.__name__} 运行时间为：{time.time() - start_time} second')
+    return wrapper
+
+@my_decorator
+def square(x):
+    time.sleep(1)
+    return x**2
+
+print(f'function name is {square.__name__}')   # wrapper ，丢失了原来函数的属性
+
+# ======= 使用 functools.wraps 装饰器将原函数的元信息 “复制” 到装饰器内部的 wrapper 函数上
+def my_decorator(fun):
+    @functools.wraps(fun)
+    def wrapper(*args,**kwargs):
+        start_time=time.time()
+        fun(*args,**kwargs)
+        print(f'函数 {fun.__name__} 运行时间为：{time.time() - start_time} second')
+    return wrapper
+
+@my_decorator
+def square(x):
+    time.sleep(1)
+    return x**2
+
+print(f'function name is {square.__name__}')   # wrapper ，丢失了原来函数的属性
+
+
+
+
+```
+
 
 
