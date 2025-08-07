@@ -30,8 +30,8 @@
             </div>
             <div>
                 {{  if $tocEnable }}
-                <div x-data="{ open: false }" class="lg:hidden sticky top-0 z-10 shadow-md p-2">
-                    <h4 x-on:click="open = !open" x-transition.duration.500ms class="m-0 p-0 text-2xl cursor-pointer">{{- T "article.table_of_contents" | default "tableOfContents" -}}</h4>
+                <div x-data="{ open: false }" class="lg:hidden sticky top-4 z-10 bg-tl-base-100">
+                    <div x-on:click="open = !open" x-transition.duration.500ms class="m-0 p-1 text-2xl cursor-pointer">{{- T "article.table_of_contents" | default "tableOfContents" -}}</div>
                     <div x-show="open" x-transition @click.away="open = false" class="prose prose-a:no-underline prose-li:list-none prose-ul:my-1 prose-li:my-0 max-h-[70vh] overflow-y-auto">
                         {{ .TableOfContents }}
                     </div>
