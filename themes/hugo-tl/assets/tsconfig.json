@@ -106,10 +106,7 @@
     /* Skip type checking all .d.ts files. */
     "paths": {
       "*": [
-        "*",
-        "..\\node_modules\\@alpinejs\\*",
-        "..\\node_modules\\alpinejs\\*",
-        "..\\node_modules\\crypto-js\\*"
+        "themes/hugo-tl/node_modules/*",
       ]
     }
   }
