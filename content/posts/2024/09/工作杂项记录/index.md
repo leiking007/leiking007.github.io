@@ -366,3 +366,36 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO f
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO face_user;
 ```
 
+## 运维
+
+### jar 更改 war/jar 包中配置文件
+
+```bash
+# 查看
+jar -tvf app.war | grep -i application.yml   
+
+# 提取war包中某个文件
+jar -xvf app.war WEB-INF/classes/application.yml   
+
+# 更新，常用于只替换包中某个配置文件，而不需要解压整个包
+jar -uvf app.war WEB-INF/classes/application.yml   
+
+# =============================================
+# 查看多个文件
+jar -tvf xxx.jar | grep -E 'application-datasource-zs.yml|application.yml|logback.xml'
+
+# 提取多个文件
+jar -xvf xxx.jar \
+    WEB-INF/classes/application-datasource-zs.yml \
+    WEB-INF/classes/application.yml \
+    WEB-INF/classes/logback.xml
+
+# 更新war中的多个文件
+jar -uvf xxx.jar \
+    WEB-INF/classes/application-datasource-zs.yml \
+    WEB-INF/classes/application.yml \
+    WEB-INF/classes/logback.xml
+```
+
+
+
