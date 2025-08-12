@@ -724,3 +724,104 @@ Maven父工程遵循以下要求
 </settings>
 ```
 
+## war 包名带时间戳
+
+**方式一**
+
+在 Maven 中，要让打包后的 WAR 文件名自动带上“日期”，可以通过配置 `maven-war-plugin` 的 `<finalName>` 来实现，结合 Maven 的 `maven.build.timestamp` 属性即可
+
+在 `pom.xml` 中添加或修改如下配置
+
+```xml
+<properties>
+    <!-- 定义时间格式 -->
+    <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+    <!-- 如果你想带 时间戳（小时分钟），把时间格式改为 yyyyMMdd_HHmm -->
+    <!-- 强制使用东八区，Maven 版本 ≥ 3.9 -->
+    <maven.build.timestamp.timezone>Asia/Shanghai</maven.build.timestamp.timezone>
+</properties>
+
+<build>
+    <finalName>${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.3.2</version> <!-- 用最新版 -->
+            <configuration>
+                <!-- 确保使用上面定义的 finalName -->
+                <warName>${project.artifactId}-${project.version}-${maven.build.timestamp}</warName>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+> 注意事项：
+>
+> - `maven.build.timestamp` 是 Maven 内置变量，**只在构建时有效**，不会影响源码中任何地方
+>
+> - 生成的时间默认为UTC时区的，会相差8小时，maven3.9以上版本可以通过配置强制使用东八区
+>
+> - 如果你使用的是 Spring Boot 的 `spring-boot-maven-plugin`，它默认会忽略 `finalName`，需要额外配置
+>
+>   ```xml
+>   <plugin>
+>       <groupId>org.springframework.boot</groupId>
+>       <artifactId>spring-boot-maven-plugin</artifactId>
+>       <configuration>
+>           <finalName>${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
+>       </configuration>
+>   </plugin>
+>   ```
+
+**方式二**
+
+用插件动态生成时间（兼容所有 Maven 版本），引入 `build-helper-maven-plugin`，在打包前把东八区时间写入属性，再供 `finalName` 使用。
+
+| 配置项                               | 含义                                               |
+| ------------------------------------ | -------------------------------------------------- |
+| `groupId` / `artifactId` / `version` | 插件坐标，确保使用的是 `3.4.0` 版本                |
+| `execution.id`                       | 命名为 `timestamp-property`，可自定义              |
+| `phase`                              | 绑定到 `validate` 阶段，即构建一开始就会执行       |
+| `goal`                               | 使用 `timestamp-property` 目标来生成时间戳属性     |
+| `configuration.name`                 | 生成的 Maven 属性名，这里是 `build.time`           |
+| `configuration.pattern`              | 时间格式，`yyyyMMdd_HHmm` 会生成如 `20250812_1432` |
+| `configuration.timeZone`             | 指定时区为 `Asia/Shanghai`，即中国标准时间         |
+
+```xml
+<build>
+    <finalName>${project.artifactId}-${project.version}-${build.time}</finalName>
+    <plugins>
+        <!-- 1. 生成东八区时间 -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.4.0</version>
+            <executions>
+                <execution>
+                    <id>timestamp-property</id>
+                    <phase>validate</phase>
+                    <goals><goal>timestamp-property</goal></goals>
+                    <configuration>
+                        <name>build.time</name>
+                        <pattern>yyyyMMdd_HHmm</pattern>
+                        <timezone>Asia/Shanghai</timezone>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- 2. 打 war 包时使用上面的时间 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.3.2</version>
+            <configuration>
+                <warName>${project.artifactId}-${project.version}-${build.time}</warName>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+

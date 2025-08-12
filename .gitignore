@@ -9,4 +9,5 @@ resources/
 node_modules/
 themes/hugo-tl/assets/css/style.css
 yarn.lock
+.yarn
 package-lock.json
