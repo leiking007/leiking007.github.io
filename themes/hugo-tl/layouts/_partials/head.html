@@ -5,7 +5,7 @@
 
 <!-- style -->
 {{ $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint "sha256" }}
-<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+<link rel="stylesheet" type='text/css' href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
 <!-- End -->
 
 <!-- search pagefind -->
