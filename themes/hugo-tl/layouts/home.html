@@ -43,26 +43,7 @@
     <div>
       <div class="grid grid-rows-1 grid-cols-12 md:gap-x-2">
         {{ range $index, $element := $pag.Pages }}
-        <div class="card duration-200 my-4 mx-2 col-span-12 bg-tl-base-100 border-tl-300">
-          <div class="card-body">
-            <a href="{{ .RelPermalink }}">
-              <p class="text-2xl">{{ .Title }}</p>
-              <small class="text-sm">{{- T "article.last_updated_on"  -}}: {{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}</small>
-              <p class="fs-6">{{ .Summary }}</p>
-              <div class="flex flex-wrap items-center mt-4 justify-starts">
-                {{ if .Params.tags }}
-                {{ range (.GetTerms "tags") }}
-                <a href='{{ .RelPermalink }}'>
-                  <div class="text-xs mr-2 py-1.5 px-4 rounded-2xl hover:shadow-sm bg-tl-base-200">
-                    #{{- .LinkTitle -}}
-                  </div>
-                </a>
-                {{ end }}
-                {{ end }}
-              </div>
-            </a>
-          </div>
-        </div>
+            {{ .Render "summary" }}
         {{ end }}
       </div>
       {{ partial "pagination.html" . }}
