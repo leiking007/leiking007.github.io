@@ -81,7 +81,13 @@
         }
     }
 
-    .toc-active {
-        @apply relative text-cyan-500;
+    .active > a {
+        /*color: blue;*/
+    }
+
+    .current {
+        & > a {
+            @apply text-tl-primary font-semibold
+        }
     }
 }
