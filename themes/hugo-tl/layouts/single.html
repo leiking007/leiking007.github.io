@@ -60,7 +60,7 @@
             {{  if $tocEnable }}
             <div class="max-w-full h-auto sticky top-20">
                 <h4 class="text-2xl">{{- T "article.table_of_contents" | default "tableOfContents" -}}</h4>
-                <div class="toc">
+                <div class="toc" x-data="tocHighlight">
                     {{ .TableOfContents }}
                 </div>
             </div>

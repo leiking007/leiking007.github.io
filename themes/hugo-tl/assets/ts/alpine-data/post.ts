@@ -2,40 +2,44 @@
  * 目录高亮
  */
 const tocHighlight = () => ({
-    activeId: '',
-
     init() {
-        // 监听滚动事件
-        window.addEventListener('scroll', this.highlightActiveSection);
-    },
-
-    highlightActiveSection() {
-        // 获取所有目录项
-        const tocItems: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('.TableOfContents a');
-        let currentActiveId = '';
-
-        tocItems.forEach(item => {
-            const section = document.getElementById(item.hash.substring(1));
-            if (section) {
-                const rect = section.getBoundingClientRect();
-                if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-                    currentActiveId = item.hash.substring(1);
-                }
-            }
-        });
-
-        // 更新高亮状态
-        if (currentActiveId !== this.activeId) {
-            this.activeId = currentActiveId;
-            tocItems.forEach(item => {
-                item.classList.toggle('active', item.hash.substring(1) === this.activeId);
-            });
+        const toc = this.$el.querySelector("#TableOfContents")
+        if (toc) {
+            this.createTocObserver();
         }
     },
-
     destroy() {
-        // 移除滚动事件监听
-        window.removeEventListener('scroll', this.highlightActiveSection);
+        console.log('tocHighlight destroy');
+    },
+    createTocObserver() {
+        const headings = document.querySelectorAll("article h1[id], article h2[id], article h3[id], article h4[id], article h5[id], article h6[id]")
+        const setCurrentActive = () => {
+            const allActive = document.querySelectorAll(`#TableOfContents .active`)
+            if (allActive.length === 0) {
+                return
+            } else {
+                document.querySelector(`#TableOfContents .current`)?.classList.remove('current');
+                document.querySelectorAll(`#TableOfContents .active`)[0]?.classList.add('current')
+            }
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const id = entry.target.getAttribute('id');
+                console.log(id,entry.intersectionRatio)
+                if (entry.intersectionRatio > 0) {
+                    document.querySelector(`#TableOfContents li a[href="#${id}"]`)?.parentElement?.classList.add('active');
+                } else {
+                    document.querySelector(`#TableOfContents li a[href="#${id}"]`)?.parentElement?.classList.remove('active');
+                }
+                setCurrentActive()
+            });
+        })
+
+        // Track all sections that have an `id` applied
+        headings.forEach((section) => {
+            observer.observe(section);
+        })
     }
 })
 
@@ -72,6 +76,4 @@ const codeBlock = () => ({
 })
 
 
-
-
-export {tocHighlight,codeBlock}
+export {tocHighlight, codeBlock}
