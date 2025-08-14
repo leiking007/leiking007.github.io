@@ -21,8 +21,8 @@
      x-init="init"
      x-on:click="scrollToTop"
      x-transition.duration.500ms
-     class="md:fixed bottom-12 right-12 hover:text-tl-error">
-    <i class="iconfont icon-top text-3xl"></i>
+     class="md:fixed bottom-12 right-12 hover:text-tl-primary">
+    {{ partial "icons/icon" (dict "path" "common/top" "className" "text-3xl " ) }}
 </div>
 </body>
 <!--搜索-->

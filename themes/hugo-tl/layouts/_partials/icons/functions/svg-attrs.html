@@ -1,0 +1,20 @@
+{{/* Parse and return the original attributes of SVG tag. */}}
+{{- $svg := .Content -}}
+{{- $processAttrs := .processAttrs -}}
+{{/* Fetch the "<svg>" content. */}}
+{{- $tag := findRE `<svg[^>]+>` $svg 1 -}}
+{{- $attrs := newScratch -}}
+{{- if $processAttrs -}}
+  {{- $attrs.Set "fill" "currentColor" -}}
+  {{- $attrs.Set "aria-hidden" "true" -}}
+{{- end -}}
+{{/* Parse the attributes' name="value" pairs. */}}
+{{- range findRE `[\w-]+="[^"]+"` (index $tag 0) -}}
+  {{- $pair := split . "=" -}}
+  {{- $name := index $pair 0 -}}
+  {{- $val := replace (index $pair 1) `"` "" -}}
+  {{ $attrs.Set $name $val -}}
+{{- end -}}
+{{/* 直接覆盖原有的class */}}
+{{- $attrs.Set "class" "svg-inline" -}}
+{{- return $attrs -}}

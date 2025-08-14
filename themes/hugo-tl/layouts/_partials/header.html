@@ -2,17 +2,8 @@
     <div class="mx-auto flex h-full w-full max-w-[90rem] justify-between px-4 lg:px-6">
         <div class="flex h-full gap-6">
             <div class="hidden lg:block mr-2 h-full">
-                <a href="{{.Site.Home.RelPermalink}}" class="flex items-center space-x-3 rtl:space-x-reverse">
-                    <svg class="icon h-8 w-auto" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M128 31.9488h768c17.7152 0 31.9488 14.336 31.9488 31.9488V975.872c0 17.7152-14.336 31.9488-31.9488 31.9488H128c-17.7152 0-31.9488-14.336-31.9488-31.9488V64c0-17.7152 14.2336-32.0512 31.9488-32.0512z"
-                              fill="#F0EEE2" p-id="4852"></path>
-                        <path d="M655.9744 64v240.0256l79.9744-79.9744 79.9744 79.9744V64H655.9744zM128 960h64v-896H128v896z"
-                              fill="#BBAA9C" p-id="4853"></path>
-                        <path d="M335.9744 864.0512h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744zM768 560.0256h-48.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744H768c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744z m-256-79.9744c0-8.8064-7.168-15.9744-15.9744-15.9744h-79.9744c-8.8064 0.2048-15.7696 7.5776-15.5648 16.384 0.2048 8.4992 7.0656 15.36 15.5648 15.5648h79.9744c8.8064 0 15.9744-7.168 15.9744-15.9744z m-48.0256-320.1024h64c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-64c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m-304.0256 128h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m560.0256-143.9744h31.9488c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744h-31.9488c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744z m207.9744 640H816.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h112.0256c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-16.0768-15.9744z m-303.9232-79.9744h-128c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744h128c8.8064 0 15.9744-7.168 15.9744-15.9744s-7.168-15.9744-15.9744-15.9744z m128-304.0256c-8.8064 0-15.9744 7.168-15.9744 15.9744s7.168 15.9744 15.9744 15.9744 15.9744-7.168 15.9744-15.9744-7.168-15.9744-15.9744-15.9744zM224.0512 624.0256c0-8.8064-7.168-15.9744-15.9744-15.9744h-48.0256c-8.8064 0.2048-15.7696 7.5776-15.5648 16.384 0.2048 8.4992 7.0656 15.36 15.5648 15.5648h48.0256c8.704 0 15.872-7.168 15.9744-15.9744z"
-                              fill="#D8D5BA" p-id="4854"></path>
-                        <path d="M896 0H128C92.672 0 64 28.672 64 64v896c0 35.328 28.672 64 64 64h768c35.328 0 64-28.672 64-64v-896C960 28.672 931.328 0 896 0zM671.9488 64h128v201.3184l-52.736-52.6336c-6.2464-6.2464-16.384-6.2464-22.6304 0l-52.736 52.6336V64z m-479.9488 896H128v-896h64v896z m704 0H224.0512v-896H640v240.0256c0 8.8064 7.168 15.9744 15.9744 15.9744 4.1984 0 8.2944-1.7408 11.264-4.7104l68.7104-68.7104 68.7104 68.7104c6.2464 6.2464 16.384 6.2464 22.6304 0 2.9696-2.9696 4.7104-7.0656 4.7104-11.264V64H896v896z"
-                              fill="#5F4E56"></path>
-                    </svg>
+                <a href="{{.Site.Home.RelPermalink}}" class="flex items-center space-x-3">
+                    {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
                     <span class="self-center text-2xl font-semibold whitespace-nowrap ">Note</span>
                 </a>
             </div>
@@ -28,12 +19,10 @@
                     class="relative cursor-pointer text-sm font-medium">
                     <button x-on:click="open =!open"
                             class="flex items-center justify-between w-full py-2 px-3 rounded-sm border-0 p-0 w-auto">
-                        {{ .Pre }}{{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
-                        <svg class="w-2.5 h-2.5 ms-2.5" xmlns="http://www.w3.org/2000/svg"
-                             fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="2" d="m1 1 4 4 4-4"/>
-                        </svg>
+                        {{ with .Pre }}
+                            {{ partial "icons/icon" (dict "path" . ) }}
+                        {{ end }}{{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
+                        {{ partial "icons/icon" (dict "path" "common/arrow-down" ) }}
                     </button>
                     <!-- Dropdown menu -->
                     <div x-show="open" x-cloak x-transition.duration.500ms
@@ -53,9 +42,11 @@
                 <li class="relative cursor-pointer text-sm font-medium">
                     <a href="{{ .URL | relLangURL }}"
                        {{ if eq (default false .Params.newTab) true }}target="_blank" {{ end }}
-                       class="block py-2 px-3 rounded-sm border-0 hover:text-tl-primary p-0 {{ if $active }} text-tl-primary {{ end }}">
+                       class="inline-block py-2 px-3 rounded-sm border-0 hover:text-tl-primary p-0 {{ if $active }} text-tl-primary {{ end }}">
                         {{/* default DEFAULT input 如果获取的i8in为空，则默认设置.Name */}}
-                        {{ .Pre }}{{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
+                        {{ with .Pre }}
+                            {{ partial "icons/icon" (dict "path" . ) }}
+                        {{ end }}{{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
                     </a>
                 </li>
                 {{ end }}

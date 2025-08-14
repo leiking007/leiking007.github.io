@@ -1,33 +1,40 @@
 {{/*  页码数量大于 1  */}}
 {{- if gt .Paginator.TotalPages 1 -}}
-<div class="flex items-center justify-between px-4 py-3 sm:px-6">
-  <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center border-t border-tl-base-300">
-      {{ if $.Paginator.HasPrev }}
-      <a class="relative block items-center px-4 py-2 mr-6 border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Prev.URL -}}">上一页</a>
-      {{ end }}
-      <nav class="isolate inline-flex -space-x-px rounded-md ">
-        {{- .Scratch.Set "paginator.ellipsed" false -}}
-        {{- range $.Paginator.Pagers -}}
-        {{- $right := sub .TotalPages .PageNumber -}}
-        {{- $showNumber := or (le .PageNumber 1) (eq $right 0) -}}
-        {{- $showNumber := or $showNumber (and (gt .PageNumber (sub $.Paginator.PageNumber 3)) (lt .PageNumber (add $.Paginator.PageNumber 3))) -}}
-        {{- if $showNumber -}}
-        {{- $.Scratch.Set "paginator.ellipsed" false -}}
-        {{- $.Scratch.Set "paginator.shouldEllipse" false -}}
-        {{- else -}}
-        {{- $.Scratch.Set "paginator.shouldEllipse" (not ($.Scratch.Get "paginator.ellipsed") ) -}}
-        {{- $.Scratch.Set "paginator.ellipsed" true -}}
-        {{- end -}}
-        {{- if $showNumber -}}
-        <a href="{{ .URL }}" class="relative block items-center px-4 py-2  border-t-2 hover:border-tl-primary {{ if eq . $.Paginator }} border-tl-primary/75 {{ else }} border-transparent {{ end }}">{{- .PageNumber -}}</a>
-        {{- else if ($.Scratch.Get "paginator.shouldEllipse") -}}
-        <span class="relative block items-center px-4 py-2  border-transparent">...</span>
-        {{- end -}}
-        {{- end -}}
-      </nav>
-      {{ if $.Paginator.HasNext }}
-      <a class="relative block items-center ml-6 px-4 py-2  border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Next.URL -}}">下一页</a>
-      {{ end }}
+<div class="mt-12 pt-8 border-t border-gray-100">
+  <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-600">
+          第 {{ .Paginator.PageNumber }} 页，共 {{ .Paginator.TotalPages }} 页
+      </div>
+      <div class="flex items-center justify-between px-4 py-3 sm:px-6">
+        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center border-t border-tl-base-300">
+            {{ if $.Paginator.HasPrev }}
+            <a class="relative block items-center px-4 py-2 mr-6 border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Prev.URL -}}">上一页</a>
+            {{ end }}
+            <nav class="isolate inline-flex -space-x-px rounded-md ">
+              {{- .Scratch.Set "paginator.ellipsed" false -}}
+              {{- range $.Paginator.Pagers -}}
+              {{- $right := sub .TotalPages .PageNumber -}}
+              {{- $showNumber := or (le .PageNumber 1) (eq $right 0) -}}
+              {{- $showNumber := or $showNumber (and (gt .PageNumber (sub $.Paginator.PageNumber 3)) (lt .PageNumber (add $.Paginator.PageNumber 3))) -}}
+              {{- if $showNumber -}}
+              {{- $.Scratch.Set "paginator.ellipsed" false -}}
+              {{- $.Scratch.Set "paginator.shouldEllipse" false -}}
+              {{- else -}}
+              {{- $.Scratch.Set "paginator.shouldEllipse" (not ($.Scratch.Get "paginator.ellipsed") ) -}}
+              {{- $.Scratch.Set "paginator.ellipsed" true -}}
+              {{- end -}}
+              {{- if $showNumber -}}
+              <a href="{{ .URL }}" class="relative block items-center px-4 py-2  border-t-2 hover:border-tl-primary {{ if eq . $.Paginator }} border-tl-primary/75 {{ else }} border-transparent {{ end }}">{{- .PageNumber -}}</a>
+              {{- else if ($.Scratch.Get "paginator.shouldEllipse") -}}
+              <span class="relative block items-center px-4 py-2  border-transparent">...</span>
+              {{- end -}}
+              {{- end -}}
+            </nav>
+            {{ if $.Paginator.HasNext }}
+            <a class="relative block items-center ml-6 px-4 py-2  border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Next.URL -}}">下一页</a>
+            {{ end }}
+        </div>
+      </div>
   </div>
 </div>
 {{- end -}}

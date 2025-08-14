@@ -3,26 +3,26 @@ main:
     name: 归档
     url: /posts/
     weight: -80
-    pre: <i class="iconfont mr-1 icon-guidang"></i>
+    pre: common/guidang
   - identifier: categories
     name: 分类
     url: /categories/
     weight: -70
-    pre: <i class="iconfont mr-1 icon-fenlei"></i>
+    pre: common/fenlei
   - identifier: tags
     name: 标签
     url: /tags/
     weight: -60
-    pre: <i class="iconfont mr-1 icon-24gl-tags2"></i>
+    pre: common/tags
   - identifier: about
     name: 关于
     url: /about/
     weight: -50
-    pre: <i class="iconfont mr-1 icon-shouye"></i>
+    pre: common/about
   - identifier: tools
     name: 常用工具
     weight: -10
-    pre: <i class="iconfont mr-1 icon-icTools"></i>
+    pre: common/tools
     params:
       sub:
         - name: 花密
