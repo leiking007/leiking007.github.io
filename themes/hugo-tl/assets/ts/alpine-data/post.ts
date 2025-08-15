@@ -45,12 +45,15 @@ const tocHighlight = () => ({
 /**
  * 代码块
  */
-const codeBlock = () => ({
+const postCodeBlock = () => ({
     showCode: true,  // 是否显示代码块
     /** 复制代码 */
     copyCode() {
         const codeBlock = this.$refs.codeBlock
         const copyBtn = this.$el
+        if (!this.copyInnerHTML) {
+            this.copyInnerHTML = copyBtn.innerHTML;
+        }
         let codeEle = codeBlock.firstElementChild?.firstElementChild?.firstElementChild
         if (codeEle instanceof HTMLElement) {
             let text = ''
@@ -61,9 +64,10 @@ const codeBlock = () => ({
                 Promise.all([navigator.clipboard.writeText(text)])
                     .then(() => {
                         if (copyBtn instanceof HTMLElement) {
+
                             copyBtn.innerHTML = "copied"
                             setTimeout(() => {
-                                copyBtn.innerHTML = "<i class=\"iconfont icon-fuzhi\"></i>"
+                                copyBtn.innerHTML = this.copyInnerHTML
                             }, 1000)
                         }
                     })
@@ -75,4 +79,4 @@ const codeBlock = () => ({
 })
 
 
-export {tocHighlight, codeBlock}
+export {tocHighlight, postCodeBlock}

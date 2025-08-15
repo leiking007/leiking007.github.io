@@ -5,22 +5,22 @@
         <span class="cursor-default ml-2">{{ .Type }}</span>
         <span class="flex">
             <span x-on:click="copyCode" class="cursor-copy mr-2 inline-block">
-                <i class="iconfont icon-fuzhi"></i>
+                {{ partial "icons/icon" (dict "path" "post/copy" ) }}
             </span>
-            <span class="cursor-pointer mr-2 inline-block">
-                <i x-on:click="showCode = !showCode"
-                   x-bind:class=" 'iconfont ' + (showCode ? 'icon-xuanzeqizhankai_o' : 'icon-zhankaicaidan') "></i>
+            <span x-on:click="showCode = !showCode" class="cursor-pointer mr-2 inline-block">
+                <span x-show="showCode">
+                    {{ partial "icons/icon" (dict "path" "common/arrow-down" ) }}
+                </span>
+                <span x-show="!showCode">
+                    {{ partial "icons/icon" (dict "path" "common/arrow-left" ) }}
+                </span>
             </span>
         </span>
     </div>
     <div x-show="showCode"
          x-cloak
-         x-transition:enter="transition duration-500 ease-out delay-100"
-         x-transition:enter-start="scale-y-0 opacity-0"
-         x-transition:enter-end="scale-y-100 opacity-100"
-         x-transition:leave="transition duration-300 ease-in"
-         x-transition:leave-start="scale-y-100 opacity-100"
-         x-transition:leave-end="scale-y-0 opacity-0"
+         x-collapse
+         x-collapse.duration.500ms
          x-ref="codeBlock">
         {{ transform.Highlight .Inner .Type "noClasses=false"}}
     </div>

@@ -23,9 +23,9 @@
                     {{ end }}
                 </h1>
                 <section class="d-flex">
-                    <span class="mx-2"><i class="iconfont icon-riqi2 mr-1"></i>{{ .Date.Format (default "January 2, 2006" .Site.Params.DateFormat) }}</span>
-                    <span class="mx-2"><i class="iconfont icon-yongyan mr-1"></i>{{- T "article.word_count" .WordCount -}}</span>
-                    <span class="mx-2"><i class="iconfont icon-time mr-1"></i>{{- T "article.reading_time" .ReadingTime -}}</span>
+                    <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/date" ) }}{{ .Date.Format (default "January 2, 2006" .Site.Params.DateFormat) }}</span>
+                    <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/bi" ) }}{{- T "article.word_count" .WordCount -}}</span>
+                    <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/time" ) }}{{- T "article.reading_time" .ReadingTime -}}</span>
                 </section>
             </div>
             <div>

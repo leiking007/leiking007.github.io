@@ -115,7 +115,7 @@
     /* 图标 */
     .svg-inline {
         vertical-align: -0.125em;   /* 负值往下，正值往上 */
-        @apply inline-block text-sm mx-1
+        @apply inline-block text-base mx-1
     }
 }
 

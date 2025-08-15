@@ -14,6 +14,7 @@
     "dev:pagefind": "npx pagefind --site ../../public --output-subdir search"
   },
   "dependencies": {
+    "@alpinejs/collapse": "^3.14.9",
     "@alpinejs/focus": "^3.14.9",
     "@tailwindcss/cli": "^4.1.10",
     "alpinejs": "^3.14.9",
