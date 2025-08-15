@@ -1,0 +1,70 @@
+{{- /* 参数说明
+    id        必填，弹窗唯一标识（也用于 aria-labelledby）
+    class     可选，附加在 .modal-wrapper 上的 class
+    title     可选，标题文字（支持 HTML）
+    content   可选，正文内容（支持 HTML）
+    size      可选，sm | md | lg  → 对应 max-w-sm / max-w-2xl / max-w-4xl
+    postion   可选，top | center | bottom   默认top
+*/ -}}
+
+{{- $size := .size | default "md" -}}
+{{- $maxWidth := dict "sm" "max-w-sm" "md" "max-w-2xl" "lg" "max-w-4xl" -}}
+{{- $position := .position | default "top" -}}
+
+<!-- Modal wrapper -->
+<div
+  x-show="open"
+  x-cloak
+  x-transition.duration.300ms
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title-{{ .id }}"
+  class="fixed inset-0 z-50 flex justify-center w-full h-full bg-tl-base-100/50 backdrop-blur-sm overflow-y-auto
+    {{- if eq $position "top" }} pt-10
+    {{- else if eq $position "bottom" }} items-end pb-10
+    {{- else }} items-center
+    {{- end }}
+    {{ .class }}"
+>
+  <!-- Modal content -->
+  <div
+    class="relative p-4 w-full {{ index $maxWidth $size }} max-h-[90vh] flex flex-col"
+    @click.away="open = false"
+  >
+    <div class="bg-tl-base-100 rounded-lg shadow-xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="flex items-center justify-between p-4 border-b border-tl-base-300">
+        <h3 id="modal-title-{{ .id }}" class="text-lg font-semibold text-tl-base-800">
+            {{ with .title }}
+                {{- . | safeHTML -}}
+            {{ end }}
+        </h3>
+        <button
+          type="button"
+          @click="open = false"
+          class="p-1 rounded-full text-tl-base-500 hover:bg-tl-base-200 transition"
+          aria-label="{{ T `ui.close` | default `Close` }}"
+        >
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Body -->
+      <main class="p-4 overflow-y-auto">
+        {{ with .content }}
+            {{- . | safeHTML -}}
+        {{ end }}
+      </main>
+    </div>
+  </div>
+</div>

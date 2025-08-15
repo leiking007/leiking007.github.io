@@ -1,20 +1,20 @@
 {{ define "main" }}
-<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 lg:px-6">
-  <main class="col-span-12 lg:col-span-8 lg:col-start-3">
+<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
+  <main>
     <div class="p-6 rounded">
       <div class="grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
-        <div class="flex flex-col justify-center col-span-1 text-center lg:text-start">
-          <div class="flex items-center justify-center mb-4 lg:justify-normal">
+        <div class="flex flex-col justify-center col-span-1 text-center md:text-start">
+          <div class="flex items-center justify-center mb-4 md:justify-normal">
             <h4 class="ml-2 text-sm font-bold tracking-widest text-tl-primary uppercase">
               {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
               {{.Title}}
             </h4>
           </div>
           {{ with .Site.Params.subtitle }}
-          <h1 class="mb-8 text-4xl font-extrabold leading-tight lg:text-6xl">{{- . -}}</h1>
+          <h1 class="mb-8 text-4xl font-extrabold leading-tight md:text-6xl">{{- . -}}</h1>
           {{ end }}
           {{ with .Site.Params.describe }}
-          <p class="mb-6 text-tl-base font-normal leading-7 lg:w-3/4 ">{{- . -}}</p>
+          <p class="mb-6 text-tl-base font-normal leading-7 md:w-3/4 ">{{- . -}}</p>
           {{ end }}
         </div>
         <div class="items-center justify-end hidden col-span-1 md:flex">
