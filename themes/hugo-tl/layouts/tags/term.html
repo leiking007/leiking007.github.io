@@ -4,22 +4,12 @@
         <div class="">
             {{- partial "tags.html" . -}}
             <h1 class="text-2xl">{{ .Title }}</h1>
-            <div class="">
-                <main>
-                    {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 9)).Pages }}
-                    <div class="shadow-xl my-4 p-4 card">
-                        <a href="{{ .RelPermalink }}">
-                            <p class=" leading-6">{{- .Title }}</p>
-                            <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                                <p class="text-sm leading-6">lei</p>
-                                <p class="mt-1 text-xs leading-5">日期 <time>{{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}</time></p>
-                            </div>
-                        </a>
-                    </div>
-                    {{ end }}
-                    {{ partial "pagination.html" . }}
-                </main>
-            </div>
+            <main class="space-y-6">
+                {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 9)).Pages }}
+                    {{ .Render "summary" }}
+                {{ end }}
+                {{ partial "pagination.html" . }}
+            </main>
         </div>
     </div>
 </section>

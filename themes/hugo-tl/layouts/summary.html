@@ -1,20 +1,48 @@
-<div class="card duration-200 my-4 mx-2 col-span-12 bg-tl-base-100 border-tl-300">
-    <div class="card-body">
-        <a href="{{ .RelPermalink }}">
-            <p class="text-2xl">{{ .Title }}</p>
-            <small class="text-sm">{{- T "article.last_updated_on"  -}}: {{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}</small>
-            <p class="fs-6">{{ .Summary }}</p>
-            <div class="flex flex-wrap items-center mt-4 justify-starts">
-                {{ if .Params.tags }}
-                {{ range (.GetTerms "tags") }}
-                <a href='{{ .RelPermalink }}'>
-                    <div class="text-xs mr-2 py-1.5 px-4 rounded-2xl hover:shadow-sm bg-tl-base-200">
-                        #{{- .LinkTitle -}}
+<article class="group relative overflow-hidden bg-gradient-to-r bg-tl-base-100 rounded-xl p-6 transition-all duration-300 border border-tl-base-300 hover:border-tl-primary hover:shadow-lg">
+    <div class="relative">
+        <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+                <a href="{{ .RelPermalink }}" class="block group">
+                    <h2 class="text-xl font-bold group-hover:text-tl-primary transition-colors duration-200 mb-3 leading-tight">
+                        {{ .Title }}
+                    </h2>
+                    <!-- 文章元信息 -->
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/75">
+
+                            <span class="flex items-center bg-tl-base-200 px-3 py-1 rounded-full">
+                                {{ partial "icons/icon" (dict "path" "common/about" "className" "ml-0 mr-1 p-0 text-xs" ) }}
+                                {{ .Params.author }}
+                            </span>
+
+                            <span class="flex items-center bg-tl-base-200 px-3 py-1 rounded-full">
+                                {{ partial "icons/icon" (dict "path" "post/date" "className" "ml-0 mr-1 p-0 text-xs" ) }}
+                                {{ .Date.Format (default "2006年01月02日" .Site.Params.DateFormat) }}
+                            </span>
+
+                        {{ if .Params.categories }}
+                            <span class="flex items-center bg-tl-base-200 px-2 py-1 rounded-md hover:bg-tl-base-300 text-xs">
+                                    {{ partial "icons/icon" (dict "path" "common/fenlei" "className" "ml-0 mr-1 p-0 text-xs") }}
+                                    {{ index .Params.categories 0 }}
+                            </span>
+                        {{ end }}
+
+                        {{ if .Params.tags }}
+                        <div class="flex items-center space-x-1">
+                            {{ range .Params.tags }}
+                                <span class="bg-tl-base-200 hover:bg-tl-base-300 px-2 py-1 rounded-md text-xs transition-colors duration-200">
+                                    {{ partial "icons/icon" (dict "path" "common/tags" "className" "ml-0 mr-1 p-0 text-xs") }}{{ . }}
+                                </span>
+                            {{ end }}
+                        </div>
+                        {{ end }}
                     </div>
+                    {{ if .Summary }}
+                    <p class=" text-base leading-relaxed mb-4 line-clamp-3 transition-colors duration-200">
+                        {{ .Summary }}
+                    </p>
+                    {{ end }}
                 </a>
-                {{ end }}
-                {{ end }}
             </div>
-        </a>
+        </div>
     </div>
-</div>
+</article>
