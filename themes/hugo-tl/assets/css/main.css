@@ -61,7 +61,6 @@
         content: " ";
         width: 1px;
     }
-
     .toc {
         #TableOfContents {
             @apply list-none relative overflow-y-auto ;
@@ -88,29 +87,11 @@
         .active > a {
             /*color: blue;*/
         }
-
         .current {
             & > a {
                 @apply text-tl-primary font-semibold
             }
         }
-    }
-    /* 卡片 */
-    .card {
-        border-radius: 0.5rem;
-        outline-offset: 2px;
-        outline: 0 solid #0000;
-        flex-direction: column;
-        transition: outline .2s ease-in-out;
-        display: flex;
-        position: relative;
-    }
-    .card-body {
-        padding: 1rem;
-        flex-direction: column;
-        flex: auto;
-        gap: .5rem;
-        display: flex;
     }
     /* 图标 */
     .svg-inline {

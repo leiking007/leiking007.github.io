@@ -1,9 +1,9 @@
 {{ define "main" }}
-<section class="mx-auto mt-6 max-w-[90rem]">
+<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
     <div class="flex gap-6">
         <!-- 左侧边栏 -->
-        <div class="w-80 flex-shrink-0">
-            <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
+        <div class="w-80 flex-shrink-0 hidden md:block">
+            <div class="bg-tl-base-100 rounded-lg shadow-md p-6 sticky top-6">
                 <h2 class="text-xl font-bold mb-4 border-b pb-2">
                     {{ .Page.Section | title }} 目录
                 </h2>
@@ -11,10 +11,10 @@
                     {{ range $term, $taxonomy := index site.Taxonomies .Page.Section }}
                     <div class="transition-colors duration-200">
                         <a href="{{ $taxonomy.Page.RelPermalink }}" 
-                           class="block px-3 py-2 rounded-md  hover:bg-blue-50 hover:text-tl-primary transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-blue-100 text-blue-800 font-medium{{ end }}">
+                           class="block px-3 py-2 rounded-md  hover:bg-tl-secondary hover:text-tl-secondary-content transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-secondary text-tl-secondary-content font-medium{{ end }}">
                             <div class="flex justify-between items-center">
                                 <span>{{ $taxonomy.Page.Title }}</span>
-                                <span class="text-sm bg-gray-100  px-2 py-1 rounded-full">{{ $taxonomy.Count }}</span>
+                                <span class="text-sm  px-2 py-1 rounded-full">{{ $taxonomy.Count }}</span>
                             </div>
                         </a>
                     </div>
@@ -25,9 +25,9 @@
 
         <!-- 右侧主内容区 -->
         <main class="flex-1">
-            <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="bg-tl-base-100 rounded-xl shadow-lg p-8">
                 <!-- 页面标题区域 -->
-                <div class="mb-8 pb-6 border-b border-gray-100">
+                <div class="mb-8 pb-6 border-b border-tl-base-300">
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-4xl font-bold mb-2">{{ .Title }}</h1>
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         <div class="hidden md:block">
-                            <div class="bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium">
+                            <div class="bg-tl-base-100 px-4 py-2 rounded-lg text-sm font-medium">
                                 {{ .Page.Section | title }}
                             </div>
                         </div>
