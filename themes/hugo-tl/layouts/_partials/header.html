@@ -63,10 +63,10 @@
                 <button x-on:click="open = true" data-modal-toggle="default-modal" class="block">
                     {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
                 </button>
-                {{ define "_partials/inline/mobile_title.html" }}
+                {{ define "_partials/header/mobile_title.html" }}
                         <a href="{{.Site.Home.RelPermalink}}">{{ .Site.Title }}</a>
                 {{ end }}
-                {{ define "_partials/inline/mobile_content.html" }}
+                {{ define "_partials/header/mobile_content.html" }}
                         <div class="p-2 space-y-2">
                                 {{ $currentPage := . }}
                                 {{ range .Site.Menus.main }}
@@ -107,10 +107,10 @@
                 {{ end }}
                 {{ partial "modal.html" (dict
                     "id"     "mobileModal"
-                    "title"  (partial "inline/mobile_title.html" .)
+                    "title"  (partial "header/mobile_title.html" .)
                     "size"   "md"
                     "position" "top"
-                    "content" (partial "inline/mobile_content.html" .)
+                    "content" (partial "header/mobile_content.html" .)
                 ) }}
             </div>
         </div>
