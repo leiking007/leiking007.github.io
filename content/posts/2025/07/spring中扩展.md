@@ -257,3 +257,99 @@ pattern2.matchAndExtract(PathContainer.parsePath("/users/add/12"));  // true
 ```
 
 ## 类型转换ConversionService
+
+`ConversionService` 是 Spring 框架自 3.0 起引入的“统一类型转换”总入口，它把**任意 Java 类型 → 任意 Java 类型**的转换逻辑抽象成一套可扩展的服务，从而彻底取代早期仅支持 `String↔Object` 且线程不安全的 `PropertyEditor`。
+
+------
+
+1. 接口定义
+
+   ```java
+   public interface ConversionService {
+       // 判断是否可以将 sourceType 转换为 targetType
+       boolean canConvert(Class<?> sourceType, Class<?> targetType);
+       
+       // 更细致的类型判断（支持泛型）
+       boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType);
+       
+       // 执行转换（无类型描述符）
+       <T> T convert(Object source, Class<T> targetType);
+       
+       // 执行转换（带类型描述符，支持泛型和注解信息）
+       Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+   }
+   ```
+
+2. 核心实现体系
+
+   1. `GenericConversionService`: 最底层、线程安全、无状态，内部维护一张 `Converters` 并发哈希表，负责“根据源→目标类型”路由具体转换器。
+   2. `DefaultConversionService`: 在 1 的基础上**预注册**了大量常用转换器（String↔Number、String↔Enum、String↔Date、数组/集合互转等），开箱即用。
+   3. `FormattingConversionService`: 继承2, 额外支持字段**格式化**（`@NumberFormat`、`@DateTimeFormat`），Spring MVC 默认装配的就是它。
+   4. `ApplicationConversionService`: Spring Boot 中，在 3 的基础上再追加 Boot 自身所需的一套转换器（`String→Duration`、`String→DataSize` 等），由 `ApplicationConversionService.getSharedInstance()` 单例提供。
+
+3. 转换器三种形态及注册方式
+
+   1. Converter<S, T>: 最基础的转换器接口，用于将类型 `S` 转换为类型 `T`	
+
+      ```java
+      public class StringToLocalDateConverter implements Converter<String, LocalDate> {
+          @Override
+          public LocalDate convert(String source) {
+              return LocalDate.parse(source, DateTimeFormatter.ISO_LOCAL_DATE);
+          }
+      }
+      ```
+
+   2. GenericConverter: 更灵活的转换器，支持多源类型到多目标类型的转换，还能获取类型上下文（如注解、泛型信息）
+
+      ```java
+      public interface GenericConverter {
+          // 返回支持的类型对（源类型→目标类型）
+          Set<ConvertiblePair> getConvertibleTypes();
+          
+          // 执行转换，可利用类型描述符获取更多信息
+          Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+      }
+      ```
+
+   3. ConverterFactory<S, R>: 用于将源类型 `S` 转换为 `R` 类型的子类型（如将 `String` 转换为任意 `Enum` 类型）
+
+      ```java
+      public interface ConverterFactory<S, R> {
+          <T extends R> Converter<S, T> getConverter(Class<T> targetType);
+      }
+      ```
+
+4. 使用方式
+
+   1. 创建 ConversionService, 通常直接使用 `DefaultConversionService`，它已内置常用转换器
+
+      ```java
+      ConversionService conversionService = new DefaultConversionService();
+      ```
+
+   2. 注册自定义转换器
+
+      ```java
+      GenericConversionService conversionService = new GenericConversionService();
+      // 注册 Converter
+      conversionService.addConverter(new StringToLocalDateConverter());
+      // 注册 ConverterFactory
+      conversionService.addConverterFactory(new StringToEnumConverterFactory());
+      ```
+
+   3. 执行转换
+
+      ```java
+      // 字符串转整数
+      Integer num = conversionService.convert("123", Integer.class);
+      
+      // 字符串转LocalDate
+      LocalDate date = conversionService.convert("2023-10-01", LocalDate.class);
+      
+      // 集合转换（需借助TypeDescriptor处理泛型）
+      List<String> strList = Arrays.asList("1", "2", "3");
+      TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(String.class));
+      TypeDescriptor targetType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Integer.class));
+      List<Integer> intList = (List<Integer>) conversionService.convert(strList, sourceType, targetType);
+      ```
