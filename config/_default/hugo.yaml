@@ -12,7 +12,7 @@ enableEmoji: true
 pagination:
   pagerSize: 18
 
-summaryLength: 6  # 摘要长度
+summaryLength: 0  # 摘要长度
 
 uglyURLs: false  # 默认 false;启用时，创建的 URL 格式是 /filename.html 而不是 /filename/
 

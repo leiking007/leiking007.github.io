@@ -10,7 +10,7 @@
                 <div class="space-y-2">
                     {{ range $term, $taxonomy := index site.Taxonomies .Page.Section }}
                     <div class="transition-colors duration-200">
-                        <a href="{{ $taxonomy.Page.RelPermalink }}" 
+                        <a href="{{ $taxonomy.Page.RelPermalink }}"
                            class="block px-3 py-2 rounded-md  hover:bg-tl-secondary hover:text-tl-secondary-content transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-secondary text-tl-secondary-content font-medium{{ end }}">
                             <div class="flex justify-between items-center">
                                 <span>{{ $taxonomy.Page.Title }}</span>
@@ -33,11 +33,11 @@
                             <h1 class="text-4xl font-bold mb-2">{{ .Title }}</h1>
                             <div class="flex items-center space-x-4 ">
                                 <span class="flex items-center">
-                                    {{ partial "icons/icon" (dict "path" "common/chevron-down" "className" "text-3xl hover:text-tl-error" ) }}
+                                    {{ partial "icons/icon" (dict "path" "post/bi" "className" "text-xl" ) }}
                                     共 {{ len .Pages }} 篇文章
                                 </span>
                                 <span class="flex items-center">
-                                    {{ partial "icons/icon" (dict "path" "common/chevron-down" "className" "text-3xl hover:text-tl-error" ) }}
+                                    {{ partial "icons/icon" (dict "path" "post/time" "className" "text-xl" ) }}
                                     最后更新: {{ (index .Pages 0).Date.Format "2006-01-02" }}
                                 </span>
                             </div>
