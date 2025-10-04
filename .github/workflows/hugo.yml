@@ -24,9 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DART_SASS_VERSION: 1.89.2
-      HUGO_VERSION: 0.148.0
-      HUGO_ENVIRONMENT: production
+      HUGO_VERSION: 0.151.0
       TZ: Asia/Shanghai
       NODE_VERSION: 18.x
       NODE_DEPENDENCIES_DIR: themes/hugo-tl/
