@@ -1,17 +1,9 @@
 {
   "author": "lei",
-  "bugs": {
-    "url": "http:"
-  },
+  "type": "module",
   "scripts": {
-    "build": "run-s build:*",
-    "build:css": "npx  @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -m",
-    "build:hugo": "hugo --minify --source ./../../",
-    "build:pagefind": "npx pagefind --site ../../public --output-subdir search",
-    "dev": "run-p dev:*",
-    "dev:css": "npx  @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -w",
-    "dev:hugo": "hugo server --source ./../../ --disableFastRender --gc --noHTTPCache --noBuildLock --logLevel debug --port 1313 --bind 0.0.0.0",
-    "dev:pagefind": "npx pagefind --site ../../public --output-subdir search"
+    "build": "node script/build.js",
+    "dev": "node script/dev.js",
   },
   "dependencies": {
     "@alpinejs/collapse": "^3.14.9",
@@ -28,6 +20,10 @@
   },
   "description": "Note",
   "homepage": "",
+  "license": "ISC",
+  "main": "",
+  "name": "note",
+  "version": "1.0.0",
   "keywords": [
     "hugo",
     "alpinejs",
@@ -35,12 +31,11 @@
     "markdown",
     "note"
   ],
-  "license": "ISC",
-  "main": "",
-  "name": "note",
   "repository": {
     "type": "git",
     "url": ""
   },
-  "version": "1.0.0"
+  "bugs": {
+    "url": "http:"
+  }
 }
