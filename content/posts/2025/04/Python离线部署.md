@@ -6,6 +6,7 @@ draft: false
 tags: ['Python']
 categories: ["笔记"]
 author: "lei"
+summary: "介绍 Python 项目两种离线部署方式：基于 Docker 构建镜像（含依赖）并导出导入，以及通过虚拟环境和离线包安装依赖，适用于无网络环境。"
 ---
 
 # Python离线部署

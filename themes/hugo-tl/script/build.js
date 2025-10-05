@@ -3,10 +3,10 @@
 import {execSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {dirname, resolve} from 'node:path';
-import {existsSync} from 'node:fs'; // 新增：用于查找根目录
+import {existsSync} from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// 通过 config 定位根目录（更可靠）
+// 通过 config 定位根目录
 let root = __dirname;
 while (!existsSync(resolve(root, 'config'))) {
   root = resolve(root, '..');
@@ -38,11 +38,11 @@ function runCommand(dir, cmd, desc) {
 
 // 1. 执行 build:css（Tailwind CSS 编译）
 const buildCssCmd = 'npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -m';
-runCommand(resolve(root, 'themes/hugo-tl'), buildCssCmd, 'Tailwind CSS 编译（压缩模式）');
+runCommand(resolve(root, 'themes/hugo-tl'), buildCssCmd, 'Tailwind CSS 编译');
 
 // 2. 执行 build:hugo（Hugo 构建静态站点）
 const buildHugoCmd = 'hugo --minify';
-runCommand(root, buildHugoCmd, 'Hugo 构建静态站点（压缩输出）');
+runCommand(root, buildHugoCmd, 'Hugo 构建静态站点');
 
 // 3. 执行 build:pagefind（PageFind 生成搜索索引）
 const buildPagefindCmd = 'npx pagefind --site ./public --output-subdir search'; // 基于项目根目录的 public 目录

@@ -6,6 +6,7 @@ draft: false
 tags: ['spring']
 categories: ["框架"]
 author: "lei"
+summary: "本文介绍 Spring 扩展相关内容，包括 AutowireCapableBeanFactory 的使用、SessionFixationProtectionStrategy 的工作流程，以及 PathMatcher、PathPatternParser 和 ConversionService 的相关知识。"
 ---
 
 # Spring中扩展
