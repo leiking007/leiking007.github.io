@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{- $paginator := .Paginate (where .Data.Pages.ByDate.Reverse "Type" "in" .Site.Params.mainSections) (index .Site.Params.pagination "posts_paginate" | default 20) }}
-<div class="col-span-12" id="archive">
+<div class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 md:px-6" id="archive">
     <h1 class="text-2xl">
         {{- $length := len .Data.Pages }}
         {{ i18n "widget.archives.title" | default "archives" }}{{- T "widget.archives.counter_archives" $length -}}

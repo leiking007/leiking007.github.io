@@ -1,5 +1,5 @@
 {{ define "main" }}
-<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
+<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 md:px-6">
     <div class="p-2">
         {{- $category_key := lower .Title -}}
         {{- $displayName := $category_key -}}
@@ -10,7 +10,7 @@
                         {{ $taxonomy.Page.Title }} ({{ $taxonomy.Count }})
                     </a>
                 </h3>
-                
+
                 <div class="space-y-2">
                     {{ range first 5 $taxonomy.Pages }}
                         <div class="pl-4">
@@ -22,7 +22,7 @@
                             {{ end }}
                         </div>
                     {{ end }}
-                    
+
                     {{ if gt (len $taxonomy.Pages) 5 }}
                         <div class="pl-4 pt-2">
                             <a href="{{ $taxonomy.Page.RelPermalink }}" class="text-tl-secondary hover:text-tl-secondary/75 text-sm">
