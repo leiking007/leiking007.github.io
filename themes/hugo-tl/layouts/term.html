@@ -38,7 +38,7 @@
                                 </span>
                                 <span class="flex items-center">
                                     {{ partial "icons/icon" (dict "path" "post/time" "className" "text-xl" ) }}
-                                    最后更新: {{ (index .Pages 0).Date.Format "2006-01-02" }}
+                                    最后更新: {{ (index .Pages 0).Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                                 </span>
                             </div>
                         </div>

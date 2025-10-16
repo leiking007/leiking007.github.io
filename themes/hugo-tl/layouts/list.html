@@ -22,8 +22,8 @@
                             <div>
                                 {{- range .Pages }}
                                 <div>
-                                    <time datetime='{{ .Date.Format "2006-01-02" }}'>
-                                        {{ .Date | time.Format (.Site.Params.dateFormat | default "2006-01-02") }}
+                                    <time datetime='{{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}'>
+                                        {{ .Date | time.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                                     </time>
                                     <span> <a href="{{ .RelPermalink }}" class="archive-post-link"> {{ .Title }} </a> </span>
                                 </div>

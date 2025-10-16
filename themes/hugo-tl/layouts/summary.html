@@ -15,7 +15,7 @@
 
                             <span class="flex items-center bg-tl-base-200 px-3 py-1 rounded-full">
                                 {{ partial "icons/icon" (dict "path" "post/date" "className" "ml-0 mr-1 p-0 text-xs" ) }}
-                                {{ .Date.Format (default "2006年01月02日" .Site.Params.DateFormat) }}
+                                {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                             </span>
 
                         {{ if .Params.categories }}

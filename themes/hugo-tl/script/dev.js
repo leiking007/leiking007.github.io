@@ -43,7 +43,7 @@ function runCommand(dir, cmd, desc) {
 
     // 处理错误输出
     child.stderr.on('data', (data) => {
-      process.stderr.write(`[${desc} 错误] ${data}`);
+      process.stderr.write(`[${desc}] ${data}`);
     });
 
     child.on('close', (code) => {

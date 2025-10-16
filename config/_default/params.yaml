@@ -1,8 +1,7 @@
 author: lei
 subtitle: "时间如流水，匆匆而逝不复回。"
 describe: "这是我的个人博客，记录生活和工作的点滴。"
-dateFormat : 2006-01-02
-enableCat: true
+dateFormat : 2006-01-02   # 2006/01/02 15:04:05
 toc: true
 rssFullContent: false   # rss是否包含正文内容
 pagination:

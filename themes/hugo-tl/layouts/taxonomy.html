@@ -18,7 +18,7 @@
                                 {{ .Title }}
                             </a>
                             {{ if .Date }}
-                                <span class="text-sm text-tl-base/75 ml-2">{{ .Date.Format "2006-01-02" }}</span>
+                                <span class="text-sm text-tl-base/75 ml-2">{{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
                             {{ end }}
                         </div>
                     {{ end }}
