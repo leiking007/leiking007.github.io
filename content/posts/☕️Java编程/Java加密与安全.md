@@ -1,0 +1,329 @@
+---
+title: "Java加密与安全"
+date: 2024-07-06
+lastmod: 2024-07-06
+draft: false
+tags: ['JavaSE']
+categories: ["☕️Java编程"]
+author: "lei"
+---
+
+# 加密与安全
+
+## 编码算法
+
+### URL 编码
+
+URL 编码是浏览器发送数据给服务器时使用的编码，它通常附加在URL的参数部分，例如：https://www.baidu.com/s?wd=%E4%B8%AD%E6%96%87
+
+URL 编码是为了解决许多服务器只识别 ASCII 字符，不能处理 URL 中的中文和日文而存在
+
+URL 编码规则：
+
+- 如果字符是`A`~`Z`，`a`~`z`，`0`~`9`以及`-`、`_`、`.`、`*`，则保持不变
+- 如果是其他字符，先转换为UTF-8编码，然后对每个字节以`%XX`表示
+
+java 标准类库提供 `URLEncoder`类和`URLDecoder`类：
+
+```java
+public static void urlEncoderTest() {
+    // 编码
+    String encodeStr = URLEncoder.encode("中文", StandardCharsets.UTF_8);
+    System.out.println(encodeStr);   // %E4%B8%AD%E6%96%87
+
+    String decodeStr = URLDecoder.decode("%E4%B8%AD%E6%96%87", StandardCharsets.UTF_8);
+    System.out.println(decodeStr);    // 中文
+}
+```
+
+### Base64 编码
+
+Base64编码是对二进制数据进行编码，表示成文本格式；Base64编码可以把任意长度的二进制数据变为纯文本，且只包含`A`~`Z`、`a`~`z`、`0`~`9`、`+`、`/`、`=`这些字符。
+
+原理：把3字节的二进制数据按6bit一组，用4个int整数表示，然后查表，把int整数用索引对应到字符，得到编码后的字符串。
+
+如果需要被的二进制数据不是3字节的整数倍，则需要对被编码的数据末尾补一个或两个`0x00`，编码后的字符串末尾加一个`=`表示补充了1个`0x00`，加两个`=`表示补充了2个`0x00`，解码的时候，去掉末尾补充的一个或两个`0x00`即可
+
+java 标准库提供 `Base64`  类：
+
+```java
+/**
+ * 1. 读取文件二进制数据，然后 Base64 进行编码
+ * 2. 将编码后的数据解码，然后重新写入文件
+ * 3. 对比两个文件中内容一样
+ */
+public static void base64EncoderTest() throws FileNotFoundException {
+
+    // 读取文件二进制数据，然后 Base64 进行编码
+    try (FileInputStream fis = new FileInputStream("test")){
+        byte[] bytes = fis.readAllBytes();
+
+        // 讲二进制数据编码
+        byte[] encodeByte = Base64.getEncoder().encode(bytes);
+
+        System.out.println(new String(encodeByte,StandardCharsets.UTF_8));    // MTIzMTIzMTMyMTI=
+
+    }catch (Exception ignore){}
+
+    // 将编码后的数据解码，然后重新写入文件
+    try (FileOutputStream fos=new FileOutputStream("test1")){
+        byte[] bytes = "MTIzMTIzMTMyMTI=".getBytes(StandardCharsets.UTF_8);
+
+        // 解码数据
+        byte[] decodeByte = Base64.getDecoder().decode(bytes);
+
+        fos.write(decodeByte);
+        fos.flush();
+
+    }catch (Exception ignore){}
+
+}
+```
+
+因为标准的Base64编码会出现`+`、`/`和`=`，所以`不适合把Base64编码后的字符串放到URL中`。一种针对URL的Base64编码可以在URL中使用的Base64编码，它仅仅是把`+`变成`-`，`/`变成`_`：
+
+```java
+public static void base64UrlEncoderTest() {
+    byte[] input = new byte[] { 0x01, 0x02, 0x7f, 0x00 };
+    String b64encoded = Base64.getUrlEncoder().encodeToString(input);
+    System.out.println(b64encoded);
+
+    byte[] output = Base64.getUrlDecoder().decode(b64encoded);
+    System.out.println(Arrays.toString(output));
+}
+```
+
+Base64编码的目的是把二进制数据变成文本格式，这样在很多文本中就可以处理二进制数据。
+
+Base64编码的缺点是传输效率会降低，因为它把原始数据的长度增加了1/3。
+
+如果把Base64的64个字符编码表换成32个、48个或者58个，就可以使用Base32编码，Base48编码和Base58编码。字符越少，编码的效率就会越低。
+
+### 小结
+
+- URL编码和Base64编码都是编码算法，它们不是加密算法
+- URL编码的目的是把任意文本数据编码为%前缀表示的文本，便于浏览器和服务器处理
+- Base64编码的目的是把任意二进制数据编码为文本，但编码后数据量会增加1/3
+
+## 哈希算法
+
+### 介绍
+
+哈希算法（Hash）又称摘要算法（Digest），它的作用是：对任意一组输入数据进行计算，得到一个固定长度的输出摘要。
+
+哈希算法最重要的特点就是：
+
+- 相同的输入一定得到相同的输出；
+- 不同的输入大概率得到不同的输出。
+
+哈希算法的目的就是为了验证原始数据是否被篡改。
+
+哈希碰撞：碰撞是一定会出现的，因为输出的字节长度是固定的，但输入的数据长度是不固定的，有无数种输入。所以，哈希算法是把一个无限的输入集合映射到一个有限的输出集合，必然会产生碰撞。
+
+### 常用的哈希算法
+
+| 算法       | 输出长度（位） | 输出长度（字节） |
+| :--------- | :------------- | :--------------- |
+| MD5        | 128 bits       | 16 bytes         |
+| SHA-1      | 160 bits       | 20 bytes         |
+| RipeMD-160 | 160 bits       | 20 bytes         |
+| SHA-256    | 256 bits       | 32 bytes         |
+| SHA-512    | 512 bits       | 64 bytes         |
+
+Java标准库提供了常用的哈希算法，并且有一套统一的接口。MD5 算法：
+
+```java
+public static void md5Test() throws Exception {
+    // 创建一个MessageDigest实例:
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    // 反复调用update输入数据:
+    md.update("Hello".getBytes(StandardCharsets.UTF_8));
+    md.update("World".getBytes(StandardCharsets.UTF_8));
+    byte[] result = md.digest(); // 16 bytes: 68e109f0f40ca72a15e05cc22786f8e6
+
+    // 转换成16进制输出，一个byte为8位，可用两个十六进制位标识
+    StringBuilder buf = new StringBuilder(result.length * 2);
+    for(byte b : result) { // 使用String的format方法进行转换
+        buf.append(String.format("%02x", b & 0xff));
+    }
+
+    System.out.println(buf);   // 68e109f0f40ca72a15e05cc22786f8e6
+}
+```
+
+### 哈希算法的用途
+
+因为相同的输入永远会得到相同的输出，因此，如果输入被修改了，得到的输出就会不同。
+
+- 可以用来防篡改
+- 用于存储用户口令，防止明文存储
+
+### 彩虹表
+
+一张 `常用口令和它们的MD5的对照表`
+
+| 常用口令 | MD5                              |
+| :------- | :------------------------------- |
+| hello123 | f30aa7a662c728b7407c54ae6bfd27d1 |
+| 12345678 | 25d55ad283aa400af464c76d713c07ad |
+| passw0rd | bed128365216c019988915ed3add75fb |
+| 19700101 | 570da6d5277a646f6552b8832012f5dc |
+| …        | …                                |
+| 20201231 | 6879c0ae9117b50074ce0a0d4c843060 |
+
+可以采取措施来抵御彩虹表攻击，方法是对每个口令额外添加随机数，这个方法称之为加盐（salt）：
+
+```js
+digest = md5(salt+inputPassword)
+```
+
+### 小结
+
+- 哈希算法可用于验证数据完整性，具有防篡改检测的功能
+
+- 常用的哈希算法有MD5、SHA-1等
+- 用哈希存储口令时要考虑彩虹表攻击
+
+## 对称加密算法
+
+对称加密算法就是传统的用一个密码进行加密和解密。例如，我们常用的WinZIP和WinRAR对压缩包的加密和解密，就是使用对称加密算法
+
+### 常用对称加密算法
+
+| 算法 | 密钥长度    | 工作模式             | 填充模式                                |
+| :--- | :---------- | :------------------- | :-------------------------------------- |
+| DES  | 56/64       | ECB/CBC/PCBC/CTR/... | NoPadding/PKCS5Padding/...              |
+| AES  | 128/192/256 | ECB/CBC/PCBC/CTR/... | NoPadding/PKCS5Padding/PKCS7Padding/... |
+| IDEA | 128         | ECB                  | PKCS5Padding/PKCS7Padding/...           |
+
+密钥长度直接决定加密强度，而工作模式和填充模式可以看成是对称加密算法的参数和格式选择
+
+Java标准库提供的算法实现并不包括所有的工作模式和所有填充模式，但是通常我们只需要挑选常用的使用就可以了
+
+### AES加密
+
+ECB模式加密/解密代码
+
+```java
+public static void aESTestMainTestA() throws Exception {
+    // 128位密钥 = 16 bytes Key:
+    byte[] key = "1234567890abcdef".getBytes(StandardCharsets.UTF_8);
+
+    // 需要加密的数据
+    String encryptStr = "Hello, world!";
+    // 加密
+    Cipher cipher1 = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKey keySpec1 = new SecretKeySpec(key, "AES");
+    cipher1.init(Cipher.ENCRYPT_MODE, keySpec1);
+    byte[] encryptBytes = cipher1.doFinal(encryptStr.getBytes(StandardCharsets.UTF_8));
+    // 加密后二进制数据通过base64编码后输出
+    // 2xiGROlFBhC57b7EGu5c3g==
+    System.out.printf("加密后二进制数据base64输出为：%s%n", Base64.getEncoder().encodeToString(encryptBytes));
+
+    // 通过base64编码的需要解密的数据
+    String decryptStr = "2xiGROlFBhC57b7EGu5c3g==";
+    Cipher cipher2 = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKey keySpec2 = new SecretKeySpec(key, "AES");
+    cipher2.init(Cipher.DECRYPT_MODE, keySpec2);
+    byte[] decryptBytes = cipher2.doFinal(Base64.getDecoder().decode(decryptStr));
+    // 解密后的二进制数据输出
+    System.out.printf("解密后的二进制数据输出：%s%n",new String(decryptBytes,StandardCharsets.UTF_8));
+}
+```
+
+### 小结
+
+- 对称加密算法使用同一个密钥进行加密和解密，常用算法有DES、AES和IDEA等
+- 密钥长度由算法设计决定，AES的密钥长度是128/192/256位
+- 使用对称加密算法需要指定算法名称、工作模式和填充模式
+- Java标准库提供的对称加密接口使用时按以下步骤编写代码：
+  1. 根据算法名称/工作模式/填充模式获取 Cipher 实例
+  2. 根据算法名称初始化一个 SecretKey 实例，密钥必须是指定长度
+  3. 使用 SecretKey 初始化 Cipher 实例，并设置加密或解密模式
+  4. 传入明文或密文，获得密文或明文
+
+## 非对称加密算法
+
+### RSA
+
+非对称加密就是加密和解密使用的不是相同的密钥：只有同一个公钥-私钥对才能正常加解密。
+
+非对称加密的典型算法就是RSA算法
+
+Java标准库提供了RSA算法的实现，示例代码如下：
+
+```java
+public class RsaMain {
+
+    private String privateKeyStr;
+    private String publicKeyStr;
+
+    public static void main(String[] args) throws Exception {
+        RsaMain rsaMain = new RsaMain();
+        // 生成密钥对
+        rsaMain.generalKey();
+
+        // 对数据加密
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        // 恢复公钥: 先将字符串通过 base64 解码转成原密钥字节
+        X509EncodedKeySpec pkSpec = new X509EncodedKeySpec(Base64.getDecoder().decode(rsaMain.publicKeyStr.getBytes(StandardCharsets.UTF_8)));
+        PublicKey pk = kf.generatePublic(pkSpec);
+        // 恢复私钥
+        PKCS8EncodedKeySpec skSpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(rsaMain.privateKeyStr.getBytes(StandardCharsets.UTF_8)));
+        PrivateKey sk = kf.generatePrivate(skSpec);
+
+        String message="需要加密的字符串!!!";
+
+        // 公钥加密
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, pk);
+        byte[] encryptBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
+        // 将加密后的二进制数据通过base64编码转成可视字符串
+        String encryptStr = new String(Base64.getEncoder().encode(encryptBytes), StandardCharsets.UTF_8);
+        System.out.printf("加密后二进制数据通过Base64编码后字符：%s%n",encryptStr);
+
+        // 私钥解密
+        Cipher cipher1 = Cipher.getInstance("RSA");
+        cipher1.init(Cipher.DECRYPT_MODE, sk);
+        // 将可视字符串通过base64解码转成二进制数据
+        byte[] decodeStr = Base64.getDecoder().decode(encryptStr.getBytes(StandardCharsets.UTF_8));
+        // 通过私钥解密
+        byte[] decryptBytes = cipher1.doFinal(decodeStr);
+        System.out.printf("解密后数据：%s%n",new String(decryptBytes,StandardCharsets.UTF_8));
+
+    }
+
+    /**
+     * 生成公钥／私钥对
+     */
+    public void generalKey() throws Exception {
+
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("RSA");
+        kpGen.initialize(1024);
+        KeyPair kp = kpGen.generateKeyPair();
+
+        // 获取私钥
+        byte[] privateKey = kp.getPrivate().getEncoded();
+        // 将私钥二进制数据通过 Base64编码转换为字符串
+        String privateKeyStr = new String(Base64.getEncoder().encode(privateKey), StandardCharsets.UTF_8);
+        this.privateKeyStr = privateKeyStr;
+        System.out.println("私钥：" + privateKeyStr);
+
+        // 获取公钥
+        byte[] publicKey = kp.getPublic().getEncoded();
+        // 将公钥二进制数据通过 Base64编码转换为字符串
+        String publicKeyStr = new String(Base64.getEncoder().encode(publicKey), StandardCharsets.UTF_8);
+        this.publicKeyStr = publicKeyStr;
+        System.out.println("公钥：" + publicKeyStr);
+    }
+}
+```
+
+RSA算法的密钥有256/512/1024/2048/4096等不同的长度。长度越长，密码强度越大，当然计算速度也越慢。
+
+使用512bit的RSA加密时，明文长度不能超过53字节，使用1024bit的RSA加密时，明文长度不能超过117字节，因此使用RSA的时候，总是配合AES一起使用，即用AES加密任意长度的明文，用RSA加密AES口令。
+
+### 小结
+
+- 非对称加密就是加密和解密使用的不是相同的密钥，只有同一个公钥-私钥对才能正常加解密
+- 只使用非对称加密算法不能防止中间人攻击。
