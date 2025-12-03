@@ -366,6 +366,37 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO f
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO face_user;
 ```
 
+### PGSQL排查连接问题
+
+```sql
+-- 查询face_db数据库的活跃 / 非内部连接详情
+SELECT 
+  pid,  -- 连接的唯一进程ID（PostgreSQL内部标识每个连接的进程号）
+  datname,  -- 连接的数据库名（这里过滤后只显示face_db）
+  usename,  -- 发起连接的数据库用户名（比如fastapi_user）
+  client_addr,  -- 客户端IP（能定位到是哪个FastAPI服务实例连过来的）
+  application_name,  -- 应用名（如果FastAPI连接时配置了这个参数，能直接识别业务模块）
+  state,  -- 连接状态（关键！比如：
+          -- active：正在执行SQL；
+          -- idle：空闲（没执行SQL）；
+          -- idle in transaction：事务中空闲（最危险，占连接且未提交/回滚）；
+          -- idle in transaction (aborted)：事务出错但未终止
+  state_change,  -- 连接状态最后一次变更的时间（比如idle状态持续了多久）
+  backend_start,  -- 连接建立的时间（能看连接是否长期不释放）
+  query,  -- 该连接最后/正在执行的SQL（能定位到慢SQL/异常SQL，比如未提交的DELETE）
+  now() - backend_start AS connection_age,  -- 连接存活总时长（排查长连接泄漏）
+  now() - state_change AS state_age  -- 当前状态持续时长（比如idle状态卡了几小时）
+FROM pg_stat_activity 
+WHERE datname = 'face_db'  -- 只查face_db数据库的连接
+  AND client_addr is not null;  -- 排除数据库内部连接（比如后台进程、本机localhost无IP的连接）
+  
+SELECT pg_terminate_backend(4750);  -- 终止指定 PID 的数据库连接
+
+SELECT * FROM pg_stat_activity WHERE pid = 4723;  -- 查询指定 PID 连接的完整详情
+```
+
+
+
 ## 运维
 
 ### jar 更改 war/jar 包中配置文件
