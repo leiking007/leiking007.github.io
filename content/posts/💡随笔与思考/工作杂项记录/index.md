@@ -395,7 +395,27 @@ SELECT pg_terminate_backend(4750);  -- 终止指定 PID 的数据库连接
 SELECT * FROM pg_stat_activity WHERE pid = 4723;  -- 查询指定 PID 连接的完整详情
 ```
 
+### 库迁移
 
+```bash
+# 导出
+pg_dump.exe --verbose \    
+  --host=192.168.116.131 --port=5432 \
+  --username=postgres \
+  --format=t --encoding=UTF-8 \
+  --file E:/dump-404 \
+  --no-owner --no-privileges \
+  -n "health_management_ta404" postgres
+  
+  
+# 导入
+pg_restore.exe --verbose \
+  --host=20.1.1.5 --port=5433 \
+  --username=postgres \
+  --dbname=health_db \
+  --no-owner --no-privileges \
+  E:/dump-404
+```
 
 ## 运维
 
