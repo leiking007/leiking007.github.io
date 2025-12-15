@@ -1,0 +1,36 @@
+main:
+  - identifier: posts
+    name: 归档
+    url: /posts/
+    weight: -80
+    pre: common/guidang
+  - identifier: categories
+    name: 分类
+    url: /categories/
+    weight: -70
+    pre: common/fenlei
+  - identifier: tags
+    name: 标签
+    url: /tags/
+    weight: -60
+    pre: common/tags
+  - identifier: about
+    name: 关于
+    url: /about/
+    weight: -50
+    pre: common/about
+  - identifier: tools
+    name: 常用工具
+    weight: -10
+    pre: common/tools
+    params:
+      sub:
+        - name: 花密
+          url: /flower_passwd
+          newTab: false
+        - name: ctool
+          url: https://ctool.dev/tool.html
+          newTab: true
+        - name: 阮一峰ES6
+          url: https://es6.ruanyifeng.com
+          newTab: true
