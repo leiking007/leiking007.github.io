@@ -480,3 +480,163 @@ server {
     }
 }
 ```
+
+## 配置示例
+
+```nginx
+server {
+    listen 80;
+    server_name shop.example.com;
+    root /var/www/shop;
+
+    # ==========================================
+    # 1. 精确匹配 (=) - 最高优先级
+    # ==========================================
+
+    # 首页精确匹配 - 加快首页访问速度
+    location = / {
+        return 200 "欢迎来到首页 [精确匹配 =]";
+        add_header Content-Type text/plain;
+    }
+
+    # robots.txt 精确匹配
+    location = /robots.txt {
+        return 200 "User-agent: *\nDisallow: /admin/";
+        add_header Content-Type text/plain;
+    }
+
+    # favicon.ico 精确匹配
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+        expires 30d;
+    }
+
+
+    # ==========================================
+    # 2. 前缀优先匹配 (^~) - 阻止正则匹配
+    # ==========================================
+
+    # 静态资源目录 - 不需要正则处理,直接命中提高性能
+    location ^~ /static/ {
+        alias /var/www/shop/static/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        return 200 "静态资源目录 [前缀优先 ^~]";
+    }
+
+    # 上传文件目录
+    location ^~ /uploads/ {
+        alias /var/www/shop/uploads/;
+        expires 7d;
+        return 200 "上传文件目录 [前缀优先 ^~]";
+    }
+
+    # 阻止访问隐藏文件
+    location ^~ /. {
+        deny all;
+        return 403 "禁止访问隐藏文件 [前缀优先 ^~]";
+    }
+
+
+    # ==========================================
+    # 3. 正则匹配 (~ ~*) - 按顺序匹配
+    # ==========================================
+
+    # 图片文件处理 (区分大小写)
+    location ~ \.(jpg|jpeg|png|gif|webp|svg|ico)$ {
+        expires 30d;
+        add_header Cache-Control "public";
+        return 200 "图片文件 [正则匹配 ~]";
+    }
+
+    # CSS/JS 文件处理 (不区分大小写)
+    location ~* \.(css|js)$ {
+        expires 7d;
+        add_header Cache-Control "public";
+        return 200 "CSS/JS文件 [正则不区分大小写 ~*]";
+    }
+
+    # 字体文件处理
+    location ~* \.(ttf|woff|woff2|eot)$ {
+        expires 365d;
+        add_header Cache-Control "public, immutable";
+        add_header Access-Control-Allow-Origin *;
+        return 200 "字体文件 [正则不区分大小写 ~*]";
+    }
+
+    # 视频文件处理
+    location ~* \.(mp4|webm|ogg|avi)$ {
+        expires 30d;
+        add_header Cache-Control "public";
+        return 200 "视频文件 [正则不区分大小写 ~*]";
+    }
+
+    # PHP 文件处理 (演示正则顺序重要性)
+    location ~ \.php$ {
+        # fastcgi_pass unix:/var/run/php-fpm.sock;
+        # fastcgi_index index.php;
+        return 200 "PHP文件处理 [正则匹配 ~]";
+    }
+
+    # 禁止访问备份文件
+    location ~ \.(bak|backup|old|tmp)$ {
+        deny all;
+        return 403 "禁止访问备份文件 [正则匹配 ~]";
+    }
+
+
+    # ==========================================
+    # 4. 普通前缀匹配 - 最长匹配原则
+    # ==========================================
+
+    # API 接口 v2 (更长的前缀)
+    location /api/v2/ {
+        proxy_pass http://backend_v2;
+        return 200 "API v2接口 [普通前缀,更长]";
+    }
+
+    # API 接口 v1 (较短的前缀)
+    location /api/v1/ {
+        proxy_pass http://backend_v1;
+        return 200 "API v1接口 [普通前缀,较短]";
+    }
+
+    # API 接口通用
+    location /api/ {
+        proxy_pass http://backend;
+        return 200 "API通用接口 [普通前缀,最短]";
+    }
+
+    # 商品详情页
+    location /product/ {
+        try_files $uri$uri/ /product/index.html;
+        return 200 "商品详情页 [普通前缀]";
+    }
+
+    # 用户中心
+    location /user/ {
+        try_files $uri$uri/ /user/index.html;
+        return 200 "用户中心 [普通前缀]";
+    }
+
+    # 管理后台
+    location /admin/ {
+        auth_basic "Admin Area";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+        return 200 "管理后台 [普通前缀]";
+    }
+
+
+    # ==========================================
+    # 5. 通用匹配 - 兜底规则
+    # ==========================================
+
+    # 所有其他请求
+    location / {
+        try_files $uri$uri/ /index.html;
+        return 200 "通用匹配 [兜底规则]";
+    }
+}
+```
+
