@@ -398,6 +398,10 @@ SELECT * FROM pg_stat_activity WHERE pid = 4723;  -- 查询指定 PID 连接的�
 ### 库迁移
 
 ```bash
+# PGPASSWORD 是 PostgreSQL 客户端（如 psql、pg_dump 等）用来自动提供密码的环境变量
+# cmd:  set PGPASSWORD=your_password
+# powershell:  $env:PGPASSWORD = "your_password"
+
 # 导出
 pg_dump.exe --verbose \    
   --host=192.168.116.131 --port=5432 \
