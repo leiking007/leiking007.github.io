@@ -335,6 +335,24 @@ hwclock --hctosys
 
 ## 数据库
 
+### 参数化查询
+
+```sql
+-- 清空用户数据
+DO $$
+DECLARE
+    v_user_id TEXT := '78914762532372551';  -- 定义变量
+BEGIN
+    delete from health_management_ta404.et_user where user_id=v_user_id;
+	delete from health_management_biz.health_checkin_user where user_id=v_user_id;
+	delete from health_management_biz.reg_infor where user_id=v_user_id;
+	delete from health_management_biz.ship_address where user_id=v_user_id;
+	delete from health_management_biz.user_info_ext where user_id=v_user_id;
+	delete from health_management_biz.user_points_details where user_id=v_user_id;
+	delete from health_management_biz.user_points_summary where user_id=v_user_id;
+END $$;
+```
+
 ### PGSQL
 
 ```sql
