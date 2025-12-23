@@ -341,15 +341,24 @@ hwclock --hctosys
 -- 清空用户数据
 DO $$
 DECLARE
-    v_user_id TEXT := '78914762532372551';  -- 定义变量
+    v_user_id TEXT := '78914762532372551';
 BEGIN
-    delete from health_management_ta404.et_user where user_id=v_user_id;
-	delete from health_management_biz.health_checkin_user where user_id=v_user_id;
-	delete from health_management_biz.reg_infor where user_id=v_user_id;
-	delete from health_management_biz.ship_address where user_id=v_user_id;
-	delete from health_management_biz.user_info_ext where user_id=v_user_id;
-	delete from health_management_biz.user_points_details where user_id=v_user_id;
-	delete from health_management_biz.user_points_summary where user_id=v_user_id;
+    -- 可选：记录操作日志或检查是否存在
+    RAISE NOTICE 'Deleting user data for user_id: %', v_user_id;
+
+    DELETE FROM health_management_ta404.et_user WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.health_checkin_user WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.reg_infor WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.ship_address WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.user_info_ext WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.user_points_details WHERE user_id = v_user_id;
+    DELETE FROM health_management_biz.user_points_summary WHERE user_id = v_user_id;
+
+    RAISE NOTICE 'User data deleted successfully.';
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE WARNING 'Error deleting user %: %', v_user_id, SQLERRM;
+        -- 可选择是否回滚（在 DO 块中自动回滚）
 END $$;
 ```
 
