@@ -225,3 +225,23 @@ const PI:f32 = 3.1415926;
 ------
 
 变量遮蔽：
+
+Rust 中允许声明相同的变量名，在后面声明的变量会遮蔽掉前面声明的
+
+```rust
+fn main() {
+    let x = 5;
+    {
+        // x="a";   // expected i32, found &' static str
+        let x = "a";
+        println!("inner x : {}",x)
+    }
+    println!("x : {}",x)
+}
+/*
+输出：
+	inner x : a
+	x : 5
+*/
+```
+
