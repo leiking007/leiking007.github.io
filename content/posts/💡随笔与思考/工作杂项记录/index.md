@@ -282,7 +282,27 @@ username=weblogic
 password=weblogic2019
 ```
 
+### Tomcat
 
+#### cmd 窗口
+
+```bash
+# 设置当前cmd界面编码为 UTF-8
+chcp 65001
+
+# 设置环境变量 JAVA_HOME、CATALINA_HOME
+set JAVA_HOME=F:\study\environment\javaDevelopmentKit\jdk1.7
+set CATALINA_HOME=F:\study\soft\apache\apache-tomcat-8.5.99
+
+# 设置 PATH
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+# 设置 JVM 参数
+set JAVA_OPTS=-Xms512m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8
+
+# 在当前窗口启动 Tomcat
+%CATALINA_HOME%\bin\catalina.bat run
+```
 
 ## Linux
 
@@ -362,7 +382,7 @@ EXCEPTION
 END $$;
 ```
 
-### PGSQL
+### PGSQL 新建用户
 
 ```sql
 -- 新建用户
@@ -422,7 +442,7 @@ SELECT pg_terminate_backend(4750);  -- 终止指定 PID 的数据库连接
 SELECT * FROM pg_stat_activity WHERE pid = 4723;  -- 查询指定 PID 连接的完整详情
 ```
 
-### 库迁移
+### PGSQL 库迁移
 
 ```bash
 # PGPASSWORD 是 PostgreSQL 客户端（如 psql、pg_dump 等）用来自动提供密码的环境变量
@@ -446,6 +466,25 @@ pg_restore.exe --verbose \
   --dbname=health_db \
   --no-owner --no-privileges \
   E:/dump-404
+```
+
+### 达梦新建用户
+
+```bash
+CREATE USER "KXCWT_TA404" IDENTIFIED BY "Dameng123" DEFAULT TABLESPACE MAIN;
+GRANT CREATE SESSION TO "KXCWT_TA404";  -- 授予连接权限
+GRANT RESOURCE TO "KXCWT_TA404";   -- 授予建表等基本资源权限
+# GRANT DBA TO "KXCWT_TA404";   -- 或者一次性授予 DBA 权限（谨慎使用）
+```
+
+### 达梦库迁移
+
+```bash
+# 导出 KXCWT_TA404 模式表到 KXCWT_TA404.dmp
+dexp USERID=KXCWT_TA404/Dameng123@127.0.0.1:5236 FILE=KXCWT_TA404.dmp SCHEMAS=KXCWT_TA404
+
+# 导入到 KXCHX_TA404 模式
+dimp USERID=KXCHX_TA404/Dameng123@127.0.0.1:5236 FILE=KXCWT_TA404.dmp REMAP_SCHEMA=KXCWT_TA404:KXCHX_TA404
 ```
 
 ## 运维
