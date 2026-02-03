@@ -382,36 +382,93 @@ EXCEPTION
 END $$;
 ```
 
-### PGSQL 新建用户
+### PGSQL 新建数据库和用户
 
 ```sql
--- 新建用户
-CREATE USER face_user WITH PASSWORD 'LongerPassword123.';
+-- ======================================
+-- 核心操作：新建数据库、用户、专属模式（超级管理员 postgres 执行）
+-- 适用场景：为业务用户分配专属数据库/模式，保障数据隔离与权限可控
+-- ======================================
 
--- 新建数据库
-CREATE DATABASE face_lib;
+-- 1. 新建数据库 test_db，指定 UTF-8 编码（避免中文乱码）
+CREATE DATABASE test_db
+  WITH ENCODING 'UTF8'
+       CONNECTION LIMIT -1;      -- 连接数限制（-1 表示无限制，可根据业务调整为具体数值，如 100）
 
--- 授予连接数据库权限
-GRANT CONNECT ON DATABASE face_lib TO face_user;
+-- 2. 新建数据库用户 test_user，设置强密码、指定连接有效期（可选）
+CREATE USER test_user
+  WITH PASSWORD 'LongerPassword123.'  -- 登录密码
+       VALID UNTIL '2027-12-31 23:59:59'  -- 密码有效期（可选，不写则永久有效）
+       CONNECTION LIMIT 50;  -- 该用户单实例连接数限制（可选，配合数据库连接限制使用）
 
--- 连接新建库执行以下语句
--- 授予数据库所有权限
-GRANT ALL PRIVILEGES ON DATABASE face_lib TO face_user;
--- 授予 public 模式所有权限
-GRANT ALL PRIVILEGES ON SCHEMA public TO face_user;
--- 授予现有表所有权限
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO face_user;
--- 授予现有序列所有权限
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO face_user;
--- 授予现有函数所有权限
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO face_user;
--- 设置未来创建表的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO face_user;
--- 设置未来创建序列的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO face_user;
--- 设置未来创建函数的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO face_user;
+-- 3. 新建专属模式 schema_a，直接指定拥有者为 test_user（简化后续授权，test_user 默认拥有该模式全部权限）
+-- 备注：模式（Schema）用于数据库内对象隔离，避免多业务表名冲突，相当于「数据库内的子目录」
+CREATE SCHEMA schema_a AUTHORIZATION test_user;
+
+-- ======================================
+-- 后续操作：test_user 登录使用（无需超级管理员权限）
+-- ======================================
+-- 登录命令（终端执行）：psql -U test_user -d test_db -h localhost -p 5432
+-- 登录后默认操作 schema_a 步骤（可选，避免每次操作都写 schema_a.表名）：
+--   1. 设置当前会话默认模式：SET search_path TO schema_a, public;
+--   2. （可选）修改用户永久默认模式：ALTER USER test_user SET search_path TO schema_a, public;
+--
+-- 登录后可直接在 schema_a 下创建表/视图/索引等对象，所有对象所有者均为 test_user
+-- 示例：CREATE TABLE schema_a.user_info (id SERIAL PRIMARY KEY, name VARCHAR(50) NOT NULL);
+-- （若已设置 search_path，可简化为：CREATE TABLE user_info (id SERIAL PRIMARY KEY, name VARCHAR(50) NOT NULL);）
+
+-- ======================================
+-- 补充操作：额外授权命令（根据业务场景选择，超级管理员 postgres 执行）
+-- 适用场景：多人共享 test_db 数据库、需要给 test_user 分配 public 模式权限等
+-- ======================================
+
+-- 场景1：将 test_db 数据库所有权转移给 test_user（权限最高，适合 test_user 专属数据库）
+-- 备注：转移后 test_user 成为数据库所有者，拥有该数据库内所有操作权限（包括删除数据库）
+ALTER DATABASE test_db OWNER TO test_user;
+
+-- 场景2：授予 test_user 对 test_db 数据库的全部操作权限（不转移所有权，适合多人共享数据库）
+-- 备注：仅数据库层面权限（连接、创建模式等），不包含模式内对象的操作权限
+GRANT ALL PRIVILEGES ON DATABASE test_db TO test_user;
+
+-- 场景3：授予 test_user 对 public 模式的全部操作权限（创建、修改、删除模式内对象）
+-- 备注：public 是 PostgreSQL 默认模式，未指定模式时对象会创建在该模式下
+GRANT ALL PRIVILEGES ON SCHEMA public TO test_user;
+
+-- 场景4：授予 test_user 对 public 模式下现有对象的全部操作权限
+-- 备注：仅对「已存在」的表、序列、函数生效，后续新建对象需依赖默认权限设置
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test_user;  -- 自增字段依赖序列，需单独授权
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO test_user;
+
+-- 场景5：设置 public 模式下「未来新建」对象的默认权限（避免后续新建对象无权限）
+-- 备注：仅对「超级管理员或拥有模式权限的用户」后续新建的对象生效，保障权限继承
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO test_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO test_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO test_user;
+
+-- 场景6：删除用户
+-- 将 test_user 拥有的所有数据库的 ownership 转移给 postgres（或其他管理员）
+REASSIGN OWNED BY test_user TO postgres;
+-- 然后删除该用户拥有的所有权限和依赖对象（安全清理）
+DROP OWNED BY test_user;
+-- 再删除用户
+DROP USER test_user;
+
+-- 场景7：查询所有用户（角色）信息
+-- 备注：在 PostgreSQL 中，用户（User）本质上是具有 LOGIN 权限的角色（Role）
+SELECT rolname AS username,
+       rolsuper AS is_superuser,
+       rolcreatedb AS can_create_db,
+       rolcreaterole AS can_create_role,
+       rolcanlogin AS can_login,
+       rolreplication AS can_replicate,
+       rolconnlimit AS connection_limit,
+       rolvaliduntil AS password_valid_until
+FROM pg_roles
+ORDER BY rolname;
 ```
+
+
 
 ### PGSQL排查连接问题
 
