@@ -148,6 +148,40 @@ hwclock --systohc
 hwclock --hctosys
 ```
 
+### 欧拉系统安装后初始化
+
+```bash
+# 卸载/home分区（前提：/home分区未被占用，否则会卸载失败）
+umount /home/
+
+# 删除/home对应的逻辑卷（彻底释放/home卷的空间）
+lvremove /dev/mapper/openeuler-home 
+
+# 查看卷组信息（确认/home卷删除后释放的空闲空间）
+vgs
+
+# 将卷组中所有空闲空间扩展给根分区逻辑卷
+lvextend -l +100%FREE /dev/mapper/openeuler-root 
+
+# 查看逻辑卷信息（验证根分区逻辑卷已扩容）
+lvs
+
+# 查看文件系统类型和磁盘使用情况（此时根分区逻辑卷扩容，但文件系统还未同步）
+df -hT
+
+# 调整根分区的文件系统大小，使其匹配扩容后的逻辑卷（ext系列文件系统用resize2fs）
+resize2fs /dev/mapper/openeuler-root 
+
+# 再次查看磁盘使用情况（验证根分区实际可用空间已增加）
+df -h
+
+# 查看块设备信息（确认磁盘/分区/逻辑卷的整体结构）
+lsblk
+
+# 再次查看卷组信息（确认空闲空间已被根分区占用）
+vgs
+```
+
 ## 运维
 
 ### jar 更改 war/jar 包中配置文件
