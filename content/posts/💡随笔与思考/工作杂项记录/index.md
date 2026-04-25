@@ -11,214 +11,9 @@ summary: oracle锁表、oracle导入导出、weblogic打补丁、Linux扩容swap
 
 # 杂记
 
-## oracle
+## weblogic
 
-### 数据库
-
-#### 锁表
-
-```sql
--- 锁表
-SELECT * FROM COSTINFO c FOR UPDATE;
-
--- 查询锁表信息
-SELECT t2.username, t2.sid,t2.serial#,t3.object_name,t2.OSUSER,t2.MACHINE,t2.PROGRAM,t2.LOGON_TIME,t2.COMMAND,t2.LOCKWAIT,t2.SADDR,t2.PADDR,t2.TADDR,t2.SQL_ADDRESS,t1.LOCKED_MODE
-FROM v$locked_object t1, v$session t2, dba_objects t3
-WHERE t1.session_id = t2.sid AND t1.object_id = t3.object_id
-ORDER BY t2.logon_time;
-
--- 查询session
-SELECT a.OS_USER_NAME,c.owner,c.object_name,b.sid,b.serial#,logon_time
-FROM v$locked_object a, v$session b, dba_objects c
-WHERE a.session_id = b.sid AND a.object_id = c.object_id
-ORDER BY b.logon_time;
-
--- 杀掉session 'sid,serial#'
-ALTER system kill SESSION '2844,28686' IMMEDIATE;
-
-```
-
-#### 新建用户/授权
-
-```sql
--- 其中username是你要创建的用户名，password是该用户的密码
-CREATE USER username IDENTIFIED BY password;
-
--- 分配默认表空间和临时表空间
-ALTER USER username DEFAULT TABLESPACE tablespace_name
-    TEMPORARY TABLESPACE temp_tablespace;
-```
-
-```sql
--- 授权创建session权限
-grant create session,resource TO username;
-
--- 设置为管理员用户（拥有大多权限）
-GRANT DBA TO username;
-
--- 查看用户拥有权限
-SELECT * FROM USER_SYS_PRIVS;
--- 查看用户拥有的角色
-SELECT * FROM USER_ROLE_PRIVS;
--- 查看用户拥有的对象权限
-SELECT * FROM USER_TAB_PRIVS;
--- 查看用户拥有的系统权限和角色（查询结合了系统权限和角色，提供了一个更全面的视图）
-SELECT * FROM SESSION_PRIVS;
-```
-
-#### exp/imp
-
-> 保持表空间一致
-
-导出exp
-
-```sql
--- 导出完整数据库：用户名/密码@数据库名，file=d:/daochu1.dmp 是导出的文件路径，full=y 表示导出整个数据库。
-exp username/passwd@ip:port/db file=d:/daochu1.dmp full=y
-
--- 导出某个用户表空间： 在这里，owner=user 指定了要导出的数据库用户
-exp username/passwd@ip:port/db file=d:/daochu1.dmp owner=username
-
--- 导出某个用户的某个表： tables=table1 是要导出的表名，如果需要导出多个表，则使用(table1,table2)的形式。
-exp username/passwd@ip:port/db file=d:/daochu1.dmp tables=(table1,...)
-
--- 示例
-exp MOHRSS_AIO_TA404/MOHRSS_AIO_TA404@10.161.18.39:1521/orclpdb file=e:/MOHRSS_AIO_TA404.dmp owner=MOHRSS_AIO_TA404 buffer=8192 
-```
-
-导入imp
-
-```sql
--- 查看版本号
-select * from v$version;
-
--- cmd 命令行执行导入
-imp username/passwd@ip:port/db file=d:/daochu1.dmp full=y ignore=y
-
--- 示例
-imp MOHRSS_AIO_TA404_2025/MOHRSS_AIO_TA404_2025@10.161.18.39:1521/orclpdb file=e:/MOHRSS_AIO_TA404.dmp buffer=8192 ignore=y full=y
-```
-
-导出后导入中文乱码处理
-
-```sql
--- 查询库的字符集 ；SIMPLIFIED CHINESE_CHINA.AL32UTF8;
-select userenv('language') from dual;
-
--- 设置临时环境变量
-set NLS_LANG=SIMPLIFIED CHINESE_CHINA.AL32UTF8
-
--- 切换当前cmd使用 utf-8 编码
-chcp 65001
-
--- 执行导出导入命令
-```
-
-其他相关sql
-
-```sql
--- 查看所有表（'table1','table2',...）
-SELECT LISTAGG(''''||table_name||'''' ,',') WITHIN GROUP (ORDER BY table_name) AS names
-FROM all_tables
-WHERE owner = 'MOHRSS_AIO_TA404' AND table_name!='ET_ATTACHMENT';
-```
-
-#### DBLINK
-
-```sql
--- 创建一个名为 remote_db_link 的数据库链接，连接到远程数据库
-CREATE DATABASE LINK remote_db_link
-CONNECT TO remote_username IDENTIFIED BY remote_password
-USING '(DESCRIPTION =
-  (ADDRESS = (PROTOCOL = TCP)(HOST = remote_host)(PORT = remote_port))
-  (CONNECT_DATA =
-    (SERVICE_NAME = remote_service_name)
-  )
-)';
--- remote_db_link：数据库链接的名称，可以自定义。
--- remote_username：远程数据库的用户名。
--- remote_password：远程数据库的密码。
--- remote_host：远程数据库服务器的主机名或 IP 地址。
--- remote_port：远程数据库监听的端口号，默认是 1521。
--- remote_service_name：远程数据库的服务名。
-
--- 或下面写法
-CREATE DATABASE LINK myrsjhk_db_link
-    CONNECT TO SCCARD IDENTIFIED BY SCCARD
-    USING 'ip:port/service';
-
--- 查询远程数据库中的表数据
-SELECT * FROM employees@remote_db_link;
-
--- 修改远程数据库表数据
-UPDATE JXJYLOG@yhwsyw_db_link SET fieldName = 'value';
-
---  删除 DBLINK
-DROP DATABASE LINK remote_db_link;
-
--- 查询某个用户所有的DBLINK
-SELECT * FROM DBA_DB_LINKS WHERE OWNER = 'MY_EXAM_MANAGE';
-
--- 查询某个DBLINK
-SELECT * FROM dba_db_links WHERE db_link = 'MYRSWT_DB_LINK'
-```
-
-#### 统计Schema大小
-
-```sql
--- 查询某个模式（Schema）占用的物理空间大小
-SELECT
-    owner AS "模式名称",
-    ROUND(SUM(bytes) / 1024 / 1024, 2) AS "占用空间（MB）"
-FROM dba_segments
-GROUP BY owner;
-
--- 查询某个模式（Schema）占用的物理空间大小
-SELECT 
-    u.username AS "模式名称",
-    SUM(s.bytes / 1024 / 1024) AS "占用空间（MB）"
-FROM dba_segments s JOIN dba_users u ON s.owner = u.username
-GROUP BY 
-    u.username
-ORDER BY u.username;
-
--- 查询某个模式（Schema）各个对象占用的物理空间大小
-SELECT owner,
-       segment_name,
-       segment_type,
-       ROUND(bytes / 1024 / 1024, 2) AS SIZE_MB
-FROM dba_segments
-WHERE owner = 'MOHRSS_AIO_TA404'
-ORDER BY SIZE_MB DESC;
-
--- 查询某个模式（Schema）表占用的物理空间大小
-SELECT
-    t.owner,
-    t.table_name,
-    ROUND(s.bytes / 1024 / 1024, 2) AS "表占用空间（MB）"
-FROM dba_tables t
-JOIN dba_segments s ON t.owner = s.owner AND t.table_name = s.segment_name
-WHERE t.owner = 'YOUR_SCHEMA_NAME'
-ORDER BY "表占用空间（MB）" DESC;
-```
-
-#### 查看过期时间
-
-```sql
-# 该语句会返回数据库中所有用户的用户名、账户状态以及密码过期日期。如果expiry_date列的值为NULL，表示该用户的密码没有设置过期时间；如果有具体的日期值，则表示该用户的密码将在该日期过期。
-SELECT username, account_status, expiry_date FROM dba_users;
-
-# 同样以管理员身份连接到数据库，先查询用户对应的概要文件，一般用户的概要文件为DEFAULT
-SELECT username, PROFILE FROM dba_users;
-# 然后查询对应概要文件的密码有效期设置,如果返回的LIMIT值为UNLIMITED，表示密码永不过期；如果是一个数字，则表示密码的有效期为该数字指定的天数。
-SELECT * FROM dba_profiles WHERE profile='DEFAULT' AND resource_name='PASSWORD_LIFE_TIME';
-```
-
-
-
-### weblogic
-
-#### 打补丁(12 c)
+### 打补丁(12 c)
 
 ```cmd
 # weblogic 版本在后台登录页左下角可以看到，命令行需要管理员打开
@@ -267,7 +62,7 @@ spbat.bat -phase apply -oracle_home D:\Oracle\Middleware\Oracle_Home
 %ORACLE_HOME%\OPatch\opatch.bat nrollback -id 15941858,15955138
 ```
 
-#### 重置密码(12 c)
+### 重置密码(12 c)
 
 ```bash
 # 在 Oracle_Home 目录下
@@ -282,7 +77,27 @@ username=weblogic
 password=weblogic2019
 ```
 
+## Tomcat
 
+### cmd 窗口
+
+```bash
+# 设置当前cmd界面编码为 UTF-8
+chcp 65001
+
+# 设置环境变量 JAVA_HOME、CATALINA_HOME
+set JAVA_HOME=F:\study\environment\javaDevelopmentKit\jdk1.7
+set CATALINA_HOME=F:\study\soft\apache\apache-tomcat-8.5.99
+
+# 设置 PATH
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+# 设置 JVM 参数
+set JAVA_OPTS=-Xms512m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8
+
+# 在当前窗口启动 Tomcat
+%CATALINA_HOME%\bin\catalina.bat run
+```
 
 ## Linux
 
@@ -333,119 +148,38 @@ hwclock --systohc
 hwclock --hctosys
 ```
 
-## 数据库
-
-### 参数化查询
-
-```sql
--- 清空用户数据
-DO $$
-DECLARE
-    v_user_id TEXT := '78914762532372551';
-BEGIN
-    -- 可选：记录操作日志或检查是否存在
-    RAISE NOTICE 'Deleting user data for user_id: %', v_user_id;
-
-    DELETE FROM health_management_ta404.et_user WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.health_checkin_user WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.reg_infor WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.ship_address WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.user_info_ext WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.user_points_details WHERE user_id = v_user_id;
-    DELETE FROM health_management_biz.user_points_summary WHERE user_id = v_user_id;
-
-    RAISE NOTICE 'User data deleted successfully.';
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error deleting user %: %', v_user_id, SQLERRM;
-        -- 可选择是否回滚（在 DO 块中自动回滚）
-END $$;
-```
-
-### PGSQL
-
-```sql
--- 新建用户
-CREATE USER face_user WITH PASSWORD 'LongerPassword123.';
-
--- 新建数据库
-CREATE DATABASE face_lib;
-
--- 授予连接数据库权限
-GRANT CONNECT ON DATABASE face_lib TO face_user;
-
--- 连接新建库执行以下语句
--- 授予数据库所有权限
-GRANT ALL PRIVILEGES ON DATABASE face_lib TO face_user;
--- 授予 public 模式所有权限
-GRANT ALL PRIVILEGES ON SCHEMA public TO face_user;
--- 授予现有表所有权限
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO face_user;
--- 授予现有序列所有权限
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO face_user;
--- 授予现有函数所有权限
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO face_user;
--- 设置未来创建表的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO face_user;
--- 设置未来创建序列的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO face_user;
--- 设置未来创建函数的默认权限
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO face_user;
-```
-
-### PGSQL排查连接问题
-
-```sql
--- 查询face_db数据库的活跃 / 非内部连接详情
-SELECT 
-  pid,  -- 连接的唯一进程ID（PostgreSQL内部标识每个连接的进程号）
-  datname,  -- 连接的数据库名（这里过滤后只显示face_db）
-  usename,  -- 发起连接的数据库用户名（比如fastapi_user）
-  client_addr,  -- 客户端IP（能定位到是哪个FastAPI服务实例连过来的）
-  application_name,  -- 应用名（如果FastAPI连接时配置了这个参数，能直接识别业务模块）
-  state,  -- 连接状态（关键！比如：
-          -- active：正在执行SQL；
-          -- idle：空闲（没执行SQL）；
-          -- idle in transaction：事务中空闲（最危险，占连接且未提交/回滚）；
-          -- idle in transaction (aborted)：事务出错但未终止
-  state_change,  -- 连接状态最后一次变更的时间（比如idle状态持续了多久）
-  backend_start,  -- 连接建立的时间（能看连接是否长期不释放）
-  query,  -- 该连接最后/正在执行的SQL（能定位到慢SQL/异常SQL，比如未提交的DELETE）
-  now() - backend_start AS connection_age,  -- 连接存活总时长（排查长连接泄漏）
-  now() - state_change AS state_age  -- 当前状态持续时长（比如idle状态卡了几小时）
-FROM pg_stat_activity 
-WHERE datname = 'face_db'  -- 只查face_db数据库的连接
-  AND client_addr is not null;  -- 排除数据库内部连接（比如后台进程、本机localhost无IP的连接）
-  
-SELECT pg_terminate_backend(4750);  -- 终止指定 PID 的数据库连接
-
-SELECT * FROM pg_stat_activity WHERE pid = 4723;  -- 查询指定 PID 连接的完整详情
-```
-
-### 库迁移
+### 欧拉系统安装后初始化
 
 ```bash
-# PGPASSWORD 是 PostgreSQL 客户端（如 psql、pg_dump 等）用来自动提供密码的环境变量
-# cmd:  set PGPASSWORD=your_password
-# powershell:  $env:PGPASSWORD = "your_password"
+# 卸载/home分区（前提：/home分区未被占用，否则会卸载失败）
+umount /home/
 
-# 导出
-pg_dump.exe --verbose \    
-  --host=192.168.116.131 --port=5432 \
-  --username=postgres \
-  --format=t --encoding=UTF-8 \
-  --file E:/dump-404 \
-  --no-owner --no-privileges \
-  -n "health_management_ta404" postgres
-  
-  
-# 导入
-pg_restore.exe --verbose \
-  --host=20.1.1.5 --port=5433 \
-  --username=postgres \
-  --dbname=health_db \
-  --no-owner --no-privileges \
-  E:/dump-404
+# 删除/home对应的逻辑卷（彻底释放/home卷的空间）
+lvremove /dev/mapper/openeuler-home 
+
+# 查看卷组信息（确认/home卷删除后释放的空闲空间）
+vgs
+
+# 将卷组中所有空闲空间扩展给根分区逻辑卷
+lvextend -l +100%FREE /dev/mapper/openeuler-root 
+
+# 查看逻辑卷信息（验证根分区逻辑卷已扩容）
+lvs
+
+# 查看文件系统类型和磁盘使用情况（此时根分区逻辑卷扩容，但文件系统还未同步）
+df -hT
+
+# 调整根分区的文件系统大小，使其匹配扩容后的逻辑卷（ext系列文件系统用resize2fs）
+resize2fs /dev/mapper/openeuler-root 
+
+# 再次查看磁盘使用情况（验证根分区实际可用空间已增加）
+df -h
+
+# 查看块设备信息（确认磁盘/分区/逻辑卷的整体结构）
+lsblk
+
+# 再次查看卷组信息（确认空闲空间已被根分区占用）
+vgs
 ```
 
 ## 运维
