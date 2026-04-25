@@ -1,47 +1,46 @@
-<article class="group relative overflow-hidden bg-gradient-to-r bg-tl-base-200 rounded-xl p-6 transition-all duration-300 border border-tl-base-300 hover:bg-tl-base-200-hover hover:border-tl-primary hover:shadow-lg">
-    <div class="relative">
-        <div class="flex items-start justify-between">
+<article class="group relative overflow-hidden bg-gradient-to-br from-tl-base-200 to-tl-base-100 rounded-xl p-6 transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 h-full flex flex-col">
+    <div class="relative flex flex-col h-full">
+        <div class="flex items-start justify-between mb-3">
             <div class="flex-1 min-w-0">
                 <a href="{{ .RelPermalink }}" class="block group">
-                    <h2 class="text-xl font-bold group-hover:text-tl-primary transition-colors duration-200 mb-3 leading-tight">
+                    <h2 class="text-lg font-bold group-hover:text-tl-primary transition-colors duration-200 mb-3 leading-tight line-clamp-2">
                         {{ .Title }}
                     </h2>
-                    <!-- 文章元信息 -->
-                    <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/75">
-                            <span class="flex items-center bg-tl-base-200 px-3 py-1 rounded-full">
-                                {{ partial "icons/icon" (dict "path" "common/about" "className" "ml-0 mr-1 p-0 text-xs" ) }}
-                                {{ .Params.author }}
-                            </span>
-
-                            <span class="flex items-center bg-tl-base-200 px-3 py-1 rounded-full">
-                                {{ partial "icons/icon" (dict "path" "post/date" "className" "ml-0 mr-1 p-0 text-xs" ) }}
-                                {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
-                            </span>
-
-                        {{ if .Params.categories }}
-                            <span class="flex items-center bg-tl-base-200 px-2 py-1 rounded-md hover:bg-tl-base-300 text-xs">
-                                    {{ partial "icons/icon" (dict "path" "common/fenlei" "className" "ml-0 mr-1 p-0 text-xs") }}
-                                    {{ index .Params.categories 0 }}
-                            </span>
-                        {{ end }}
-
-                        {{ if .Params.tags }}
-                        <div class="flex items-center space-x-1">
-                            {{ range .Params.tags }}
-                                <span class="bg-tl-base-200 hover:bg-tl-base-300 px-2 py-1 rounded-md text-xs transition-colors duration-200">
-                                    {{ partial "icons/icon" (dict "path" "common/tags" "className" "ml-0 mr-1 p-0 text-xs") }}{{ . }}
-                                </span>
-                            {{ end }}
-                        </div>
-                        {{ end }}
-                    </div>
-                    {{ if .Summary }}
-                    <p class=" text-base leading-relaxed mb-4 line-clamp-3 transition-colors duration-200">
-                        {{ .Summary }}
-                    </p>
-                    {{ end }}
                 </a>
             </div>
+        </div>
+
+        {{ if .Summary }}
+        <a href="{{ .RelPermalink }}" class="block group flex-1">
+            <p class="text-sm leading-relaxed mb-4 line-clamp-3 text-tl-base-content/70 group-hover:text-tl-base-content/90 transition-colors duration-200">
+                {{ .Summary }}
+            </p>
+        </a>
+        {{ end }}
+
+        <div class="flex flex-col gap-3 mt-auto pt-3 border-t border-tl-base-300/30">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-tl-base-content/60">
+                <span class="flex items-center gap-1">
+                    {{ partial "icons/icon" (dict "path" "post/date" "className" "w-3.5 h-3.5" ) }}
+                    {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
+                </span>
+                {{ if .Params.author }}
+                <span class="flex items-center gap-1">
+                    {{ partial "icons/icon" (dict "path" "common/about" "className" "w-3.5 h-3.5" ) }}
+                    {{ .Params.author }}
+                </span>
+                {{ end }}
+            </div>
+
+            {{ if .Params.tags }}
+            <div class="flex flex-wrap items-center gap-1.5">
+                {{ range first 3 .Params.tags }}
+                <span class="bg-tl-base-300/40 hover:bg-tl-base-300/70 px-2 py-0.5 rounded-md text-xs transition-colors duration-200 text-tl-base-content/70">
+                    {{ . }}
+                </span>
+                {{ end }}
+            </div>
+            {{ end }}
         </div>
     </div>
 </article>

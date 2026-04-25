@@ -1,23 +1,19 @@
 {{ $fontUnit := "rem" }}
 {{ $largestFontSize := 2.0 }}
 {{ $smallestFontSize := 1.0 }}
-{{ $fontSpread := sub $largestFontSize $smallestFontSize }}
 {{ $max := add (len (index .Site.Taxonomies.tags.ByCount 0).Pages) 1 }}
 {{ $min := len (index .Site.Taxonomies.tags.ByCount.Reverse 0).Pages }}
-{{ $spread := sub $max $min }}
-{{ $fontStep := div $fontSpread $spread }}
-<div class="flex justify-center  items-center flex-wrap">
+<div class="flex justify-center items-center flex-wrap gap-3">
     {{ range $taxonomyname, $taxonomy := .Site.Taxonomies.tags }}
-    {{ $currentTagCount := len $taxonomy.Pages }}
-    {{ $currentFontSize := (add $smallestFontSize (mul (sub $currentTagCount $min) $fontStep) ) }}
     {{ $count := len $taxonomy.Pages }}
-    {{ $weigth := div (sub (math.Log $count) (math.Log $min)) (sub (math.Log $max) (math.Log $min)) }}
-    {{ $currentFontSize := (add $smallestFontSize (mul (sub $largestFontSize $smallestFontSize) $weigth) ) }}
-    <span class="inline-block mx-3 my-2">
-           <a href='{{ .Page.RelPermalink }}'
-              style="font-size: {{$currentFontSize -}}{{- $fontUnit}}">
-            {{- $taxonomyname -}}<small class="ms-1">{{- .Len -}}</small>
-        </a>
-    </span>
+    {{ $weight := div (sub (math.Log $count) (math.Log $min)) (sub (math.Log $max) (math.Log $min)) }}
+    {{ $currentFontSize := (add $smallestFontSize (mul (sub $largestFontSize $smallestFontSize) $weight)) }}
+    {{ $opacity := (add 0.6 (mul 0.4 $weight)) }}
+    <a href='{{ .Page.RelPermalink }}'
+       class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5"
+       style="font-size: {{$currentFontSize}}{{$fontUnit}};">
+        <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200">{{- $taxonomyname -}}</span>
+        <span class="text-xs px-1.5 py-0.5 rounded-full bg-tl-primary/10 text-tl-primary font-medium">{{- .Len -}}</span>
+    </a>
     {{ end }}
 </div>

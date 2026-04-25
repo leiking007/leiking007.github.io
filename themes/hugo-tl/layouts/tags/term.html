@@ -1,16 +1,54 @@
 {{ define "main" }}
-<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 md:px-6">
-    <div>
-        <div>
-            {{- partial "tags.html" . -}}
-            <h1 class="text-2xl">{{ .Title }}</h1>
-            <main class="space-y-6">
-                {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 9)).Pages }}
-                    {{ .Render "summary" }}
-                {{ end }}
-                {{ partial "pagination.html" . }}
-            </main>
+<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
+    {{/* 页面标题区 - 与标签页一致 */}}
+    <div class="mb-10 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-tl-primary/10 flex items-center justify-center">
+                {{ partial "icons/icon" (dict "path" "common/tags" "className" "text-2xl text-tl-primary" ) }}
+            </div>
+        </div>
+        <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+            标签
+        </h1>
+        <p class="text-tl-base-content/60 text-lg">
+            共 {{ len .Site.Taxonomies.tags }} 个标签
+        </p>
+    </div>
+
+    {{/* 标签云 - 与标签页完全一致 */}}
+    <div class="mb-12">
+        <div class="flex justify-center items-center flex-wrap gap-3">
+            {{ range $taxonomyname, $taxonomy := .Site.Taxonomies.tags }}
+            {{ $count := len $taxonomy.Pages }}
+            {{ $weight := div (sub (math.Log $count) (math.Log 1)) (sub (math.Log (add (len (index $.Site.Taxonomies.tags.ByCount 0).Pages) 1)) (math.Log 1)) }}
+            {{ $currentFontSize := (add 1.0 (mul 1.0 $weight)) }}
+            <a href='{{ $taxonomy.Page.RelPermalink }}'
+               class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}border-tl-primary/60 shadow-md shadow-tl-primary/10{{ end }}"
+               style="font-size: {{$currentFontSize}}rem;">
+                <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}text-tl-primary font-medium{{ end }}">{{- $taxonomyname -}}</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full bg-tl-primary/10 text-tl-primary font-medium">{{- $taxonomy.Count -}}</span>
+            </a>
+            {{ end }}
         </div>
     </div>
+
+    {{/* 当前标签信息 */}}
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-1.5 h-6 bg-tl-primary rounded-full"></div>
+        <h2 class="text-xl font-bold text-tl-base-content">
+            <span class="text-tl-primary">{{ .Title }}</span> 下的文章
+        </h2>
+        <span class="text-sm text-tl-base-content/50">({{ len .Pages }} 篇)</span>
+    </div>
+
+    {{/* 文章网格 */}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 10)).Pages }}
+            {{ .Render "summary" }}
+        {{ end }}
+    </div>
+
+    {{/* 分页区域 */}}
+    {{ partial "pagination.html" . }}
 </section>
 {{ end }}

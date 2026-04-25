@@ -1,37 +1,40 @@
 {{ define "main" }}
-<section class="mx-auto mt-6 grid max-w-[90rem] gap-6 px-4 md:px-6">
-    <div class="p-2">
+<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
+    {{/* 页面标题区 */}}
+    <div class="mb-10 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-tl-primary/10 flex items-center justify-center">
+                {{ partial "icons/icon" (dict "path" "common/fenlei" "className" "text-2xl text-tl-primary" ) }}
+            </div>
+        </div>
+        <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+            {{ .Title }}
+        </h1>
+        <p class="text-tl-base-content/60 text-lg">
+            共 {{ len .Data.Terms }} 个分类
+        </p>
+    </div>
+
+    {{/* 分类卡片网格 */}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {{- $category_key := lower .Title -}}
         {{- $displayName := $category_key -}}
         {{ range $term, $taxonomy := index site.Taxonomies $displayName }}
-            <div class="my-4 p-4 border rounded-lg">
-                <h3 class="text-lg font-semibold mb-3">
-                    <a href="{{ $taxonomy.Page.RelPermalink }}">
-                        {{ $taxonomy.Page.Title }} ({{ $taxonomy.Count }})
-                    </a>
-                </h3>
-
-                <div class="space-y-2">
-                    {{ range first 5 $taxonomy.Pages }}
-                        <div class="pl-4">
-                            <a href="{{ .RelPermalink }}">
-                                {{ .Title }}
-                            </a>
-                            {{ if .Date }}
-                                <span class="text-sm text-tl-base/75 ml-2">{{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
-                            {{ end }}
+            <a href="{{ $taxonomy.Page.RelPermalink }}" class="group">
+                <article class="relative overflow-hidden bg-gradient-to-br from-tl-base-200 to-tl-base-100 rounded-xl transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1 p-6 text-center">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-tl-primary/10 flex items-center justify-center group-hover:bg-tl-primary/20 transition-colors duration-300">
+                            <span class="text-xl font-bold text-tl-primary">{{ slicestr $taxonomy.Page.Title 0 1 }}</span>
                         </div>
-                    {{ end }}
-
-                    {{ if gt (len $taxonomy.Pages) 5 }}
-                        <div class="pl-4 pt-2">
-                            <a href="{{ $taxonomy.Page.RelPermalink }}" class="text-tl-secondary hover:text-tl-secondary/75 text-sm">
-                                查看更多 ({{ sub (len $taxonomy.Pages) 5 }} 篇)
-                            </a>
-                        </div>
-                    {{ end }}
-                </div>
-            </div>
+                        <h3 class="text-lg font-bold text-tl-base-content group-hover:text-tl-primary transition-colors duration-200">
+                            {{ $taxonomy.Page.Title }}
+                        </h3>
+                        <span class="text-sm text-tl-base-content/50">
+                            {{ $taxonomy.Count }} 篇文章
+                        </span>
+                    </div>
+                </article>
+            </a>
         {{ end }}
     </div>
 </section>

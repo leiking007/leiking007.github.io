@@ -1,8 +1,9 @@
 {{ define "main" }}
 <section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
   <main>
-    <div class="p-6 rounded">
-      <div class="grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
+    {{/* Hero 区域：添加粒子背景 */}}
+    <div class="relative p-6 rounded-2xl overflow-hidden bg-gradient-to-br from-tl-base-200 via-tl-base-100 to-tl-primary/5">
+      <div class="relative z-10 grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
         <div class="flex flex-col justify-center col-span-1 text-center md:text-start">
           <div class="flex items-center justify-center mb-4 md:justify-normal">
             <h4 class="ml-2 text-sm font-bold tracking-widest text-tl-primary uppercase">
@@ -11,35 +12,56 @@
             </h4>
           </div>
           {{ with .Site.Params.subtitle }}
-          <h1 class="mb-8 text-4xl font-extrabold leading-tight md:text-6xl">{{- . -}}</h1>
+          <h1 class="mb-8 text-4xl font-extrabold leading-tight md:text-6xl bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">{{- . -}}</h1>
           {{ end }}
           {{ with .Site.Params.describe }}
-          <p class="mb-6 text-tl-base font-normal leading-7 md:w-3/4 ">{{- . -}}</p>
+          <p class="mb-6 text-tl-base-content/80 font-normal leading-7 md:w-3/4 text-lg">{{- . -}}</p>
           {{ end }}
         </div>
         <div class="items-center justify-end hidden col-span-1 md:flex">
-          <img class="w-4/5 rounded-md" src='{{ relURL "images/background-2.jpg" }}' alt="header image">
+          <img class="w-4/5 rounded-xl shadow-2xl shadow-tl-primary/10 transition-transform duration-500 hover:scale-105" src='{{ relURL "images/background-2.jpg" }}' alt="header image">
         </div>
       </div>
     </div>
+
+    <div class="prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2">
+      {{.Content}}
+    </div>
+
     {{/*  获取常规页面  */}}
     {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
     {{/*  获取所有页面，并且 hidden != true  */}}
     {{ $notHidden := where .Site.RegularPages "Params.hidden" "!=" true }}
     {{/*  两数组公共部分  */}}
     {{ $filtered := ($pages | intersect $notHidden) }}
-    {{/*  分页  */}}
-    {{ $pag := .Paginate ($filtered) (index .Site.Params.pagination "index_paginate" | default 9) }}
-    <div class="prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2">
-      {{.Content}}
-    </div>
-    <div>
-      <div class="space-y-6">
-        {{ range $index, $element := $pag.Pages }}
+    {{/*  获取最新5篇文章  */}}
+    {{ $latest5 := first 5 $filtered.ByDate.Reverse }}
+
+    {{/*  最新文章区块  */}}
+    <div class="mt-12 mb-8">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-1.5 h-8 bg-tl-primary rounded-full"></div>
+          <h2 class="text-2xl font-bold text-tl-base-content">最新文章</h2>
+        </div>
+        <a href='{{ relURL "/posts/" }}' class="group flex items-center gap-1 text-sm font-medium text-tl-primary hover:text-tl-primary/80 transition-colors">
+          查看全部
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      {{/*  网格布局：第一篇大图突出，其余卡片式  */}}
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {{ range $index, $element := $latest5 }}
+          {{ if eq $index 0 }}
+            {{ .Render "summary-featured" }}
+          {{ else }}
             {{ .Render "summary" }}
+          {{ end }}
         {{ end }}
       </div>
-      {{ partial "pagination.html" . }}
     </div>
   </main>
 </section>

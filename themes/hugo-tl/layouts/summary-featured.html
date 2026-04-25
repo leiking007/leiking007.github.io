@@ -1,0 +1,47 @@
+<article class="group relative overflow-hidden bg-gradient-to-br from-tl-primary/10 via-tl-base-200 to-tl-base-100 rounded-2xl p-8 transition-all duration-300 border-2 border-tl-primary/20 hover:border-tl-primary/50 hover:shadow-xl hover:shadow-tl-primary/10 lg:col-span-2">
+    <div class="flex flex-col h-full justify-between">
+        <div>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-primary/10 text-tl-primary text-xs font-semibold tracking-wide uppercase">
+                    最新推荐
+                </span>
+                {{ if .Params.categories }}
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-base-300/50 text-tl-base-content/70 text-xs">
+                    {{ index .Params.categories 0 }}
+                </span>
+                {{ end }}
+            </div>
+
+            <a href="{{ .RelPermalink }}" class="block group">
+                <h2 class="text-2xl lg:text-3xl font-bold group-hover:text-tl-primary transition-colors duration-200 mb-4 leading-tight">
+                    {{ .Title }}
+                </h2>
+                {{ if .Summary }}
+                <p class="text-base lg:text-lg leading-relaxed mb-6 line-clamp-4 text-tl-base-content/80">
+                    {{ .Summary }}
+                </p>
+                {{ end }}
+            </a>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/70">
+            <span class="flex items-center gap-1.5">
+                {{ partial "icons/icon" (dict "path" "common/about" "className" "w-4 h-4" ) }}
+                {{ .Params.author }}
+            </span>
+            <span class="flex items-center gap-1.5">
+                {{ partial "icons/icon" (dict "path" "post/date" "className" "w-4 h-4" ) }}
+                {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
+            </span>
+            {{ if .Params.tags }}
+            <div class="flex items-center gap-2 ml-auto">
+                {{ range first 3 .Params.tags }}
+                <span class="bg-tl-base-300/50 hover:bg-tl-base-300 px-2.5 py-1 rounded-lg text-xs transition-colors duration-200">
+                    {{ . }}
+                </span>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</article>

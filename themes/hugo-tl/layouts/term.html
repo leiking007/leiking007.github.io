@@ -1,64 +1,80 @@
 {{ define "main" }}
 <section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
-    <div class="flex gap-6">
+    <div class="flex gap-8">
         <!-- 左侧边栏 -->
-        <div class="w-80 flex-shrink-0 hidden md:block">
-            <div class="bg-tl-base-100 rounded-lg shadow-md p-6 sticky top-6">
-                <h2 class="text-xl font-bold mb-4 border-b pb-2">
-                    {{ .Page.Section | title }} 目录
-                </h2>
-                <div class="space-y-2">
-                    {{ range $term, $taxonomy := index site.Taxonomies .Page.Section }}
-                    <div class="transition-colors duration-200">
-                        <a href="{{ $taxonomy.Page.RelPermalink }}"
-                           class="block px-3 py-2 rounded-md  hover:bg-tl-secondary hover:text-tl-secondary-content transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-secondary text-tl-secondary-content font-medium{{ end }}">
-                            <div class="flex justify-between items-center">
-                                <span>{{ $taxonomy.Page.Title }}</span>
-                                <span class="text-sm  px-2 py-1 rounded-full">{{ $taxonomy.Count }}</span>
-                            </div>
-                        </a>
+        <div class="w-72 flex-shrink-0 hidden lg:block">
+            <div class="bg-gradient-to-br from-tl-base-200 to-tl-base-100 rounded-xl border border-tl-base-300/50 p-5 sticky top-6">
+                <div class="flex items-center gap-2 mb-5 pb-4 border-b border-tl-base-300/40">
+                    <div class="w-8 h-8 rounded-lg bg-tl-primary/10 flex items-center justify-center">
+                        {{ partial "icons/icon" (dict "path" "common/fenlei" "className" "text-sm text-tl-primary" ) }}
                     </div>
+                    <h2 class="text-base font-bold text-tl-base-content">
+                        {{ .Page.Section | title }}
+                    </h2>
+                </div>
+                <div class="space-y-1">
+                    {{ range $term, $taxonomy := index site.Taxonomies .Page.Section }}
+                    <a href="{{ $taxonomy.Page.RelPermalink }}"
+                       class="flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-primary/10 text-tl-primary font-medium{{ else }}text-tl-base-content/70 hover:bg-tl-base-300/30 hover:text-tl-base-content{{ end }}">
+                        <span class="text-sm truncate mr-2">{{ $taxonomy.Page.Title }}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-primary/20 text-tl-primary{{ else }}bg-tl-base-300/40 text-tl-base-content/50{{ end }}">
+                            {{ $taxonomy.Count }}
+                        </span>
+                    </a>
                     {{ end }}
                 </div>
             </div>
         </div>
 
         <!-- 右侧主内容区 -->
-        <main class="flex-1">
-            <div class="bg-tl-base-100 rounded-xl shadow-lg p-8">
-                <!-- 页面标题区域 -->
-                <div class="mb-8 pb-6 border-b border-tl-base-300">
-                    <div class="flex items-center justify-between">
+        <main class="flex-1 min-w-0">
+            {{/* 页面标题区域 */}}
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-tl-base-200 via-tl-base-100 to-tl-primary/5 border border-tl-base-300/50 p-8 mb-8">
+                <div class="relative z-10">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h1 class="text-4xl font-bold mb-2">{{ .Title }}</h1>
-                            <div class="flex items-center space-x-4 ">
-                                <span class="flex items-center">
-                                    {{ partial "icons/icon" (dict "path" "post/bi" "className" "text-xl" ) }}
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-xs font-semibold tracking-wider uppercase text-tl-primary bg-tl-primary/10 px-3 py-1 rounded-full">
+                                    {{ .Page.Section | title }}
+                                </span>
+                            </div>
+                            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+                                {{ .Title }}
+                            </h1>
+                            <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/60">
+                                <span class="flex items-center gap-1.5">
+                                    {{ partial "icons/icon" (dict "path" "post/bi" "className" "w-4 h-4" ) }}
                                     共 {{ len .Pages }} 篇文章
                                 </span>
-                                <span class="flex items-center">
-                                    {{ partial "icons/icon" (dict "path" "post/time" "className" "text-xl" ) }}
-                                    最后更新: {{ (index .Pages 0).Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
+                                {{ if .Pages }}
+                                <span class="flex items-center gap-1.5">
+                                    {{ partial "icons/icon" (dict "path" "post/time" "className" "w-4 h-4" ) }}
+                                    更新于 {{ (index .Pages 0).Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                                 </span>
+                                {{ end }}
                             </div>
                         </div>
-                        <div class="hidden md:block">
-                            <div class="bg-tl-base-100 px-4 py-2 rounded-lg text-sm font-medium">
-                                {{ .Page.Section | title }}
+                        {{ if .Pages }}
+                        <div class="hidden md:flex items-center gap-3">
+                            <div class="text-center px-5 py-3 rounded-xl bg-tl-base-100/80 border border-tl-base-300/30">
+                                <div class="text-2xl font-bold text-tl-primary">{{ len .Pages }}</div>
+                                <div class="text-xs text-tl-base-content/50 mt-1">文章</div>
                             </div>
                         </div>
+                        {{ end }}
                     </div>
                 </div>
-
-                <!-- 文章列表 -->
-                <div class="space-y-6">
-                    {{ range (.Paginate .Pages 9).Pages }}
-                        {{ .Render "summary" }}
-                    {{ end }}
-                </div>
-                <!-- 分页区域 -->
-                {{ partial "pagination.html" . }}
             </div>
+
+            {{/* 文章网格 */}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {{ range (.Paginate .Pages 10).Pages }}
+                    {{ .Render "summary" }}
+                {{ end }}
+            </div>
+
+            {{/* 分页区域 */}}
+            {{ partial "pagination.html" . }}
         </main>
     </div>
 </section>
