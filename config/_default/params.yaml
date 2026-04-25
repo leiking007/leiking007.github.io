@@ -5,6 +5,5 @@ dateFormat : 2006-01-02   # 2006/01/02 15:04:05
 toc: true
 rssFullContent: false   # rss是否包含正文内容
 pagination:
-  index_paginate: 16
-  posts_paginate: 30
+  posts_paginate: 20
   tag_paginate: 10

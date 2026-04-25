@@ -28,9 +28,6 @@ main:
         - name: 花密
           url: /flower_passwd
           newTab: false
-        - name: ctool
-          url: https://ctool.dev/tool.html
-          newTab: true
         - name: 阮一峰ES6
           url: https://es6.ruanyifeng.com
           newTab: true
