@@ -31,45 +31,48 @@ tar -zxvf nginx-1.20.1.tar.gz
 cd nginx-1.20.1/
 
 # configure 报错时一般缺少一些库，根据提示安装即可
-# ubuntu ： apt-get install libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev make
+# ubuntu: apt-get install libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev make
+# rocky9: dnf install -y gcc make pcre-devel zlib-devel openssl-devel
+
 ./configure --prefix=/usr/local/nginx --with-http_ssl_module
 
-# 编译，编译后的nginx文件在objs里
-make
+# 编译，建议加上 -j$(nproc) 利用多核加速，编译后的nginx文件在objs里
+make -j$(nproc) 
 
 # 安装，将编译后的文件安装到系统（创建相关目录等）
 make install
 
 # 重新编译时用得上
-make clean #清除上一次make命令生成的文件
+# 清除上一次make命令生成的文件
+make clean  
 ```
 
 > 启动
 
 ```bash
-/usr/local/nginx/sbin/nginx		#普通启动
- /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf	#通过配置文件启动
-ps -ef | grep nginx		#查看nginx进程，master和worker两个进程（主进程/工作进程）
+sbin/nginx		# 普通启动
+sbin/nginx -c conf/nginx.conf	# 通过配置文件启动
+ps -ef | grep nginx		# 查看nginx进程，master和worker两个进程（主进程/工作进程）
 ```
 
 > 关闭
 
 ```bash
-kill -QUIT 进程id	 #优雅关闭，等待所有请求处理后关闭
-kill -TERM 进程id	 #快速关闭，直接杀死
-```
-
-> 重启
-
-```bash
-/usr/local/nginx/sbin/nginx -s reload	#杀死进程，然后重新启动
+kill -QUIT 进程id	 # 优雅关闭，等待所有请求处理后关闭
+kill -TERM 进程id	 # 快速关闭，直接杀死
 ```
 
 > 其他命令
 
 ```bash
-/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf -t	#-t参数，启动时检查配置文件
-/usr/local/nginx/sbin/nginx -V	#查看nginx版本号、编译器版本、参数配置
+sbin/nginx -c conf/nginx.conf -t	#-t参数，启动时检查配置文件
+sbin/nginx -V	#查看nginx版本号、编译器版本、参数配置
+
+# nginx -s 相关命令，确保 Nginx 已经在运行，并且执行命令的用户有权限读取 Nginx 的 PID 文件（通常位于 /var/run/nginx.pid 或 logs/nginx.pid），该文件记录了主进程的 ID
+sbin/nginx -s reload	# 在不中断服务的情况下，重新加载配置文件 (nginx.conf)
+sbin/nginx -s stop	# 立即终止所有 Nginx 进程（包括主进程和工作进程）。
+sbin/nginx -s quit 	# 通知 Nginx 优雅地关闭服务
+sbin/nginx -s reopen 	# 通知 Nginx 重新打开其日志文件。
 ```
 
 > 默认目录
