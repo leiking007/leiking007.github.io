@@ -32,30 +32,37 @@
     --color-tl-error-content: var(--color-error-content);
 }
 
-/* 针对WebKit浏览器的全局样式 */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    @apply bg-tl-base-content/20;
-}
-
-::-webkit-scrollbar-thumb {
-    @apply bg-tl-base-content/50;
-}
-
-/*::-webkit-scrollbar-thumb:hover {*/
-/*    background-color: var(--color-base-content);*/
-/*}*/
-
-/* x-cloak是alpinejs的指令，用于隐藏元素*/
-[x-cloak] {
-    display: none !important;
-}
-
+/* 全局基础样式 */
 @layer base{
+    html{
+        scrollbar-gutter: stable;
+    }
+    /* 图标 */
+    .svg-inline {
+        vertical-align: -0.125em;   /* 负值往下，正值往上 */
+        @apply inline-block text-base mx-1
+    }
+    /* 针对WebKit浏览器的全局样式 */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-tl-base-content/20;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-tl-base-content/50;
+    }
+
+    /*::-webkit-scrollbar-thumb:hover {*/
+    /*    background-color: var(--color-base-content);*/
+    /*}*/
+}
+
+/* 组件复用样式 */
+@layer components {
     .toc::before {
         @apply absolute left-0 top-9 bottom-0 h-auto bg-tl-base-content inline-block -z-10;
         content: " ";
@@ -93,10 +100,14 @@
             }
         }
     }
-    /* 图标 */
-    .svg-inline {
-        vertical-align: -0.125em;   /* 负值往下，正值往上 */
-        @apply inline-block text-base mx-1
+}
+
+
+/* 扩展的工具类 */
+@layer utilities {
+    /* x-cloak是alpinejs的指令，用于隐藏元素*/
+    [x-cloak] {
+        display: none !important;
     }
 }
 

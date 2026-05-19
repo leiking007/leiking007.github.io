@@ -21,7 +21,7 @@
         {{- $displayName := $category_key -}}
         {{ range $term, $taxonomy := index site.Taxonomies $displayName }}
             <a href="{{ $taxonomy.Page.RelPermalink }}" class="group">
-                <article class="relative overflow-hidden bg-gradient-to-br from-tl-base-200 to-tl-base-100 rounded-xl transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1 p-6 text-center">
+                <article class="relative overflow-hidden bg-linear-to-br from-tl-base-200 to-tl-base-100 rounded-xl transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1 p-6 text-center">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-12 h-12 rounded-2xl bg-tl-primary/10 flex items-center justify-center group-hover:bg-tl-primary/20 transition-colors duration-300">
                             <span class="text-xl font-bold text-tl-primary">{{ slicestr $taxonomy.Page.Title 0 1 }}</span>

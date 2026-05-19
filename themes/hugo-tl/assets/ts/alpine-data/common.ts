@@ -48,7 +48,7 @@ const imageLightbox = () => ({
         return this.imgEle ? this.imgEle.getAttribute("alt") : '图片加载失败'
     },
     closeLightbox() {
-        this.isOpen = false;
+        this.isOpen = false
         this.imgEle = null
         document.body.style.overflow = ''; // 恢复背景滚动
     },

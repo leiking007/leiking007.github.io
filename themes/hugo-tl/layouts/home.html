@@ -1,8 +1,7 @@
 {{ define "main" }}
 <section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
   <main>
-    {{/* Hero 区域：添加粒子背景 */}}
-    <div class="relative p-6 rounded-2xl overflow-hidden bg-gradient-to-br from-tl-base-200 via-tl-base-100 to-tl-primary/5">
+    <div class="relative p-6 rounded-2xl overflow-hidden bg-linear-to-br from-tl-base-200 via-tl-base-100 to-tl-primary/5">
       <div class="relative z-10 grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
         <div class="flex flex-col justify-center col-span-1 text-center md:text-start">
           <div class="flex items-center justify-center mb-4 md:justify-normal">
@@ -12,7 +11,7 @@
             </h4>
           </div>
           {{ with .Site.Params.subtitle }}
-          <h1 class="mb-8 text-4xl font-extrabold leading-tight md:text-6xl bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">{{- . -}}</h1>
+          <h1 class="mb-8 text-4xl font-extrabold leading-tight md:text-6xl bg-linear-to-br from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">{{- . -}}</h1>
           {{ end }}
           {{ with .Site.Params.describe }}
           <p class="mb-6 text-tl-base-content/80 font-normal leading-7 md:w-3/4 text-lg">{{- . -}}</p>
