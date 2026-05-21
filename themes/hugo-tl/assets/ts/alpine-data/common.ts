@@ -49,7 +49,10 @@ const imageLightbox = () => ({
     },
     closeLightbox() {
         this.isOpen = false
-        this.imgEle = null
+        // 延迟500ms清理图片
+        setTimeout(()=>{
+          this.imgEle = null
+        },500)
         document.body.style.overflow = ''; // 恢复背景滚动
     },
     isZoomed() {
