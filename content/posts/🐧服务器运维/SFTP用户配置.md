@@ -32,7 +32,7 @@ SFTP（SSH File Transfer Protocol，安全文件传输协议）是一种基于 S
 2. 新建用户并设置密码
 
    ```bash
-   # 新建用户，-M不设家目录
+   # 新建用户，-M不设家目录，-s /usr/sbin/nologin 禁止登录
    useradd -M -G sftpgroup -s /usr/sbin/nologin BK102
    
    # 设置密码
@@ -88,4 +88,16 @@ SFTP（SSH File Transfer Protocol，安全文件传输协议）是一种基于 S
   	# 将用户锁定在其家目录中（可以直接指定目录）
   	ChrootDirectory /srv/sftpDir
   ```
+
+配置完成后重启ssh：
+
+```bash
+systemctl restart sshd
+```
+
+## 测试
+
+```bash
+sftp username@ip:port
+```
 
