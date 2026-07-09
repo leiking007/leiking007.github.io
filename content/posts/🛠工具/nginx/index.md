@@ -484,7 +484,9 @@ server {
 }
 ```
 
-## 配置示例
+## 示例
+
+### 配置示例
 
 ```nginx
 server {
@@ -643,3 +645,166 @@ server {
 }
 ```
 
+### 反向代理配置示例
+
+```nginx
+# ========================================
+# 第一部分：全局块 (Main Block)
+# ========================================
+
+# 1. 配置运行 Nginx 服务器的用户（组）
+# user  nobody;
+
+# 2. 允许生成的 worker process 数
+# 优化建议：设置为 auto，自动根据 CPU 核心数生成进程，充分利用多核性能
+worker_processes auto;
+
+# 3. 全局错误日志路径与级别
+# error_log  logs/error.log;
+# error_log  logs/error.log  notice;
+# error_log  logs/error.log  info;
+
+# 4. 进程 PID 存放路径
+# pid        logs/nginx.pid;
+# 5. 单个 worker 进程可打开的最大文件描述符数（高并发必配）
+# 优化建议：需配合系统级 ulimit -n 设置，防止高并发下报 "too many open files"
+worker_rlimit_nofile 65535;
+
+
+# ========================================
+# 第二部分: events 块
+# ========================================
+events {
+    # 1. 单个 worker process 支持的最大连接数
+    # 优化建议：根据内存和系统文件句柄限制适当调大（如 10240 或 65535）
+    worker_connections 10240;
+
+    # 2. 使用高效的事件驱动模型
+    # 优化建议：Linux 系统下开启 epoll，大幅提升高并发处理能力
+    # use epoll;
+
+    # 3. 允许一个 worker 进程同时接受多个新连接
+    multi_accept on;
+}
+
+
+# ========================================
+# 第三部分: http 块
+# ========================================
+http {
+    # 1. 文件引入与 MIME-TYPE 定义
+    include mime.types;
+    default_type application/octet-stream;
+
+    # 2. 自定义日志格式
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+    '$status $body_bytes_sent "$http_referer" '
+    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    # access_log  logs/access.log  main;
+
+    # ========================================
+    # 性能优化核心配置
+    # ========================================
+    # 3. 开启高效文件传输模式（零拷贝）
+    sendfile on;
+    # 配合 sendfile 使用，防止网络阻塞，减少报文段数量
+    tcp_nopush on;
+    # 禁用 Nagle 算法，适用于实时性要求高的场景（与 tcp_nopush 互斥，视业务而定）
+    # tcp_nodelay   on;
+
+    # 4. 长连接超时时间（单位：秒）
+    # 优化建议：减少频繁 TCP 三次握手的开销
+    keepalive_timeout 65;
+    # 单个长连接上允许的最大请求数
+    keepalive_requests 1000;
+
+    # 5. 开启 Gzip 压缩
+    # 优化建议：显著减少纯文本资源（HTML/CSS/JS）的传输体积，节省带宽
+    gzip on;
+    gzip_min_length 1k; # 小于 1k 的资源压缩收益不大，不压缩
+    gzip_comp_level 6; # 压缩级别 1-9，6 是性能与压缩率的较好平衡
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
+
+    # 6. 隐藏 Nginx 版本号（安全加固）
+    server_tokens off;
+
+    # 7. 限制客户端请求体大小（防止恶意大文件上传攻击）
+    client_max_body_size 10M;
+
+
+    # ========================================
+    # Server 块（虚拟主机配置）
+    # ========================================
+    server {
+        listen 80;
+        server_name 127.0.0.1;
+
+        # 当前虚拟主机访问日志
+        access_log logs/host.access.log main;
+
+        # 基础安全响应头（可选，增强防点击劫持等安全性）
+        # add_header X-Frame-Options "SAMEORIGIN";
+        # add_header X-Content-Type-Options "nosniff";
+
+        # location 指令说明, 该指令用于匹配 URL， 语法如下：
+        # nginx有两层指令来匹配请求 URI 。第一个层次是 server 指令，它通过域名、ip 和端口来做第一层级匹配，当找到匹配的 server 后就进入此 server 的 location 匹配。
+        # location [ = | ~ | ~* | ^~] uri {
+        #       ..............
+        # }
+        # =：用于不含正则表达式的 uri 前，要求请求字符串与 uri 严格匹配， 如果匹配成功，就停止继续向下搜索并立即处理该请求。
+        # ~：用于表示 uri 包含正则表达式，并且区分大小写。
+        # ~*：用于表示 uri 包含正则表达式，并且不区分大小写。
+        # ^~：用于不含正则表达式的 uri 前，要求 Nginx 服务器找到标识 uri 和请求
+        # 字符串匹配度最高的 location 后，立即使用此 location 处理请求，而不再使用 location块中的正则 uri 和请求字符串做匹配。
+        # 注意：如果 uri 包含正则表达式，则必须要有 ~ 或者 ~* 标识
+        # 如果proxy_pass末尾有斜杠/，proxy_pass不拼接location的路径
+        # 如果proxy_pass末尾无斜杠/，proxy_pass会拼接location的路径
+        # 反向代理配置
+        location /cgsp_back/ {
+            # proxy_pass 说明：
+            # 末尾有斜杠 /，proxy_pass 不拼接 location 的路径
+            # 末尾无斜杠 /，proxy_pass 会拼接 location 的路径
+            proxy_pass http://127.0.0.1:8080;
+
+            # 重写 Cookie 路径（解决后端 Set-Cookie 路径不匹配问题）
+            proxy_cookie_path ~^[^/](.*)$ /cgsp_back;
+
+            # 传递真实客户端信息给后端服务器
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            # 代理超时设置（防止后端响应过慢导致 Nginx 长时间等待）
+            proxy_connect_timeout 3s;
+            proxy_read_timeout 10s;
+
+            # 单独记录反向代理的访问日志
+            access_log logs/access-cgsp_back.log main;
+        }
+    }
+
+
+    # ========================================
+    # HTTPS 配置模板（按需启用）
+    # ========================================
+    # server {
+    #    listen       443 ssl http2; # 开启 HTTP/2 可进一步提升加载速度
+    #    server_name  localhost;
+    #
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+    #
+    #    # SSL 会话缓存优化（减少 TLS 握手开销）
+    #    ssl_session_cache    shared:SSL:10m;
+    #    ssl_session_timeout  10m;
+    #
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers  on;
+    #
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    # }
+}
