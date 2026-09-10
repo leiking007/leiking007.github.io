@@ -34,7 +34,7 @@ cd nginx-1.20.1/
 # ubuntu: apt-get install libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev make
 # rocky9: dnf install -y gcc make pcre-devel zlib-devel openssl-devel
 
-./configure --prefix=/usr/local/nginx --with-http_ssl_module
+./configure --prefix=/u01/nginx --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_gzip_static_module --with-http_stub_status_module --with-pcre-jit --with-threads
 
 # 编译，建议加上 -j$(nproc) 利用多核加速，编译后的nginx文件在objs里
 make -j$(nproc) 
