@@ -10,7 +10,7 @@
     {{ $currentFontSize := (add $smallestFontSize (mul (sub $largestFontSize $smallestFontSize) $weight)) }}
     {{ $opacity := (add 0.6 (mul 0.4 $weight)) }}
     <a href='{{ .Page.RelPermalink }}'
-       class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5"
+       class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5"
        style="font-size: {{$currentFontSize}}{{$fontUnit}};">
         <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200">{{- $taxonomyname -}}</span>
         <span class="text-xs px-1.5 py-0.5 rounded-full bg-tl-primary/10 text-tl-primary font-medium">{{- .Len -}}</span>

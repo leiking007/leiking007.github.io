@@ -932,53 +932,6 @@ dockerfile是面向开发的，以后发布项目，做镜像，需要编写dock
 ## 常用应用启动命令
 
 ```bash
-#rabbitMQ启动，指定容器名，rabbitMQ用户名，rabbitMQ密码，rabbitMQmanagement插件，映射端口
-docker run -d --hostname rabbit \ 
-	-p5672:5672 -p15672:15672 --name rabbit \
-    -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=123456 \
-    rabbitmq:3-management
-    
-#redis
-docker run -d --name redis -p 6379:6379 redis --requirepass "123456"
-
-#mysql
-# lower_case_table_names=0: 表名和列名是大小写敏感的。这意味着在创建表和查询数据时，需要严格区分大小写。
-# lower_case_table_names=1: 表名和列名是大小写不敏感的。MySQL 会自动将大写字母转换为小写字母。这种方式可以避免因大小写问题导致的错误，但可能会影响到一些依赖于大小写的业务逻辑
-# lower_case_table_names=2: 表名和列名是大小写敏感的，但 MySQL 会自动将大写字母转换为小写字母存储。这种方式可以保证在查询时大小写不敏感，同时保留了大小写信息
-docker run -d \
-	--name mysql -p3306:3306 \
-	-e MYSQL_ROOT_PASSWORD=123456 mysql:8.0 \
-	--character-set-server=utf8mb4 \
-	--collation-server=utf8mb4_unicode_ci \
-	--lower_case_table_names=1
-
-#postgresql
-docker run -d \
-	--name postgres \
-	-p5432:5432 \
-	-e POSTGRES_PASSWORD=123456 \
-	-e PGDATA=/var/lib/postgresql/data/pgdata \
-	-v $PWD/postgres:/var/lib/postgresql/data \
-	postgres
-	
-#nginx
-#将配置文件拷贝出来
-docker run -d --name nginx nginx
-mkdir conf
-docker cp nginx:/etc/nginx/nginx.conf $PWD/conf
-docker cp nginx:/etc/nginx/conf.d $PWD/conf
-docker container stop nginx
-docker container rm nginx
-#重新创建容器并挂载目录
-mkdir html
-docker run -d -p 80:80 -p 443:443  \
-		 --name nginxweb \
-		 -v $PWD/html:/usr/share/nginx/html \
-		 -v $PWD/conf/nginx.conf:/etc/nginx/nginx.conf \
-		 -v $PWD/conf/conf.d:/etc/nginx/conf.d \
-		 -v $PWD/logs:/var/log/nginx \
-		 nginx
-		 
 #halo博客搭建
 mkdir $PWD/.halo && cd ./.halo
 wget https://dl.halo.run/config/application-template.yaml -O ./application.yaml
@@ -997,5 +950,69 @@ docker run -dit \
   --hostname qinglong \
   --restart unless-stopped \
   whyour/qinglong:latest
+  
+
+```
+
+### 数据库
+
+```bash
+# Oracle XE 启动，服务名为: XEPDB1 用户名: system 密码为: 123456
+docker run -d \
+--name oracle-xe-21 \
+-p 1521:1521 \
+-v /docker/oraclexe21/oradata:/opt/oracle/oradata \
+-e ORACLE_PASSWORD=123456 \
+-e ORACLE_CHARACTERSET=AL32UTF8 \
+docker.io/gvenzl/oracle-xe:21-slim
+
+
+#postgresql
+docker run -d \
+	--name postgres \
+	-p5432:5432 \
+	-e POSTGRES_PASSWORD=123456 \
+	-e PGDATA=/var/lib/postgresql/data/pgdata \
+	-v /docker/postgres:/var/lib/postgresql/data \
+	postgres
+	
+# 达梦  sysdba/Dm123456.
+podman run -d \
+--name dm8_single \
+-p 5236:5236 \
+-e SYSDBA_PWD=Dm123456. \
+-v /docker/dmdata:/opt/dmdbms/data \
+swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/emhui/dm8_single:dm8_20230808_rev197096_x86_rh6_64
+```
+
+### 中间件
+
+```bash
+#redis
+docker run -d --name redis -p 6379:6379 redis --requirepass "123456"
+
+#rabbitMQ启动，指定容器名，rabbitMQ用户名，rabbitMQ密码，rabbitMQmanagement插件，映射端口
+docker run -d --hostname rabbit \ 
+	-p5672:5672 -p15672:15672 --name rabbit \
+    -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=123456 \
+    rabbitmq:3-management
+    
+#nginx
+#将配置文件拷贝出来
+docker run -d --name nginx nginx
+mkdir conf
+docker cp nginx:/etc/nginx/nginx.conf $PWD/conf
+docker cp nginx:/etc/nginx/conf.d $PWD/conf
+docker container stop nginx
+docker container rm nginx
+#重新创建容器并挂载目录
+mkdir html
+docker run -d -p 80:80 -p 443:443  \
+		 --name nginxweb \
+		 -v $PWD/html:/usr/share/nginx/html \
+		 -v $PWD/conf/nginx.conf:/etc/nginx/nginx.conf \
+		 -v $PWD/conf/conf.d:/etc/nginx/conf.d \
+		 -v $PWD/logs:/var/log/nginx \
+		 nginx
 ```
 

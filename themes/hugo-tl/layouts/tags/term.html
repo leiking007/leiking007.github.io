@@ -23,7 +23,7 @@
             {{ $weight := div (sub (math.Log $count) (math.Log 1)) (sub (math.Log (add (len (index $.Site.Taxonomies.tags.ByCount 0).Pages) 1)) (math.Log 1)) }}
             {{ $currentFontSize := (add 1.0 (mul 1.0 $weight)) }}
             <a href='{{ $taxonomy.Page.RelPermalink }}'
-               class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}border-tl-primary/60 shadow-md shadow-tl-primary/10{{ end }}"
+               class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}border-tl-primary/60 shadow-md shadow-tl-primary/10{{ end }}"
                style="font-size: {{$currentFontSize}}rem;">
                 <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}text-tl-primary font-medium{{ end }}">{{- $taxonomyname -}}</span>
                 <span class="text-xs px-1.5 py-0.5 rounded-full bg-tl-primary/10 text-tl-primary font-medium">{{- $taxonomy.Count -}}</span>

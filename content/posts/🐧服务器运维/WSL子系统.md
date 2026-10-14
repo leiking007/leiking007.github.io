@@ -48,6 +48,17 @@ wsl --shutdown <DistributionName>  # 关闭特定的 WSL 发行版
 # 2. Add-AppxPackage .\Ubuntu.appx
 ```
 
+使用 `wsl --import` 导入 tar 镜像后，永久默认登录用户是 root！
+
+在 WSL 内部编辑 `/etc/wsl.conf`
+
+```
+[user]
+default=tanglei
+```
+
+
+
 ## 配置
 
 ### 域名

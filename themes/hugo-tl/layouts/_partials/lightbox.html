@@ -5,12 +5,11 @@
         @mouseleave="stopDrag($event)"
         @mousemove="performDrag($event)" @touchmove="performDrag($event)"
 >
-
     <!-- 灯箱模态框 -->
     <div
             x-show="isOpen"
             x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-tl-base-100/75 p-4"
+            class="fixed inset-0 z-200 flex items-center justify-center bg-tl-base-100/75 p-4"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"

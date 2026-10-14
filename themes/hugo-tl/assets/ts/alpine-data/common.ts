@@ -89,9 +89,14 @@ const imageLightbox = () => ({
 
     closeLightbox() {
         this.isOpen = false;
-        this.imgEle = null;
-        this.resetView();
         document.body.style.overflow = ''; // 恢复背景滚动
+        // 延迟清理图片：关闭动画期间保持图片可见，避免闪烁；若期间重新打开则跳过
+        setTimeout(() => {
+            if (!this.isOpen) {
+                this.imgEle = null;
+                this.resetView();
+            }
+        }, 300);
     },
 
     // 点击遮罩关闭（拖拽结束后松开不触发关闭）

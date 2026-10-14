@@ -20,7 +20,7 @@
     {{/* 统计卡片 */}}
     {{- $yearCount := len ($paginator.Pages.GroupByDate "2006") }}
     <div class="flex flex-wrap justify-center gap-4 mb-12">
-        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
             <div class="w-10 h-10 rounded-lg bg-tl-primary/10 flex items-center justify-center">
                 {{ partial "icons/icon" (dict "path" "post/bi" "className" "w-5 h-5 text-tl-primary" ) }}
             </div>
@@ -29,7 +29,7 @@
                 <div class="text-xs text-tl-base-content/50 mt-1">文章总数</div>
             </div>
         </div>
-        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
             <div class="w-10 h-10 rounded-lg bg-tl-secondary/10 flex items-center justify-center">
                 {{ partial "icons/icon" (dict "path" "post/time" "className" "w-5 h-5 text-tl-secondary" ) }}
             </div>
@@ -39,7 +39,7 @@
             </div>
         </div>
         {{ if $paginator.Pages }}
-        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
             <div class="w-10 h-10 rounded-lg bg-tl-accent/10 flex items-center justify-center">
                 {{ partial "icons/icon" (dict "path" "post/time" "className" "w-5 h-5 text-tl-accent" ) }}
             </div>
@@ -74,7 +74,7 @@
             {{/* 文章列表 */}}
             <div class="space-y-3">
                 {{- range .Pages }}
-                <a href="{{ .RelPermalink }}" class="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-br from-tl-base-200/50 to-tl-base-100/50 border border-tl-base-300/30 hover:border-tl-primary/30 hover:shadow-md hover:shadow-tl-primary/5 transition-all duration-300">
+                <a href="{{ .RelPermalink }}" class="group flex items-start gap-4 p-4 rounded-xl bg-linear-to-br from-tl-base-200/50 to-tl-base-100/50 border border-tl-base-300/30 hover:border-tl-primary/30 hover:shadow-md hover:shadow-tl-primary/5 transition-all duration-300">
                     {{/* 日期 */}}
                     <div class="flex-shrink-0 text-center min-w-[3.5rem]">
                         <div class="text-lg font-bold text-tl-base-content/70 group-hover:text-tl-primary transition-colors">
