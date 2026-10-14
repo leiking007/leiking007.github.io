@@ -100,3 +100,94 @@
     }
 }
 
+/* ================= 阅读体验优化（纯 CSS） ================= */
+
+/* 中文字体栈：更清晰易读的正文渲染 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC",
+        "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* 选中文字高亮 */
+::selection {
+    background: color-mix(in oklch, var(--color-primary) 22%, transparent);
+}
+
+/* 正文排版：字号、行高、段落间距 */
+.prose {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: color-mix(in oklch, var(--color-base-content) 92%, transparent);
+}
+.prose p {
+    margin-top: 1.1em;
+    margin-bottom: 1.1em;
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    line-height: 1.35;
+    letter-spacing: .01em;
+}
+
+/* 正文链接：去掉默认下划线，改用柔和的下边框 */
+.prose a {
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-primary) 35%, transparent);
+    transition: color .2s ease, border-color .2s ease;
+}
+.prose a:hover {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* 行内代码 */
+.prose code:not(pre code) {
+    background: color-mix(in oklch, var(--color-base-300) 70%, transparent);
+    color: color-mix(in oklch, var(--color-base-content) 90%, transparent);
+    padding: .15em .4em;
+    border-radius: .375rem;
+    font-size: .9em;
+}
+.prose code::before,
+.prose code::after {
+    content: none;
+}
+
+/* 正文图片：统一圆角 + 边框 + 轻阴影 */
+.prose img {
+    border-radius: .625rem;
+    border: 1px solid color-mix(in oklch, var(--color-base-300) 80%, transparent);
+    box-shadow: 0 1px 3px color-mix(in oklch, var(--color-base-content) 8%, transparent);
+}
+
+/* 引用块：更克制的样式 */
+.prose blockquote {
+    border-left-width: 4px;
+    font-style: normal;
+    color: color-mix(in oklch, var(--color-base-content) 72%, transparent);
+    background: color-mix(in oklch, var(--color-base-200) 60%, transparent);
+    border-radius: 0 .5rem .5rem 0;
+    padding: .25rem 1rem;
+}
+
+/* 正文阅读宽度：限制行宽，提升长文易读性 */
+.post-body {
+    max-width: 46rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 文章页顶部阅读进度条 */
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    z-index: 60;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    transition: width .1s linear;
+    pointer-events: none;
+}
+

@@ -1,9 +1,9 @@
 <div
         x-data="imageLightbox"
         @keydown.escape.window="closeLightbox()"
-        @mouseup="stopDrag()" @touchend="stopDrag()"
+        @mouseup="stopDrag($event)" @touchend="stopDrag($event)"
+        @mouseleave="stopDrag($event)"
         @mousemove="performDrag($event)" @touchmove="performDrag($event)"
-        class="container mx-auto"
 >
 
     <!-- 灯箱模态框 -->
@@ -12,62 +12,84 @@
             x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-tl-base-100/75 p-4"
             x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start=""
-            x-transition:enter-end=""
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
             x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start=""
-            x-transition:leave-end=""
-            @click="closeLightbox()"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="onOverlayClick()"
     >
         <div
-                class="bg-tl-base-100 rounded-lg shadow-2xl p-4 max-w-[90vw] max-h-[90vh] relative flex flex-col"
+                class="bg-tl-base-100 rounded-lg shadow-2xl p-4 max-w-[90vw] max-h-[90vh] relative flex flex-col select-none"
                 @click.stop
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
         >
             <!-- 关闭按钮 -->
             <button @click="closeLightbox()"
-                    class="absolute -top-3 -right-3 text-tl-error-content  bg-tl-error/80 hover:bg-tl-error rounded-full w-8 h-8 flex items-center justify-center z-10 transition-colors">
+                    class="absolute -top-3 -right-3 text-tl-error-content  bg-tl-error/80 hover:bg-tl-error rounded-full w-8 h-8 flex items-center justify-center z-10 transition-colors hover:scale-110">
                 ×
             </button>
 
             <!-- 图片容器 (重要：添加 x-ref) -->
             <div
                     x-ref="imageContainer"
-                    class="flex-grow flex items-center justify-center overflow-hidden mb-2 relative group"
+                    class="flex-grow flex items-center justify-center overflow-hidden mb-2 relative group min-h-0"
             >
+                <!-- 加载动画 -->
+                <div x-show="isLoading"
+                     class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-10 h-10 rounded-full border-4 border-tl-base-300 border-t-tl-primary animate-spin"></div>
+                </div>
+
                 <img
                         :src="currentImageSrc"
                         :alt="currentImageAlt"
-                        class="lightbox-image max-w-full max-h-[calc(90vh-120px)] object-contain rounded"
-                        :class="{ 'dragging': isDragging }"
+                        class="lightbox-image max-w-full max-h-[calc(90vh-120px)] object-contain rounded select-none"
                         :style="{
                             transform: `translateX(${currentImageX}px) translateY(${currentImageY}px) scale(${zoomLevel})`,
                             transformOrigin: transformOrigin,
+                            opacity: isLoading ? 0 : 1,
+                            transition: imgTransition,
+                            willChange: isDragging ? 'transform' : 'auto',
                             cursor: cursorStyle()
                         }"
                         @wheel.prevent="handleWheel($event)"
-                        @mousedown="initDrag($event)" @touchstart.passive="initDrag($event)"
-                        @load="updateBaseDimensions()"
+                        @mousedown="initDrag($event)" @touchstart="initDrag($event)"
+                        @dblclick="resetView()"
+                        @load="onImageLoad()"
                         x-ref="lightboxImage"
-                        x-transition:enter="transition ease-out duration-150"
-                        x-transition:enter-start="transform scale-95"
-                        x-transition:enter-end="transform scale-100"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="transform scale-100"
-                        x-transition:leave-end="transform scale-95"
+                        draggable="false"
                 >
                 <div x-show="!isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
-                    使用滚轮缩放
+                    滚轮缩放 · 双击复位
                 </div>
                 <div x-show="isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
-                    按住拖动
+                    按住拖动 · 双击复位
                 </div>
             </div>
 
-            <!-- 图片描述和导航 -->
-            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-                <p class="text-sm" x-text="currentImageAlt"></p>
+            <!-- 图片描述和缩放控制 -->
+            <div class="flex items-center justify-between pt-2 border-t border-gray-200 gap-3">
+                <p class="text-sm truncate" x-text="currentImageAlt"></p>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button @click="zoomBy(-1)"
+                            class="w-7 h-7 rounded hover:bg-tl-base-200 flex items-center justify-center text-sm transition-colors"
+                            :class="{ 'opacity-40 pointer-events-none': zoomLevel <= minZoom }">−</button>
+                    <span class="text-xs w-11 text-center tabular-nums" x-text="Math.round(zoomLevel * 100) + '%'"></span>
+                    <button @click="zoomBy(1)"
+                            class="w-7 h-7 rounded hover:bg-tl-base-200 flex items-center justify-center text-sm transition-colors"
+                            :class="{ 'opacity-40 pointer-events-none': zoomLevel >= maxZoom }">+</button>
+                    <button @click="resetView()"
+                            class="w-7 h-7 rounded hover:bg-tl-base-200 flex items-center justify-center text-xs transition-colors"
+                            title="复位">⟲</button>
+                </div>
             </div>
         </div>
     </div>

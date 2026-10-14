@@ -1,4 +1,9 @@
 {{ define "main" }}
+{{/*  阅读进度条  */}}
+<div x-data="readingProgress"
+     class="reading-progress"
+     :style="'width:' + progress + '%'"
+     aria-hidden="true"></div>
 {{/*  默认启用菜单  */}}
 {{/*  配置参数，设置为true 或 未设置 ，结果为true   */}}
 {{- $TOCManuallyEnable := eq (eq $.Site.Params.toc false) false -}}
@@ -11,7 +16,7 @@
 {{- $tocEnable := (and (and $hasTOC $pageTocEnable) $TOCManuallyEnable)  -}}
 <section class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6" data-pagefind-body>
     <div class="z-0 min-w-0">
-        <div class="prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
+            <div class="post-body prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
             <div class="my-3">
                 <h1 class="mb-1" id="title">{{ .Title }}
                     {{ if .Params.tags }}

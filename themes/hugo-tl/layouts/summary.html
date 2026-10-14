@@ -24,6 +24,10 @@
                     {{ partial "icons/icon" (dict "path" "post/date" "className" "w-3.5 h-3.5" ) }}
                     {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                 </span>
+                <span class="flex items-center gap-1">
+                    {{ partial "icons/icon" (dict "path" "post/time" "className" "w-3.5 h-3.5" ) }}
+                    {{- T "article.reading_time" .ReadingTime -}}
+                </span>
                 {{ if .Params.author }}
                 <span class="flex items-center gap-1">
                     {{ partial "icons/icon" (dict "path" "common/about" "className" "w-3.5 h-3.5" ) }}
