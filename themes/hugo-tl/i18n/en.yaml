@@ -1,33 +1,79 @@
 article:
-  table_of_contents: 目录
-  last_updated_on: 最后更新于
-  word_count: 约 {{ . }} 字
-  reading_time: 阅读时长{{ . }} 分钟
-  previous_article: 上一篇
-  next_article: 下一篇
+  table_of_contents: Table of Contents
+  last_updated_on: Last updated on
+  word_count: "{{ . }} words"
+  reading_time: "{{ . }} min read"
+  previous_article: Previous
+  next_article: Next
+  heading_anchor: Link to this heading
 
 notFound:
-  title: 404 错误
-  subtitle: 页面不存在
+  title: 404 Error
+  subtitle: Page not found
+  back_home: Back to Home
+  start_game: Play a Game
+
+home:
+  latest_posts: Latest Posts
+  view_all: View All
+
+list:
+  total_posts: "{{ . }} posts in total"
+  stat_total: Total Posts
+  stat_year_span: Year Span
+  stat_latest: Latest Post
+
+taxonomy:
+  total_terms: "{{ . }} categories"
+
+term:
+  total_posts: "{{ . }} posts in total"
+  posts_under: "posts under"
+  posts_count: "{{ . }} posts"
+  posts_label: Posts
+
+tags:
+  total_tags: "{{ . }} tags"
 
 widget:
+  posts:
+    title: Archives
   archives:
-    title: 归档
-    counter_archives: 共计 {{.}} 篇文章
+    title: Archives
+    counter_archives: "{{ . }} posts in total"
   tags:
-    title: 标签
+    title: Tags
   categories:
-    title: 分类
+    title: Categories
+  tools:
+    title: Tools
   search:
-    title: 搜索
+    title: Search
   about:
-    title: 关于
+    title: About
 
 search:
-  title: 搜索
-  placeholder: 输入关键词搜索...
-  resultTitle: "#PAGES_COUNT 个结果 （用时 #TIME_SECONDS 秒）"
+  title: Search
+  placeholder: Type to search...
+  resultTitle: "#PAGES_COUNT results (in #TIME_SECONDS seconds)"
+
+code:
+  copied: Copied
 
 footer:
   builtWith: Built with {{ .Generator }}
-  designedBy: 主题 {{ .Theme }} 由 {{ .DesignedBy }} 设计
+  designedBy: Theme {{ .Theme }} designed by {{ .DesignedBy }}
+
+pagination:
+  info: "Page {{ .page }} of {{ .total }}"
+  prev: Previous
+  next: Next
+
+ui:
+  close: Close
+  back_to_top: Back to Top
+  scroll_to_zoom: Scroll to zoom
+  drag_to_pan: Drag to pan
+
+theme:
+  title: Theme

@@ -15,6 +15,8 @@
 <div
   x-show="open"
   x-cloak
+  x-trap.inert="open"
+  @keydown.escape.window="open = false"
   x-transition.duration.300ms
   tabindex="-1"
   role="dialog"
@@ -30,12 +32,12 @@
   <!-- Modal content -->
   <div
     class="relative p-4 w-full {{ index $maxWidth $size }} max-h-[90vh] flex flex-col"
-    @click.away="open = false"
+    @click.outside="open = false"
   >
     <div class="bg-tl-base-100 rounded-lg shadow-xl flex flex-col overflow-hidden">
       <!-- Header -->
       <header class="flex items-center justify-between p-4 border-b border-tl-base-300">
-        <h3 id="modal-title-{{ .id }}" class="text-lg font-semibold text-tl-base-800">
+        <h3 id="modal-title-{{ .id }}" class="text-lg font-semibold text-tl-base-content">
             {{ with .title }}
                 {{- . | safeHTML -}}
             {{ end }}
@@ -43,7 +45,7 @@
         <button
           type="button"
           @click="open = false"
-          class="p-1 rounded-full text-tl-base-500 hover:bg-tl-base-200 transition"
+          class="p-1 rounded-full text-tl-base-content/60 hover:bg-tl-base-200 hover:text-tl-base-content transition"
           aria-label="{{ T `ui.close` | default `Close` }}"
         >
           <svg

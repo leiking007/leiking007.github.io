@@ -10,34 +10,37 @@
             </div>
         </div>
 
-        {{ if .Summary }}
+        {{/* 摘要转纯文本：<!--more--> 前的富文本（标题/图片等块级元素）会截断 line-clamp 容器导致卡片变形 */}}
+        {{- $summary := "" -}}
+        {{- with .Summary -}}{{- $summary = trim (plainify . | htmlUnescape) "\n\r\t " | replaceRE `\s+` " " | truncate 150 -}}{{- end -}}
+        {{ if $summary }}
         <a href="{{ .RelPermalink }}" class="block group flex-1">
             <p class="text-sm leading-relaxed mb-4 line-clamp-3 text-tl-base-content/70 group-hover:text-tl-base-content/90 transition-colors duration-200">
-                {{ .Summary }}
+                {{ $summary }}
             </p>
         </a>
         {{ end }}
 
         <div class="flex flex-col gap-3 mt-auto pt-3 border-t border-tl-base-300/30">
             <div class="flex flex-wrap items-center gap-2 text-xs text-tl-base-content/60">
-                <span class="flex items-center gap-1">
+                <a href="{{ .RelPermalink }}" class="flex items-center gap-1 hover:text-tl-primary transition-colors">
                     {{ partial "icons/icon" (dict "path" "post/date" "className" "w-3.5 h-3.5" ) }}
                     {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
-                </span>
-                {{ if .Params.author }}
+                </a>
+                {{ with .Params.author }}
                 <span class="flex items-center gap-1">
                     {{ partial "icons/icon" (dict "path" "common/about" "className" "w-3.5 h-3.5" ) }}
-                    {{ .Params.author }}
+                    {{ . }}
                 </span>
                 {{ end }}
             </div>
 
-            {{ if .Params.tags }}
+            {{ with .GetTerms "tags" }}
             <div class="flex flex-wrap items-center gap-1.5">
-                {{ range first 3 .Params.tags }}
-                <span class="bg-tl-base-300/40 hover:bg-tl-base-300/70 px-2 py-0.5 rounded-md text-xs transition-colors duration-200 text-tl-base-content/70">
-                    {{ . }}
-                </span>
+                {{ range first 3 . }}
+                <a href="{{ .RelPermalink }}" class="bg-tl-base-300/40 hover:bg-tl-base-300/70 hover:text-tl-primary px-2 py-0.5 rounded-md text-xs transition-colors duration-200 text-tl-base-content/70">
+                    {{ .LinkTitle }}
+                </a>
                 {{ end }}
             </div>
             {{ end }}

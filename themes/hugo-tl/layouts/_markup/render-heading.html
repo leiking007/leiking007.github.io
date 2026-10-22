@@ -1,1 +1,1 @@
-<h{{ .Level }} id="{{ .Anchor | safeURL }}">{{ .Text | safeHTML }} <a href="#{{ .Anchor | safeURL }}" >¶</a></h{{ .Level }}>
+<h{{ .Level }} id="{{ .Anchor | safeURL }}" class="group">{{ .Text | safeHTML }} <a href="#{{ .Anchor | safeURL }}" class="heading-anchor" aria-label="{{ T `article.heading_anchor` | default `标题链接` }}">¶</a></h{{ .Level }}>

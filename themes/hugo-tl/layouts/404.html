@@ -1,25 +1,61 @@
-{{ define "head" }}
-<script type="text/javascript" src='{{ relURL "lib/catchcat/phaser.min.js" }}'></script>
-<script type="text/javascript" src='{{ relURL "lib/catchcat/catch-the-cat.js" }}'></script>
-{{ end }}
-
 {{ define "main" }}
 <div class="col-span-12">
-    <main>
-        <div id="catch-the-cat" class="w-min mx-auto"></div>
+    <main class="max-w-2xl mx-auto text-center py-12 px-4">
+        <h1 class="text-6xl font-extrabold text-tl-primary">{{ T "notFound.title" | default "404" }}</h1>
+        <p class="mt-4 text-lg text-tl-base-content/60">{{ T "notFound.subtitle" | default "页面不存在" }}</p>
+        <div class="mt-8 flex items-center justify-center gap-4">
+            <a href="{{ .Site.Home.RelPermalink }}"
+               class="px-5 py-2.5 rounded-lg bg-tl-primary text-tl-primary-content hover:opacity-90 transition-opacity">
+                {{ T "notFound.back_home" | default "返回首页" }}
+            </a>
+            <button id="start-game" type="button"
+                    class="px-5 py-2.5 rounded-lg border border-tl-base-300 hover:border-tl-primary hover:text-tl-primary transition-colors disabled:opacity-50 disabled:pointer-events-none">
+                {{ T "notFound.start_game" | default "来玩个小游戏" }}
+            </button>
+        </div>
+        <div id="catch-the-cat" class="hidden w-min mx-auto mt-10"></div>
     </main>
 </div>
 {{ end }}
 {{ define "script" }}
 <script>
-    window.game = new CatchTheCatGame({
-        w: 12,
-        h: 12,
-        r: 20,
-        backgroundColor: 0xffffff,
-        parent: 'catch-the-cat',
-        statusBarAlign: 'center',
-        credit: 'github.com/ganlvtech'
-    });
+    (function () {
+        var btn = document.getElementById('start-game');
+        if (!btn) return;
+        // 点击后才开始加载游戏资源（phaser 体积较大，避免拖慢首屏）
+        btn.addEventListener('click', function () {
+            var container = document.getElementById('catch-the-cat');
+            if (!container) return;
+            container.classList.remove('hidden');
+            btn.disabled = true;
+            // 读取当前主题背景色并归一化为 #rrggbb，使游戏画布跟随主题
+            var bg = '#ffffff';
+            try {
+                var probe = document.createElement('canvas').getContext('2d');
+                probe.fillStyle = '#ffffff';
+                probe.fillStyle = getComputedStyle(document.body).backgroundColor || '#ffffff';
+                bg = probe.fillStyle;
+            } catch (e) {}
+            var loadScript = function (src, onload) {
+                var s = document.createElement('script');
+                s.src = src;
+                s.onload = onload;
+                document.body.appendChild(s);
+            };
+            loadScript('{{ relURL "lib/catchcat/phaser.min.js" }}', function () {
+                loadScript('{{ relURL "lib/catchcat/catch-the-cat.js" }}', function () {
+                    window.game = new CatchTheCatGame({
+                        w: 12,
+                        h: 12,
+                        r: 20,
+                        backgroundColor: bg,
+                        parent: 'catch-the-cat',
+                        statusBarAlign: 'center',
+                        credit: 'github.com/ganlvtech'
+                    });
+                });
+            });
+        }, { once: true });
+    })();
 </script>
 {{ end }}

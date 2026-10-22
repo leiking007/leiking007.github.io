@@ -15,7 +15,10 @@ module:
       target: i18n
     - source: archetypes
       target: archetypes
-#   ------------ js assets ------------
-    - source: node_modules
-      target: assets
-#   ------------ static ------------
+#   ------------ js 依赖：仅挂载运行时用到的包（js.Build 将导入映射到 assets 根下的同名目录） ------------
+    - source: node_modules/alpinejs
+      target: assets/alpinejs
+    - source: node_modules/@alpinejs
+      target: assets/@alpinejs
+    - source: node_modules/crypto-js
+      target: assets/crypto-js

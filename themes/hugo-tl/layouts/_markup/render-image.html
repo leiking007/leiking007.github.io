@@ -1,9 +1,21 @@
 <!--<img style="margin: 0 auto;max-height: 24rem;max-width: calc( 100% - 20px)" loading="lazy" src="{{.Page.RelPermalink}}{{ .Destination | safeURL }}" alt="{{ .Text }}" {{ with .Title}} title="{{ . }}" {{ end }} />-->
-{{ $imgUrl := printf "%s%s" .Page.RelPermalink .Destination }}
+{{/* 相对路径拼接页面路径；以 / 开头的站内绝对路径与外链(http/https)原样使用 */}}
+{{- $imgUrl := .Destination -}}
+{{- $isRelative := and (not (strings.HasPrefix $imgUrl "/")) (not (urls.Parse $imgUrl).IsAbs) -}}
+{{- if $isRelative -}}
+{{- $imgUrl = printf "%s%s" .Page.RelPermalink $imgUrl -}}
+{{- end -}}
+{{/* 页面资源图片输出实际宽高，避免加载时布局偏移(CLS) */}}
+{{- $res := "" -}}
+{{- if and $isRelative (not (strings.Contains .Destination "?")) -}}
+{{- $res = .Page.Resources.GetMatch (strings.TrimPrefix "./" .Destination) -}}
+{{- end -}}
 <!--<a href="{{ $imgUrl | urls.RelLangURL }}"-->
 <!--   target="_blank">-->
 <!--   -->
 <!--</a>-->
 <img class="my-0 mx-auto max-h-72 max-w-[calc(100%-20px)]"
      loading="lazy"
+     decoding="async"
+     {{- with $res }} width="{{ .Width }}" height="{{ .Height }}"{{ end }}
      src="{{ $imgUrl | urls.RelLangURL }}" alt="{{ .Text }}" {{ with .Title}} title="{{ . }}" {{ end }}/>

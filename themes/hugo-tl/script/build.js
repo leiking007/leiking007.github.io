@@ -40,8 +40,8 @@ function runCommand(dir, cmd, desc) {
 const buildCssCmd = 'npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -m';
 runCommand(resolve(root, 'themes/hugo-tl'), buildCssCmd, 'Tailwind CSS 编译');
 
-// 2. 执行 build:hugo（Hugo 构建静态站点）
-const buildHugoCmd = 'hugo --minify';
+// 2. 执行 build:hugo（Hugo 构建静态站点；cleanDestinationDir 清理 public 中的陈旧产物）
+const buildHugoCmd = 'hugo --minify --cleanDestinationDir';
 runCommand(root, buildHugoCmd, 'Hugo 构建静态站点');
 
 // 3. 执行 build:pagefind（PageFind 生成搜索索引）

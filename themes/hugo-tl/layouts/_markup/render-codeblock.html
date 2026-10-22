@@ -1,10 +1,10 @@
 {{/*  {{ transform.Highlight .Inner .Type "style=monokai, lineNos=false" }}  */}}
 {{/*  不加配置，默认使用yaml中配置  */}}
-<div x-data="postCodeBlock" class="font-mono text-base not-prose my-2">
+<div x-data="postCodeBlock('{{ T `code.copied` | default `copied` }}')" class="font-mono text-base not-prose my-2">
     <div class="py-2 flex justify-between items-center bg-tl-base-300">
         <span class="cursor-default ml-2">{{ .Type }}</span>
         <span class="flex">
-            <span x-on:click="copyCode" class="cursor-copy mr-2 inline-block">
+            <span x-on:click="copyCode" x-ref="copyBtn" class="cursor-copy mr-2 inline-block">
                 {{ partial "icons/icon" (dict "path" "post/copy" ) }}
             </span>
             <span x-on:click="showCode = !showCode" class="cursor-pointer mr-2 inline-block">

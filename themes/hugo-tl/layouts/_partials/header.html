@@ -4,7 +4,7 @@
             <div class="hidden lg:block mr-2 h-full">
                 <a href="{{.Site.Home.RelPermalink}}" class="flex items-center space-x-3">
                     {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
-                    <span class="self-center text-2xl font-semibold whitespace-nowrap ">Note</span>
+                    <span class="self-center text-2xl font-semibold whitespace-nowrap ">{{ .Site.Title }}</span>
                 </a>
             </div>
             <!--    大屏菜单        -->
@@ -15,7 +15,7 @@
                 {{ $active := eq (.URL | relLangURL) ($currentPage.RelPermalink | relLangURL) }}
                 {{- if .Params.sub -}}
                 <!-- 下拉菜单配置 -->
-                <li x-data="{ open: false }" x-on:mouseover="open = true" x-on:mouseout="open = false"
+                <li x-data="{ open: false }" x-on:mouseenter="open = true" x-on:mouseleave="open = false"
                     class="relative cursor-pointer text-sm font-medium">
                     <button x-on:click="open =!open"
                             class="flex items-center justify-between py-2 px-3 rounded-sm border-0 p-0 w-auto">
@@ -60,7 +60,7 @@
             </ul>
             <!--     移动端菜单       -->
             <div class="lg:hidden" x-data="{open:false}">
-                <button x-on:click="open = true" data-modal-toggle="default-modal" class="block">
+                <button x-on:click="open = true" class="block">
                     {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
                 </button>
                 {{ define "_partials/header/mobile_title.html" }}
@@ -114,11 +114,33 @@
                 ) }}
             </div>
         </div>
-        <div x-data="{open:false}" class="flex items-center">
-            <!--搜索按钮-->
-            <div x-on:click="open = true">
-                {{ partial "icons/icon" (dict "path" "common/search" "className" "text-2xl hover:text-tl-primary" ) }}
+        <div x-data="searchLauncher('{{ "search/" | relURL }}')" class="flex items-center">
+            <!--主题切换-->
+            <div x-data="themeSwitcher" x-init="init" class="relative flex items-center mr-3">
+                <button type="button" @click="open = !open" :aria-expanded="open"
+                        class="flex items-center justify-center w-8 h-8 rounded-full hover:text-tl-primary transition-colors"
+                        aria-label="{{ T `theme.title` | default `主题` }}">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364l-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0l-1.06-1.06M6.696 6.696l-1.06-1.06M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+                <div x-show="open" x-cloak x-transition.duration.200ms @click.outside="open = false"
+                     class="absolute right-0 top-10 z-50 w-36 p-1.5 rounded-lg shadow-lg bg-tl-base-100 border border-tl-base-300/50">
+                    <template x-for="t in themes" :key="t.id">
+                        <button type="button" @click="apply(t.id); open = false"
+                                class="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm hover:bg-tl-base-200 transition-colors"
+                                :class="{ 'text-tl-primary font-medium': current === t.id }">
+                            <span class="w-4 h-4 rounded-full border border-tl-base-300" :style="`background: ${t.color}`"></span>
+                            <span x-text="t.label"></span>
+                        </button>
+                    </template>
+                </div>
             </div>
+            <!--搜索按钮：点击时才懒加载 pagefind 资源-->
+            <button type="button" x-on:click="openSearch()" class="flex items-center"
+                    aria-label="{{ T `widget.search.title` | default `搜索` }}">
+                {{ partial "icons/icon" (dict "path" "common/search" "className" "text-2xl hover:text-tl-primary" ) }}
+            </button>
             {{ partial "modal.html" (dict
                 "id"     "searchModal"
                 "title"  "全站搜索"

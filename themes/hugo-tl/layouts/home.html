@@ -18,7 +18,7 @@
           {{ end }}
         </div>
         <div class="items-center justify-end hidden col-span-1 md:flex">
-          <img class="w-4/5 rounded-xl shadow-2xl shadow-tl-primary/10 transition-transform duration-500 hover:scale-105" src='{{ relURL "images/background-2.jpg" }}' alt="header image">
+          <img class="w-4/5 rounded-xl shadow-2xl shadow-tl-primary/10 transition-transform duration-500 hover:scale-105" src='{{ .Site.Params.heroImage | default (relURL "images/background-2.jpg") }}' alt="{{ .Site.Title }}">
         </div>
       </div>
     </div>
@@ -27,24 +27,18 @@
       {{.Content}}
     </div>
 
-    {{/*  获取常规页面  */}}
-    {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
-    {{/*  获取所有页面，并且 hidden != true  */}}
-    {{ $notHidden := where .Site.RegularPages "Params.hidden" "!=" true }}
-    {{/*  两数组公共部分  */}}
-    {{ $filtered := ($pages | intersect $notHidden) }}
-    {{/*  获取最新5篇文章  */}}
-    {{ $latest5 := first 5 $filtered.ByDate.Reverse }}
+    {{/*  最新文章：主栏目内未被隐藏的页面，按时间倒序取 5 篇  */}}
+    {{ $latest5 := first 5 (where (where .Site.RegularPages "Type" "in" .Site.MainSections) "Params.hidden" "!=" true).ByDate.Reverse }}
 
     {{/*  最新文章区块  */}}
     <div class="mt-12 mb-8">
       <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-3">
           <div class="w-1.5 h-8 bg-tl-primary rounded-full"></div>
-          <h2 class="text-2xl font-bold text-tl-base-content">最新文章</h2>
+          <h2 class="text-2xl font-bold text-tl-base-content">{{ T "home.latest_posts" | default "最新文章" }}</h2>
         </div>
         <a href='{{ relURL "/posts/" }}' class="group flex items-center gap-1 text-sm font-medium text-tl-primary hover:text-tl-primary/80 transition-colors">
-          查看全部
+          {{ T "home.view_all" | default "查看全部" }}
           <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>

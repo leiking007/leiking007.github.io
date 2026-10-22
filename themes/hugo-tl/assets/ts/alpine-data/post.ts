@@ -9,7 +9,6 @@ const tocHighlight = () => ({
         }
     },
     destroy() {
-        console.log('tocHighlight destroy');
     },
     createTocObserver() {
         const headings = document.querySelectorAll("article h1[id], article h2[id], article h3[id], article h4[id], article h5[id], article h6[id]")
@@ -44,38 +43,38 @@ const tocHighlight = () => ({
 
 /**
  * 代码块
+ * @param copiedText 复制成功提示文案（由模板注入 i18n 文案）
  */
-const postCodeBlock = () => ({
+const postCodeBlock = (copiedText: string = 'copied') => ({
     showCode: true,  // 是否显示代码块
+    copyInnerHTML: '',
+    copiedText,
     /** 复制代码 */
-    copyCode() {
-        const codeBlock = this.$refs.codeBlock
-        const copyBtn = this.$el
-        if (!this.copyInnerHTML) {
-            this.copyInnerHTML = copyBtn.innerHTML;
-        }
-        let codeEle = codeBlock.firstElementChild?.firstElementChild?.firstElementChild
-        if (codeEle instanceof HTMLElement) {
-            let text = ''
-            for (let child of codeEle.children) {
-                text += child.lastElementChild.textContent
-            }
-            try {
-                Promise.all([navigator.clipboard.writeText(text)])
-                    .then(() => {
-                        if (copyBtn instanceof HTMLElement) {
+    async copyCode() {
+        const codeBlock = this.$refs.codeBlock as HTMLElement | undefined
+        const copyBtn = this.$refs.copyBtn as HTMLElement | undefined
+        if (!codeBlock || !copyBtn) return
 
-                            copyBtn.innerHTML = "copied"
-                            setTimeout(() => {
-                                copyBtn.innerHTML = this.copyInnerHTML
-                            }, 1000)
-                        }
-                    })
-            } catch (e) {
+        // 提取代码文本：克隆后移除行号节点，兼容行号/非行号两种 chroma 输出
+        const codeEle = codeBlock.querySelector('code')
+        if (!codeEle) return
+        const clone = codeEle.cloneNode(true) as HTMLElement
+        clone.querySelectorAll('.ln, .lnt').forEach((el) => el.remove())
+        const text = (clone.textContent ?? '').replace(/\n+$/, '')
+
+        try {
+            await navigator.clipboard.writeText(text)
+            if (!this.copyInnerHTML) {
+                this.copyInnerHTML = copyBtn.innerHTML
             }
+            copyBtn.innerHTML = this.copiedText
+            setTimeout(() => {
+                copyBtn.innerHTML = this.copyInnerHTML
+            }, 1000)
+        } catch {
+            // 剪贴板不可用（非安全上下文等），静默失败
         }
     },
-
 })
 
 

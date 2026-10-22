@@ -4,6 +4,8 @@ theme: hugo-tl
 defaultContentLanguage: zh-cn  # 没有语言标识的内容将默认为该语言
 languageCode: zh-cn
 hasCJKLanguage: true  # 如果为 true，则自动检测中文/日语/韩语语言的内容。这会使 .Summary 和 .WordCount 对于 CJK 语言表现正确。
+timeZone: Asia/Shanghai  # 显式指定时区，避免 CI 与本地解析时间不一致
+enableGitInfo: true  # Lastmod 取自 git 提交时间；否则 CI 上会退化为 checkout 时间，导致"最后更新于"全部失真
 
 copyright: copyright@
 
@@ -12,7 +14,7 @@ enableEmoji: true
 pagination:
   pagerSize: 18
 
-summaryLength: 0  # 摘要长度
+summaryLength: 70  # 摘要长度（0 会导致 .Summary 恒为空）
 
 uglyURLs: false  # 默认 false;启用时，创建的 URL 格式是 /filename.html 而不是 /filename/
 

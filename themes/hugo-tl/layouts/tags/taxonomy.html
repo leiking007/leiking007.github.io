@@ -7,11 +7,11 @@
                 {{ partial "icons/icon" (dict "path" "common/tags" "className" "text-2xl text-tl-primary" ) }}
             </div>
         </div>
-        <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
-            标签
+        <h1 class="text-4xl font-bold mb-3 bg-linear-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+            {{ T "widget.tags.title" | default "标签" }}
         </h1>
         <p class="text-tl-base-content/60 text-lg">
-            共 {{ len .Site.Taxonomies.tags }} 个标签
+            {{ T "tags.total_tags" (len .Site.Taxonomies.tags) | default (printf "共 %d 个标签" (len .Site.Taxonomies.tags)) }}
         </p>
     </div>
 

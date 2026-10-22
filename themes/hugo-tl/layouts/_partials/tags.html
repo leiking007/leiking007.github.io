@@ -6,13 +6,18 @@
 <div class="flex justify-center items-center flex-wrap gap-3">
     {{ range $taxonomyname, $taxonomy := .Site.Taxonomies.tags }}
     {{ $count := len $taxonomy.Pages }}
-    {{ $weight := div (sub (math.Log $count) (math.Log $min)) (sub (math.Log $max) (math.Log $min)) }}
+    {{/* 所有标签文章数相同（$max == $min）时分母为 0，权重取 0 避免 NaN 字号 */}}
+    {{ $weight := 0.0 }}
+    {{ if ne $max $min }}
+    {{ $weight = div (sub (math.Log $count) (math.Log $min)) (sub (math.Log $max) (math.Log $min)) }}
+    {{ end }}
     {{ $currentFontSize := (add $smallestFontSize (mul (sub $largestFontSize $smallestFontSize) $weight)) }}
-    {{ $opacity := (add 0.6 (mul 0.4 $weight)) }}
+    {{/* 当前页对应的标签高亮（term 页复用此 partial 时生效） */}}
+    {{ $isCurrent := eq $taxonomy.Page.RelPermalink $.RelPermalink }}
     <a href='{{ .Page.RelPermalink }}'
-       class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5"
+       class="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/40 hover:border-tl-primary/50 hover:shadow-md hover:shadow-tl-primary/10 transition-all duration-300 hover:-translate-y-0.5 {{ if $isCurrent }}border-tl-primary/60 shadow-md shadow-tl-primary/10{{ end }}"
        style="font-size: {{$currentFontSize}}{{$fontUnit}};">
-        <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200">{{- $taxonomyname -}}</span>
+        <span class="text-tl-base-content/80 group-hover:text-tl-primary transition-colors duration-200 {{ if $isCurrent }}text-tl-primary font-medium{{ end }}">{{- $taxonomyname -}}</span>
         <span class="text-xs px-1.5 py-0.5 rounded-full bg-tl-primary/10 text-tl-primary font-medium">{{- .Len -}}</span>
     </a>
     {{ end }}

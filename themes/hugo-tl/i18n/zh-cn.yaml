@@ -5,12 +5,39 @@ article:
   reading_time: 阅读时长{{ . }} 分钟
   previous_article: 上一篇
   next_article: 下一篇
+  heading_anchor: 标题链接
 
 notFound:
   title: 404 错误
   subtitle: 页面不存在
+  back_home: 返回首页
+  start_game: 来玩个小游戏
+
+home:
+  latest_posts: 最新文章
+  view_all: 查看全部
+
+list:
+  total_posts: 共 {{ . }} 篇文章
+  stat_total: 文章总数
+  stat_year_span: 年份跨度
+  stat_latest: 最新文章
+
+taxonomy:
+  total_terms: 共 {{ . }} 个分类
+
+term:
+  total_posts: 共 {{ . }} 篇文章
+  posts_under: 下的文章
+  posts_count: "{{ . }} 篇"
+  posts_label: 文章
+
+tags:
+  total_tags: 共 {{ . }} 个标签
 
 widget:
+  posts:
+    title: 归档
   archives:
     title: 归档
     counter_archives: 共计 {{.}} 篇文章
@@ -18,6 +45,8 @@ widget:
     title: 标签
   categories:
     title: 分类
+  tools:
+    title: 常用工具
   search:
     title: 搜索
   about:
@@ -28,6 +57,23 @@ search:
   placeholder: 输入关键词搜索...
   resultTitle: "#PAGES_COUNT 个结果 （用时 #TIME_SECONDS 秒）"
 
+code:
+  copied: 已复制
+
 footer:
   builtWith: Built with {{ .Generator }}
   designedBy: 主题 {{ .Theme }} 由 {{ .DesignedBy }} 设计
+
+pagination:
+  info: "第 {{ .page }} 页，共 {{ .total }} 页"
+  prev: 上一页
+  next: 下一页
+
+ui:
+  close: 关闭
+  back_to_top: 返回顶部
+  scroll_to_zoom: 使用滚轮缩放
+  drag_to_pan: 按住拖动
+
+theme:
+  title: 主题

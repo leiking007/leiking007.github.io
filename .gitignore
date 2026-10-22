@@ -2,7 +2,6 @@
 .idea
 .env.build
 .hugo_build.lock
-.package-lock.json
 resources/
 .git
 /public/**
@@ -10,4 +9,6 @@ node_modules/
 themes/hugo-tl/assets/css/style.css
 yarn.lock
 .yarn
-package-lock.json
+
+# 敏感文件
+*.kdbx

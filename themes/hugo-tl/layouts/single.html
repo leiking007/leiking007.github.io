@@ -1,15 +1,14 @@
 {{ define "main" }}
-{{/*  默认启用菜单  */}}
-{{/*  配置参数，设置为true 或 未设置 ，结果为true   */}}
-{{- $TOCManuallyEnable := eq (eq $.Site.Params.toc false) false -}}
+{{/*  站点配置的toc：设置为false 时关闭，未设置或 true 时开启  */}}
+{{- $TOCManuallyEnable := ne $.Site.Params.toc false -}}
 
-{{/*  文章配置的toc，设置为true 或 未设置 ，结果为true  */}}
-{{- $pageTocEnable := eq (eq .Params.toc false) false -}}
+{{/*  文章配置的toc：设置为false 时关闭，未设置或 true 时开启  */}}
+{{- $pageTocEnable := ne .Params.toc false -}}
 
-{{/*  判断目录长度 长度大于50 结果为true  */}}
+{{/*  TableOfContents 为空时仅输出约 35 字符的空 nav，用 100 作为"存在实际目录"的阈值  */}}
 {{- $hasTOC := ge (len .TableOfContents) 100 -}}
-{{- $tocEnable := (and (and $hasTOC $pageTocEnable) $TOCManuallyEnable)  -}}
-<section class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6" data-pagefind-body>
+{{- $tocEnable := and $hasTOC $pageTocEnable $TOCManuallyEnable -}}
+<section class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6">
     <div class="z-0 min-w-0">
         <div class="prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
             <div class="my-3">
@@ -22,8 +21,14 @@
                     {{ end }}
                     {{ end }}
                 </h1>
-                <section class="d-flex">
+                <section class="flex flex-wrap">
+                    {{ with .Params.author }}
+                    <span class="mx-2">{{ partial "icons/icon" (dict "path" "common/about" ) }}{{ . }}</span>
+                    {{ end }}
                     <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/date" ) }}{{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
+                    {{ if not (.Lastmod.Equal .Date) }}
+                    <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/date" ) }}{{ T "article.last_updated_on" }} {{ .Lastmod.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
+                    {{ end }}
                     <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/bi" ) }}{{- T "article.word_count" .WordCount -}}</span>
                     <span class="mx-2">{{ partial "icons/icon" (dict "path" "post/time" ) }}{{- T "article.reading_time" .ReadingTime -}}</span>
                 </section>
@@ -32,7 +37,7 @@
                 {{  if $tocEnable }}
                 <div x-data="{ open: false }" class="md:hidden sticky top-4 z-10 bg-tl-base-100">
                     <div x-on:click="open = !open" x-transition.duration.500ms class="m-0 p-1 text-2xl cursor-pointer">{{- T "article.table_of_contents" | default "tableOfContents" -}}</div>
-                    <div x-show="open" x-transition @click.away="open = false" class="prose prose-a:no-underline prose-li:list-none prose-ul:my-1 prose-li:my-0 max-h-[70vh] overflow-y-auto">
+                    <div x-show="open" x-transition @click.outside="open = false" class="prose prose-a:no-underline prose-li:list-none prose-ul:my-1 prose-li:my-0 max-h-[70vh] overflow-y-auto">
                         {{ .TableOfContents }}
                     </div>
                 </div>
@@ -45,20 +50,20 @@
                 <div class="flex justify-between py-6 my-4">
                     {{ with .PrevInSection }}
                     <div><span class="cursor-default mr-1">{{- T "article.previous_article" | default "上一篇" -}}: </span><a
-                            href="{{.RelPermalink}}"><i class="bi bi-chevron-double-left"></i> {{.Title}}</a></div>
+                            href="{{.RelPermalink}}"><svg class="inline-block w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg> {{.Title}}</a></div>
                     {{ end }}
                     {{ with .NextInSection }}
                     <div><span class="cursor-default mr-1">{{- T "article.next_article" | default "下一篇" -}}:</span> <a
-                            href="{{.RelPermalink}}"> {{.Title}}<i class="bi bi-chevron-double-right"></i></a></div>
+                            href="{{.RelPermalink}}"> {{.Title}}<svg class="inline-block w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg></a></div>
                     {{ end }}
                 </div>
             </aside>
         </div>
     </div>
-    <div class="z-0 hidden w-96 flex-col gap-6 md:flex">
-        <div class="sticky top-20 z-[5] w-full cursor-pointer rounded-xl p-3 shadow duration-500 hover:shadow-md ">
+    <div class="z-0 hidden w-full flex-col gap-6 md:flex">
+        <div class="sticky top-20 z-[5] w-full cursor-pointer rounded-xl p-3 shadow duration-500 hover:shadow-md">
             {{  if $tocEnable }}
-            <div class="max-w-full h-auto sticky top-20">
+            <div class="max-w-full h-auto">
                 <h4 class="text-2xl">{{- T "article.table_of_contents" | default "tableOfContents" -}}</h4>
                 <div class="toc" x-data="tocHighlight">
                     {{ .TableOfContents }}

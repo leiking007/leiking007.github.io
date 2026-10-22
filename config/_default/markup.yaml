@@ -12,11 +12,11 @@ goldmark:
 highlight:
   anchorLineNos: false
   codeFences: true
-  guessSyntax: true
+  guessSyntax: false  # 关闭语言猜测，避免无语言标注代码块被错误高亮
   lineNoStart: 1
   lineNos: true
   lineNumbersInTable: false
-  noClasses: true
+  noClasses: false  # 使用 class 模式，与主题内置的 chroma 主题样式（render hook 中 noClasses=false）保持一致
   noHl: false
   style: friendly
   # style: native

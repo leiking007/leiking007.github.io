@@ -1,6 +1,8 @@
 <div
         x-data="imageLightbox"
         @keydown.escape.window="closeLightbox()"
+        @keydown.left.window="prevImage()"
+        @keydown.right.window="nextImage()"
         @mouseup="stopDrag()" @touchend="stopDrag()"
         @mousemove="performDrag($event)" @touchmove="performDrag($event)"
         class="container mx-auto"
@@ -56,17 +58,31 @@
                 >
                 <div x-show="!isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
-                    使用滚轮缩放
+                    {{ T "ui.scroll_to_zoom" | default "使用滚轮缩放" }}
                 </div>
                 <div x-show="isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
-                    按住拖动
+                    {{ T "ui.drag_to_pan" | default "按住拖动" }}
                 </div>
+
+                <!-- 多图导航 -->
+                <button x-show="hasMultiple" x-cloak @click.stop="prevImage()"
+                        class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-tl-base-100/80 hover:bg-tl-base-200 text-tl-base-content shadow transition-colors"
+                        aria-label="prev">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button x-show="hasMultiple" x-cloak @click.stop="nextImage()"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-tl-base-100/80 hover:bg-tl-base-200 text-tl-base-content shadow transition-colors"
+                        aria-label="next">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
             </div>
 
             <!-- 图片描述和导航 -->
-            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+            <div class="flex items-center justify-between pt-2 border-t border-tl-base-300">
                 <p class="text-sm" x-text="currentImageAlt"></p>
+                <span x-show="hasMultiple" x-cloak class="text-xs text-tl-base-content/50"
+                      x-text="(currentIndex + 1) + ' / ' + images.length"></span>
             </div>
         </div>
     </div>

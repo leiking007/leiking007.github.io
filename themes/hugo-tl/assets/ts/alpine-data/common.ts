@@ -1,11 +1,13 @@
 import * as CryptoJS from 'crypto-js';
 
+declare const PagefindUI: any;
+
 const backToTop = () => ({
     visible: false,
     init() {
-        window.onscroll = () => {
+        window.addEventListener('scroll', () => {
             this.visible = window.scrollY > 200;
-        };
+        }, {passive: true});
     },
     scrollToTop() {
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -15,6 +17,7 @@ const backToTop = () => ({
 const imageLightbox = () => ({
     isOpen: false,
     imgEle: null,
+    images: [],
     // Zoom state
     zoomLevel: 1,
     minZoom: 0.5,
@@ -33,13 +36,40 @@ const imageLightbox = () => ({
     baseImageWidth: 0,
     baseImageHeight: 0,
     init() {
-        for (let img of document.getElementsByTagName("img")) {
+        // 收集文章内图片（排除灯箱自身元素），支持多图切换
+        this.images = Array.from(document.getElementsByTagName("img")).filter(
+            (img) => !img.closest('[x-data~="imageLightbox"]')
+        );
+        for (let img of this.images) {
             img.addEventListener("click", () => {
-                this.imgEle = img
-                this.isOpen = true
-                document.body.style.overflow = 'hidden'; // 禁止背景滚动
+                this.openWith(img)
             })
         }
+    },
+    openWith(img) {
+        this.imgEle = img
+        this.isOpen = true
+        document.body.style.overflow = 'hidden'; // 禁止背景滚动
+    },
+    get currentIndex() {
+        return this.imgEle ? this.images.indexOf(this.imgEle) : -1
+    },
+    get hasMultiple() {
+        return this.images.length > 1
+    },
+    switchTo(img) {
+        this.resetZoom()
+        this.currentImageX = 0
+        this.currentImageY = 0
+        this.imgEle = img
+    },
+    prevImage() {
+        if (!this.isOpen || !this.hasMultiple) return
+        this.switchTo(this.images[(this.currentIndex - 1 + this.images.length) % this.images.length])
+    },
+    nextImage() {
+        if (!this.isOpen || !this.hasMultiple) return
+        this.switchTo(this.images[(this.currentIndex + 1) % this.images.length])
     },
     get currentImageSrc() {
         return this.imgEle ? this.imgEle.getAttribute("src") : ''
@@ -49,6 +79,9 @@ const imageLightbox = () => ({
     },
     closeLightbox() {
         this.isOpen = false
+        this.resetZoom()
+        this.currentImageX = 0
+        this.currentImageY = 0
         // 延迟500ms清理图片
         setTimeout(()=>{
           this.imgEle = null
@@ -191,18 +224,14 @@ const imageLightbox = () => ({
 
 
 const flowerPasswordGenerator = () => ({
-    memoryPassword: 'tl123456',  // 记忆密码, 默认为 'tl123456'
+    memoryPassword: '',  // 记忆密码
     distinguishCode: '',
     init() {
-        this.$watch('distinguishCode', (newValue: string) => {
-            const passwd = this.generatePassword()
-            if (passwd) {
-                this.distinguishCode = newValue
-                this.$refs.passwdRef.innerText = passwd
-            } else {
-                this.$refs.passwdRef.innerText = ''
-            }
-        })
+        const update = () => {
+            this.$refs.passwdRef.innerText = this.generatePassword()
+        }
+        this.$watch('memoryPassword', update)
+        this.$watch('distinguishCode', update)
     },
     generatePassword() {
         // 在此处编写生成密码的逻辑
@@ -235,4 +264,66 @@ const flowerPasswordGenerator = () => ({
     }
 })
 
-export {backToTop, imageLightbox, flowerPasswordGenerator}
+const themeSwitcher = () => ({
+    open: false,
+    current: 'theme-light',
+    themes: [
+        {id: 'theme-light', label: 'Light', color: 'oklch(45% 0.24 277.023)'},
+        {id: 'theme-dark', label: 'Dark', color: 'oklch(58% 0.233 277.117)'},
+        {id: 'theme-cupcake', label: 'Cupcake', color: 'oklch(85% 0.138 181.071)'},
+        {id: 'theme-retro', label: 'Retro', color: 'oklch(80% 0.114 19.571)'},
+    ],
+    init() {
+        const saved = localStorage.getItem('tl-theme')
+        const id = this.themes.some(t => t.id === saved) ? saved : 'theme-light'
+        this.apply(id)
+    },
+    apply(id) {
+        const html = document.documentElement
+        for (let t of this.themes) {
+            html.classList.remove(t.id)
+        }
+        html.classList.add(id)
+        this.current = id
+        localStorage.setItem('tl-theme', id)
+    },
+})
+
+/**
+ * 搜索弹窗：首次打开时才加载 pagefind UI 资源，避免每个页面都拉取搜索脚本
+ * @param base pagefind 资源目录（由模板注入 relURL，兼容子路径部署）
+ */
+const searchLauncher = (base: string = '/search/') => ({
+    open: false,
+    loaded: false,
+    init() {
+        this.$watch('open', (val: boolean) => {
+            if (val) this.loadPagefind()
+        })
+    },
+    openSearch() {
+        this.open = true
+    },
+    loadPagefind() {
+        if (this.loaded) return
+        this.loaded = true
+        const css = document.createElement('link')
+        css.rel = 'stylesheet'
+        css.href = `${base}pagefind-ui.css`
+        document.head.appendChild(css)
+        const js = document.createElement('script')
+        js.src = `${base}pagefind-ui.js`
+        js.onload = () => {
+            new PagefindUI({
+                element: "#search",
+                showSubResults: false,
+                pageSize: 7,
+                showImages: false,
+                excerptLength: 15
+            })
+        }
+        document.body.appendChild(js)
+    },
+})
+
+export {backToTop, imageLightbox, flowerPasswordGenerator, themeSwitcher, searchLauncher}

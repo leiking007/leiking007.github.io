@@ -1,14 +1,14 @@
 {{/*  页码数量大于 1  */}}
 {{- if gt .Paginator.TotalPages 1 -}}
-<div class="mt-12 pt-8 border-t border-gray-100">
+<div class="mt-12 pt-8 border-t border-tl-base-300/50">
   <div class="flex items-center justify-between">
-      <div class="text-sm text-gray-600">
-          第 {{ .Paginator.PageNumber }} 页，共 {{ .Paginator.TotalPages }} 页
+      <div class="text-sm text-tl-base-content/60">
+          {{ T "pagination.info" (dict "page" .Paginator.PageNumber "total" .Paginator.TotalPages) }}
       </div>
       <div class="flex items-center justify-between px-4 py-3 sm:px-6">
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center border-t border-tl-base-300">
             {{ if $.Paginator.HasPrev }}
-            <a class="relative block items-center px-4 py-2 mr-6 border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Prev.URL -}}">上一页</a>
+            <a class="relative block items-center px-4 py-2 mr-6 border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Prev.URL -}}">{{ T "pagination.prev" }}</a>
             {{ end }}
             <nav class="isolate inline-flex -space-x-px rounded-md ">
               {{- .Scratch.Set "paginator.ellipsed" false -}}
@@ -31,7 +31,7 @@
               {{- end -}}
             </nav>
             {{ if $.Paginator.HasNext }}
-            <a class="relative block items-center ml-6 px-4 py-2  border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Next.URL -}}">下一页</a>
+            <a class="relative block items-center ml-6 px-4 py-2  border-t-2 border-transparent hover:border-tl-primary" href="{{- $.Paginator.Next.URL -}}">{{ T "pagination.next" }}</a>
             {{ end }}
         </div>
       </div>

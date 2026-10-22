@@ -9,11 +9,11 @@
                         {{ partial "icons/icon" (dict "path" "common/fenlei" "className" "text-sm text-tl-primary" ) }}
                     </div>
                     <h2 class="text-base font-bold text-tl-base-content">
-                        {{ .Page.Section | title }}
+                        {{ .Data.Singular | title }}
                     </h2>
                 </div>
                 <div class="space-y-1">
-                    {{ range $term, $taxonomy := index site.Taxonomies .Page.Section }}
+                    {{ range $term, $taxonomy := index site.Taxonomies .Data.Plural }}
                     <a href="{{ $taxonomy.Page.RelPermalink }}"
                        class="flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 {{ if eq $taxonomy.Page.RelPermalink $.RelPermalink }}bg-tl-primary/10 text-tl-primary font-medium{{ else }}text-tl-base-content/70 hover:bg-tl-base-300/30 hover:text-tl-base-content{{ end }}">
                         <span class="text-sm truncate mr-2">{{ $taxonomy.Page.Title }}</span>
@@ -35,16 +35,16 @@
                         <div>
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="text-xs font-semibold tracking-wider uppercase text-tl-primary bg-tl-primary/10 px-3 py-1 rounded-full">
-                                    {{ .Page.Section | title }}
+                                    {{ .Data.Singular | title }}
                                 </span>
                             </div>
-                            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+                            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-linear-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
                                 {{ .Title }}
                             </h1>
                             <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/60">
                                 <span class="flex items-center gap-1.5">
                                     {{ partial "icons/icon" (dict "path" "post/bi" "className" "w-4 h-4" ) }}
-                                    共 {{ len .Pages }} 篇文章
+                                    {{ T "term.total_posts" (len .Pages) | default (printf "共 %d 篇文章" (len .Pages)) }}
                                 </span>
                                 {{ if .Pages }}
                                 <span class="flex items-center gap-1.5">
@@ -58,7 +58,7 @@
                         <div class="hidden md:flex items-center gap-3">
                             <div class="text-center px-5 py-3 rounded-xl bg-tl-base-100/80 border border-tl-base-300/30">
                                 <div class="text-2xl font-bold text-tl-primary">{{ len .Pages }}</div>
-                                <div class="text-xs text-tl-base-content/50 mt-1">文章</div>
+                            <div class="text-xs text-tl-base-content/50 mt-1">{{ T "term.posts_label" | default "文章" }}</div>
                             </div>
                         </div>
                         {{ end }}
@@ -66,9 +66,9 @@
                 </div>
             </div>
 
-            {{/* 文章网格 */}}
+            {{/* 文章网格：分页大小读取站点配置 tag_paginate */}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {{ range (.Paginate .Pages 10).Pages }}
+                {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 10)).Pages }}
                     {{ .Render "summary" }}
                 {{ end }}
             </div>

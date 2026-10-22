@@ -3,7 +3,7 @@
 import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, watch } from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let root = __dirname;
@@ -11,7 +11,7 @@ while (!existsSync(resolve(root, 'config'))) {
   root = resolve(root, '..');
 }
 
-// 存储所有子进程，用于在发生错误时终止
+// 存储所有子进程，用于在退出时终止
 const childProcesses = [];
 
 /**
@@ -26,28 +26,22 @@ function runCommand(dir, cmd, desc) {
     console.log(`\n=== 开始执行：${desc} ===`);
     console.log(`命令：${cmd}`);
 
-    // 调整stdio配置，确保输出正确显示
     const child = exec(cmd, {
       cwd: dir,
-      // 分别处理stdin、stdout和stderr
       stdio: ['ignore', 'pipe', 'pipe']
     });
 
-    // 存储子进程引用
     childProcesses.push(child);
 
-    // 处理标准输出，添加前缀以便区分不同命令的输出
     child.stdout.on('data', (data) => {
       process.stdout.write(`[${desc}] ${data}`);
     });
 
-    // 处理错误输出
     child.stderr.on('data', (data) => {
       process.stderr.write(`[${desc}] ${data}`);
     });
 
     child.on('close', (code) => {
-      // 从进程列表中移除已完成的进程
       const index = childProcesses.indexOf(child);
       if (index > -1) {
         childProcesses.splice(index, 1);
@@ -77,39 +71,73 @@ function killAllChildProcesses() {
   });
 }
 
+// Pagefind 索引重建（防抖，避免 Hugo 频繁写 public 时重复构建）
+let pagefindTimer = null;
+let pagefindRunning = false;
+function schedulePagefind(delay = 5000) {
+  if (pagefindTimer) clearTimeout(pagefindTimer);
+  pagefindTimer = setTimeout(async () => {
+    if (pagefindRunning) {
+      schedulePagefind(delay);
+      return;
+    }
+    if (!existsSync(resolve(root, 'public'))) {
+      schedulePagefind(delay);
+      return;
+    }
+    pagefindRunning = true;
+    try {
+      await runCommand(root, 'npx pagefind --site ./public --output-subdir search', 'Pagefind 索引重建');
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      pagefindRunning = false;
+    }
+  }, delay);
+}
+
+// 监听 public 目录变化，自动重建搜索索引
+function watchPublic() {
+  const publicDir = resolve(root, 'public');
+  if (!existsSync(publicDir)) {
+    setTimeout(watchPublic, 3000);
+    return;
+  }
+  watch(publicDir, { recursive: true }, () => schedulePagefind());
+  schedulePagefind(1000);
+}
+
 try {
-  // 创建所有命令的Promise
   const commands = [
-    // 1. 执行 build:css（Tailwind CSS 编译）
+    // 1. Tailwind CSS 监听编译
     runCommand(
       resolve(root, 'themes/hugo-tl'),
-      'npx  @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -w',
+      'npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -w',
       'Tailwind CSS 编译'
     ),
 
-    // 2. 执行 build:hugo（Hugo 构建静态站点）
+    // 2. Hugo 开发服务器
     runCommand(
       root,
-      'hugo server --disableFastRender --gc --noHTTPCache --noBuildLock --logLevel debug --port 1313 --bind 0.0.0.0',
+      'hugo server --gc --noHTTPCache --noBuildLock --port 1313 --bind 0.0.0.0',
       'Hugo 构建静态站点'
-    ),
-
-    // 3. 执行 build:pagefind（PageFind 生成搜索索引）
-    runCommand(
-      root,
-      'npx pagefind --site ./public --output-subdir search',
-      'PageFind 生成搜索索引'
     )
   ];
 
-  // 并行执行所有命令
-  await Promise.all(commands);
+  // 3. 搜索索引：跟随 public 变化自动重建（此前只在启动时构建一次，索引会陈旧）
+  watchPublic();
 
-  // 所有命令执行完成
-  console.log('\n✅ 所有 build 命令执行完成！');
+  await Promise.all(commands);
+  console.log('\n✅ 所有 dev 命令执行完成！');
 } catch (err) {
   console.error(`\n=== 执行失败：${err.message} ===`);
-  // 终止所有剩余的子进程
   killAllChildProcesses();
-  process.exit(1); // 退出整个脚本
+  process.exit(1);
 }
+
+// Ctrl+C 退出时清理所有子进程
+process.on('SIGINT', () => {
+  console.log('\n正在退出，清理子进程...');
+  killAllChildProcesses();
+  process.exit(0);
+});

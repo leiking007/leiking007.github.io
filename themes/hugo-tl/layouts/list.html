@@ -1,6 +1,7 @@
 {{ define "main" }}
-{{- $paginator := .Paginate (where .Data.Pages.ByDate.Reverse "Type" "in" .Site.Params.mainSections) (index .Site.Params.pagination "posts_paginate" | default 20) }}
-{{- $total := len .Data.Pages }}
+{{- $pages := where .Data.Pages.ByDate.Reverse "Type" "in" .Site.MainSections }}
+{{- $paginator := .Paginate $pages (index .Site.Params.pagination "posts_paginate" | default 20) }}
+{{- $total := len $pages }}
 <section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
     {{/* 页面标题区 */}}
     <div class="mb-10 text-center">
@@ -9,16 +10,16 @@
                 {{ partial "icons/icon" (dict "path" "post/time" "className" "text-2xl text-tl-primary" ) }}
             </div>
         </div>
-        <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
-            {{ i18n "widget.archives.title" | default "归档" }}
+        <h1 class="text-4xl font-bold mb-3 bg-linear-to-r from-tl-base-content via-tl-primary to-tl-secondary bg-clip-text text-transparent">
+            {{ T "widget.archives.title" | default "归档" }}
         </h1>
         <p class="text-tl-base-content/60 text-lg">
-            共 {{ $total }} 篇文章
+            {{ T "list.total_posts" $total | default (printf "共 %d 篇文章" $total) }}
         </p>
     </div>
 
-    {{/* 统计卡片 */}}
-    {{- $yearCount := len ($paginator.Pages.GroupByDate "2006") }}
+    {{/* 统计卡片（基于全量文章而非当前分页） */}}
+    {{- $yearCount := len ($pages.GroupByDate "2006") }}
     <div class="flex flex-wrap justify-center gap-4 mb-12">
         <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
             <div class="w-10 h-10 rounded-lg bg-tl-primary/10 flex items-center justify-center">
@@ -26,7 +27,7 @@
             </div>
             <div>
                 <div class="text-2xl font-bold text-tl-base-content leading-none">{{ $total }}</div>
-                <div class="text-xs text-tl-base-content/50 mt-1">文章总数</div>
+                <div class="text-xs text-tl-base-content/50 mt-1">{{ T "list.stat_total" | default "文章总数" }}</div>
             </div>
         </div>
         <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-linear-to-br from-tl-base-200 to-tl-base-100 border border-tl-base-300/50">
@@ -35,7 +36,7 @@
             </div>
             <div>
                 <div class="text-2xl font-bold text-tl-base-content leading-none">{{ $yearCount }}</div>
-                <div class="text-xs text-tl-base-content/50 mt-1">年份跨度</div>
+                <div class="text-xs text-tl-base-content/50 mt-1">{{ T "list.stat_year_span" | default "年份跨度" }}</div>
             </div>
         </div>
         {{ if $paginator.Pages }}
@@ -45,7 +46,7 @@
             </div>
             <div>
                 <div class="text-lg font-bold text-tl-base-content leading-none">{{ (index $paginator.Pages 0).Date.Format "2006" }}</div>
-                <div class="text-xs text-tl-base-content/50 mt-1">最新文章</div>
+                <div class="text-xs text-tl-base-content/50 mt-1">{{ T "list.stat_latest" | default "最新文章" }}</div>
             </div>
         </div>
         {{ end }}
@@ -103,7 +104,7 @@
                             {{ if .Params.tags }}
                             <span class="flex items-center gap-1">
                                 {{ partial "icons/icon" (dict "path" "common/tags" "className" "w-3 h-3" ) }}
-                                {{ range first 2 .Params.tags }}{{ . }}{{ if not (eq . (index $.Params.tags 1)) }}, {{ end }}{{ end }}
+                                {{ range $i, $t := first 2 .Params.tags }}{{ if gt $i 0 }}, {{ end }}{{ $t }}{{ end }}
                             </span>
                             {{ end }}
                         </div>

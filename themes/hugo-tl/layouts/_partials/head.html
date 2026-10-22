@@ -1,26 +1,16 @@
-<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+{{/* style：由 Tailwind CLI 生成（npm run dev/build 产物），Hugo 再做指纹与完整性校验 */}}
+{{- $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" type="text/css" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
 
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<!--<link rel='stylesheet' type='text/css' href='{{ relURL "lib/front/iconfont.css" }}'>-->
+{{/* favicon（主题 static 内置，站点可通过同名文件覆盖） */}}
+<link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ "favicon-16x16.png" | relURL }}">
 
-<!-- style -->
-{{ $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint "sha256" }}
-<link rel="stylesheet" type='text/css' href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
-<!-- End -->
+{{/* SEO */}}
+{{- partial "seo.html" . -}}
 
-<!-- search pagefind -->
-<link href="/search/pagefind-ui.css" rel="stylesheet">
-<script src="/search/pagefind-ui.js"></script>
-<!-- End -->
-
-
-<!-- js -->
+{{/* js：Alpine 组件入口，defer 不阻塞首屏 */}}
 {{- $opts := dict "minify" hugo.IsProduction -}}
-{{/*  GetRemote 可以获取远程资源  */}}
-{{/*   resources.Concat 将多个资源文件内捆绑在一起   resources.Minify 允许压缩任何CSS、JS、JSON、HTML、SVG或XML资源  */}}
 {{- $mainjs := resources.Get "ts/main.ts" | js.Build $opts | resources.Fingerprint "sha256" -}}
 <script type="text/javascript" src="{{ $mainjs.RelPermalink }}" integrity="{{ $mainjs.Data.Integrity }}" crossorigin="anonymous" defer></script>
-<!-- End -->
-
-
-

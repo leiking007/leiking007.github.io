@@ -1,41 +1,42 @@
 <!DOCTYPE html>
-<html lang="zh" class="scroll-pt-20 theme-light">
+<html lang="{{ .Site.LanguageCode | default "zh" }}" class="scroll-pt-20 theme-light">
 <head>
-    <meta charset='utf-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ block "title" . }}
-        {{ .Site.Title }}
-        {{ end }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // 优先应用本地保存的主题，避免刷新闪烁
+        (function () {
+            var t = localStorage.getItem('tl-theme');
+            if (t && /^theme-[a-z-]+$/.test(t)) {
+                document.documentElement.classList.remove('theme-light');
+                document.documentElement.classList.add(t);
+            }
+        })();
+    </script>
+    <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} · {{ end }}{{ .Site.Title }}{{ end }}{{ end }}</title>
     {{- partial "head.html" . -}}
     {{- block "head" . -}}{{- end -}}
 </head>
 <body class="bg-tl-base-200 text-tl-base-content">
-<div id="app" class="min-h-screen ">
+<div id="app" class="min-h-screen">
     {{- partial "header.html" . -}}
     {{- block "main" . }}{{- end -}}
 </div>
-{{- partialCached "footer.html" . -}}
-{{- partialCached "lightbox.html" . -}}
+{{/* footer/lightbox 内容仅依赖站点级配置与 i18n，用常量 variant 跨页面共享缓存 */}}
+{{- partialCached "footer.html" . "site-footer" -}}
+{{- partialCached "lightbox.html" . "site-lightbox" -}}
 <div x-data="backToTop"
+     x-cloak
      x-show="visible"
      x-init="init"
      x-on:click="scrollToTop"
      x-transition.duration.500ms
-     class="md:fixed bottom-12 right-12 hover:text-tl-primary">
+     role="button"
+     tabindex="0"
+     aria-label="{{ T `ui.back_to_top` | default `返回顶部` }}"
+     class="fixed bottom-12 right-12 cursor-pointer hover:text-tl-primary">
     {{ partial "icons/icon" (dict "path" "common/top" "className" "text-3xl " ) }}
 </div>
 </body>
-<!--搜索-->
-<script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-        new PagefindUI({
-            element: "#search",
-            showSubResults: false,
-            pageSize: 7,
-            howImages: false,
-            excerptLength: 15
-        });
-    });
-</script>
 {{- block "script" . }}{{- end -}}
 </html>

@@ -1,6 +1,5 @@
 /* 导入主题 */
 @import "./themes/base.css";
-@import "./themes/light.css";
 @import "./themes/dark.css";
 @import "./themes/cupcake.css";
 @import "./themes/retro.css";
@@ -99,6 +98,17 @@
                 @apply text-tl-primary font-semibold
             }
         }
+    }
+
+    /* 标题锚点：悬停标题时显示 */
+    .heading-anchor {
+        @apply no-underline opacity-0 transition-opacity text-tl-base-content/40;
+    }
+    .group:hover .heading-anchor {
+        @apply opacity-100;
+    }
+    .heading-anchor:hover {
+        @apply text-tl-primary;
     }
 }
 
