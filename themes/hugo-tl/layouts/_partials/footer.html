@@ -1,8 +1,8 @@
 <div>
-    <footer class="my-3">
-        <div class="flex flex-col">
-            <div class="flex flex-col mt-4 md:mt-0 md:flex-row">
-                <div class="flex items-center justify-center flex-1 mt-4 md:mt-0 md:border-r border-tl-base-300">
+    <footer class="mt-8 border-t border-tl-base-300/50 pt-6 pb-4">
+        <div class="flex flex-col text-sm text-tl-base-content/70">
+            <div class="flex flex-col md:flex-row">
+                <div class="flex items-center justify-center flex-1 mt-4 md:mt-0 md:border-r border-tl-base-300/50">
                     {{ with .Site.Params.github }}
                     <a href="{{ . }}" target="_blank" rel="noopener">
                         <span class="sr-only">GitHub</span>
@@ -17,7 +17,7 @@
                 </div>
                 <div class="flex flex-col items-center justify-center flex-1 mt-7 md:mt-0 md:items-start md:pl-5">
                     <span class="mt-7 md:mt-1">
-                        Powered by <a class="underline" href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
+                        Powered by <a class="underline decoration-tl-base-content/30 underline-offset-4 transition-colors hover:text-tl-primary" href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
                         ·
                         {{ T "footer.designedBy" (dict "Theme" "hugo-tl" "DesignedBy" .Site.Params.author) }}
                     </span>

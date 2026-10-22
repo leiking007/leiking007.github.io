@@ -34,8 +34,8 @@
      role="button"
      tabindex="0"
      aria-label="{{ T `ui.back_to_top` | default `返回顶部` }}"
-     class="fixed bottom-12 right-12 cursor-pointer hover:text-tl-primary">
-    {{ partial "icons/icon" (dict "path" "common/top" "className" "text-3xl " ) }}
+     class="fixed bottom-12 right-12 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-tl-base-300/50 bg-tl-base-100/80 shadow-md backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-tl-primary/40 hover:text-tl-primary hover:shadow-lg">
+    {{ partial "icons/icon" (dict "path" "common/top" "className" "text-2xl" ) }}
 </div>
 </body>
 {{- block "script" . }}{{- end -}}
