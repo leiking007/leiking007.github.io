@@ -106,7 +106,7 @@
     /* Skip type checking all .d.ts files. */
     "paths": {
       "*": [
-        "themes/hugo-tl/node_modules/*",
+        "./themes/hugo-tl/node_modules/*",
       ]
     }
   }
