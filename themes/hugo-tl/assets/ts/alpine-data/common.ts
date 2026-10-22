@@ -224,7 +224,7 @@ const imageLightbox = () => ({
 
 
 const flowerPasswordGenerator = () => ({
-    memoryPassword: '',  // 记忆密码
+    memoryPassword: 'tl123456',  // 记忆密码, 默认为 'tl123456'
     distinguishCode: '',
     init() {
         const update = () => {
@@ -290,6 +290,22 @@ const themeSwitcher = () => ({
 })
 
 /**
+ * 文章页顶部阅读进度条
+ */
+const readingProgress = () => ({
+    progress: 0,
+    init() {
+        const onScroll = () => {
+            const doc = document.documentElement;
+            const total = doc.scrollHeight - doc.clientHeight;
+            this.progress = total > 0 ? Math.min(100, Math.round((doc.scrollTop / total) * 100)) : 0;
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+    },
+})
+
+/**
  * 搜索弹窗：首次打开时才加载 pagefind UI 资源，避免每个页面都拉取搜索脚本
  * @param base pagefind 资源目录（由模板注入 relURL，兼容子路径部署）
  */
@@ -326,4 +342,4 @@ const searchLauncher = (base: string = '/search/') => ({
     },
 })
 
-export {backToTop, imageLightbox, flowerPasswordGenerator, themeSwitcher, searchLauncher}
+export {backToTop, imageLightbox, readingProgress, flowerPasswordGenerator, themeSwitcher, searchLauncher}

@@ -14,8 +14,9 @@
 <!--   target="_blank">-->
 <!--   -->
 <!--</a>-->
-<img class="my-0 mx-auto max-h-72 max-w-[calc(100%-20px)]"
+<img class="my-0 mx-auto max-h-72 max-w-[calc(100%-20px)] cursor-zoom-in rounded-lg border border-tl-base-300/50 shadow-sm"
      loading="lazy"
      decoding="async"
+     data-lightbox
      {{- with $res }} width="{{ .Width }}" height="{{ .Height }}"{{ end }}
      src="{{ $imgUrl | urls.RelLangURL }}" alt="{{ .Text }}" {{ with .Title}} title="{{ . }}" {{ end }}/>
