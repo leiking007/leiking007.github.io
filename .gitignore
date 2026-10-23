@@ -7,6 +7,7 @@ resources/
 /public/**
 node_modules/
 themes/hugo-tl/assets/css/style.css
+themes/hugo-tl/package-lock.json
 yarn.lock
 .yarn
 

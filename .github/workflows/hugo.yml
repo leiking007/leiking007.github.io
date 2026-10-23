@@ -50,11 +50,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: '${{ env.NODE_DEPENDENCIES_DIR }}/package-lock.json'
 
       - name: 安装 Node.js 依赖
-        run: npm ci --prefix ${{ env.NODE_DEPENDENCIES_DIR }}
+        run: npm install --prefix ${{ env.NODE_DEPENDENCIES_DIR }}
 
       - name: 配置 Git
         run: git config core.quotepath false
