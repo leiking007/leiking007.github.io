@@ -18,21 +18,23 @@ const imageLightbox = () => ({
     isOpen: false,
     imgEle: null,
     images: [],
-    // Zoom state
+    // 缩放状态：scale 固定以图片中心为锚点，配合平移量实现"指针处缩放不漂移"
     zoomLevel: 1,
-    minZoom: 0.5,
-    maxZoom: 5, // 增加最大缩放，方便测试拖动
-    zoomStep: 0.1,
-    transformOrigin: '50% 50%',
-    // Drag state
+    minZoom: 1,
+    maxZoom: 4,
+    translateX: 0,
+    translateY: 0,
+    // 拖拽状态
     isDragging: false,
     startX: 0,
     startY: 0,
-    initialImageX: 0,
-    initialImageY: 0,
-    currentImageX: 0,
-    currentImageY: 0,
-    // Base dimensions for correct panning boundaries
+    startTX: 0,
+    startTY: 0,
+    // 双指捏合状态
+    pinchActive: false,
+    pinchStartDist: 0,
+    pinchStartScale: 1,
+    // 图片未缩放时的尺寸（平移边界计算用）
     baseImageWidth: 0,
     baseImageHeight: 0,
     init() {
@@ -48,6 +50,8 @@ const imageLightbox = () => ({
     },
     openWith(img) {
         this.imgEle = img
+        this.resetView()
+        this.updateBaseDimensions()
         this.isOpen = true
         document.body.style.overflow = 'hidden'; // 禁止背景滚动
     },
@@ -58,9 +62,8 @@ const imageLightbox = () => ({
         return this.images.length > 1
     },
     switchTo(img) {
-        this.resetZoom()
-        this.currentImageX = 0
-        this.currentImageY = 0
+        this.resetView()
+        this.updateBaseDimensions()
         this.imgEle = img
     },
     prevImage() {
@@ -79,9 +82,7 @@ const imageLightbox = () => ({
     },
     closeLightbox() {
         this.isOpen = false
-        this.resetZoom()
-        this.currentImageX = 0
-        this.currentImageY = 0
+        this.resetView()
         // 延迟500ms清理图片
         setTimeout(()=>{
           this.imgEle = null
@@ -89,134 +90,164 @@ const imageLightbox = () => ({
         document.body.style.overflow = ''; // 恢复背景滚动
     },
     isZoomed() {
-        return this.zoomLevel !== 1;
+        return this.zoomLevel > 1.001;
+    },
+    resetView() {
+        this.zoomLevel = 1;
+        this.translateX = 0;
+        this.translateY = 0;
     },
 
-    resetZoom() {
-        this.zoomLevel = 1;
-        this.transformOrigin = '50% 50%';
+    /**
+     * 缩放到指定倍数。
+     * 传入视口坐标 (clientX, clientY) 时，缩放前后保持该点下的图像内容不动（指针处缩放）；
+     * 不传时以图片中心为锚点（按钮/键盘/重置）。
+     */
+    zoomTo(nextScale, clientX, clientY) {
+        const clamped = Math.min(this.maxZoom, Math.max(this.minZoom, nextScale));
+        const ratio = clamped / this.zoomLevel;
+        if (Math.abs(ratio - 1) < 1e-6) return;
+
+        if (clientX != null) {
+            const img = this.$refs.lightboxImage;
+            if (!img) return;
+            const rect = img.getBoundingClientRect();
+            // 指针相对当前图片中心的屏幕距离
+            const dx = clientX - (rect.left + rect.width / 2);
+            const dy = clientY - (rect.top + rect.height / 2);
+            // 平移补偿：缩放后指针下的像素保持不动
+            this.translateX = dx * (1 - ratio) + this.translateX * ratio;
+            this.translateY = dy * (1 - ratio) + this.translateY * ratio;
+        } else {
+            // 无锚点：围绕中心等比缩放位移
+            this.translateX *= ratio;
+            this.translateY *= ratio;
+        }
+        this.zoomLevel = clamped;
+        this.clampPan();
+        if (this.zoomLevel <= this.minZoom + 1e-6) this.resetView();
+    },
+    zoomIn() {
+        this.zoomTo(this.zoomLevel * 1.25);
+    },
+    zoomOut() {
+        this.zoomTo(this.zoomLevel / 1.25);
     },
     handleWheel(event) {
-        if (!this.$refs.lightboxImage) return;
-
-        const imgElement = this.$refs.lightboxImage;
-        const rect = imgElement.getBoundingClientRect();
-
-        // 计算鼠标在图片内的相对位置 (百分比)
-        // clientX/Y 是视口坐标, rect.left/top 是元素左上角相对视口的坐标
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
-
-        this.transformOrigin = `${x}% ${y}%`;
-
-        if (event.deltaY < 0) { // 向上滚动，放大
-            this.zoomLevel = Math.min(this.maxZoom, this.zoomLevel + this.zoomStep);
-        } else { // 向下滚动，缩小
-            this.zoomLevel = Math.max(this.minZoom, this.zoomLevel - this.zoomStep);
-        }
-        // 如果缩放回原始大小附近，则直接设为1，避免浮点数精度问题
-        if (Math.abs(this.zoomLevel - 1) < this.zoomStep / 2) {
-            this.zoomLevel = 1;
-            this.transformOrigin = '50% 50%'; // 恢复中心原点
+        // 比率式步进：滚轮一格约 ±20%，触控板按 deltaY 平滑缩放
+        const factor = Math.exp(-event.deltaY * 0.002);
+        this.zoomTo(this.zoomLevel * factor, event.clientX, event.clientY);
+    },
+    handleDblClick(event) {
+        if (this.isZoomed()) {
+            this.resetView();
+        } else {
+            this.zoomTo(2.5, event.clientX, event.clientY);
         }
     },
-    initDrag(event) {
-        if (!this.isZoomed() || !this.$refs.lightboxImage) return; // Only drag if zoomed
-        event.preventDefault(); // Prevent browser's default image drag or text selection
+    onKeydown(event) {
+        if (!this.isOpen) return;
+        if (event.key === '+' || event.key === '=') {
+            event.preventDefault();
+            this.zoomIn();
+        } else if (event.key === '-') {
+            event.preventDefault();
+            this.zoomOut();
+        } else if (event.key === '0') {
+            event.preventDefault();
+            this.resetView();
+        }
+    },
 
+    // ---------- 拖拽与捏合 ----------
+    startPan(event) {
+        if (event.type === 'touchstart') {
+            if (event.touches.length === 2) {
+                // 进入双指捏合，取消单指拖拽
+                this.pinchActive = true;
+                this.isDragging = false;
+                this.pinchStartDist = this.getTouchDist(event.touches);
+                this.pinchStartScale = this.zoomLevel;
+            } else if (event.touches.length === 1 && this.isZoomed()) {
+                this.beginDrag(event.touches[0]);
+            }
+            return;
+        }
+        if (!this.isZoomed()) return; // 未放大时不拖拽
+        event.preventDefault(); // 阻止浏览器默认的图片拖拽/文字选择
+        this.beginDrag(event);
+    },
+    beginDrag(point) {
         this.isDragging = true;
-        const evt = event.type === 'touchstart' ? event.touches[0] : event;
-        this.startX = evt.clientX;
-        this.startY = evt.clientY;
-        this.initialImageX = this.currentImageX;
-        this.initialImageY = this.currentImageY;
+        this.startX = point.clientX;
+        this.startY = point.clientY;
+        this.startTX = this.translateX;
+        this.startTY = this.translateY;
     },
-
     performDrag(event) {
-        if (!this.isDragging || !this.isZoomed()) return;
-
-        const evt = event.type === 'touchmove' ? event.touches[0] : event;
-        let dx = evt.clientX - this.startX;
-        let dy = evt.clientY - this.startY;
-
-        this.currentImageX = this.initialImageX + dx;
-        this.currentImageY = this.initialImageY + dy;
-
+        if (event.type === 'touchmove') {
+            if (this.pinchActive && event.touches.length >= 2) {
+                event.preventDefault();
+                if (this.pinchStartDist > 0) {
+                    const mid = this.getTouchMid(event.touches);
+                    this.zoomTo(this.pinchStartScale * this.getTouchDist(event.touches) / this.pinchStartDist, mid.x, mid.y);
+                }
+                return;
+            }
+            if (!this.isDragging || event.touches.length !== 1) return;
+            event.preventDefault();
+            this.moveDrag(event.touches[0]);
+            return;
+        }
+        if (!this.isDragging) return;
+        this.moveDrag(event);
+    },
+    moveDrag(point) {
+        this.translateX = this.startTX + (point.clientX - this.startX);
+        this.translateY = this.startTY + (point.clientY - this.startY);
         this.clampPan();
     },
-
     stopDrag() {
-        if (this.isDragging) {
-            this.isDragging = false;
-        }
+        this.isDragging = false;
+    },
+    onTouchEnd(event) {
+        if (event.touches.length < 2) this.pinchActive = false;
+        if (event.touches.length === 0) this.isDragging = false;
+    },
+    getTouchDist(touches) {
+        return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+    },
+    getTouchMid(touches) {
+        return {
+            x: (touches[0].clientX + touches[1].clientX) / 2,
+            y: (touches[0].clientY + touches[1].clientY) / 2
+        };
     },
 
+    // 平移边界：限制缩放后图片边缘不脱离容器（origin 固定为中心，位移极限为溢出量的一半）
     clampPan() {
-        if (!this.$refs.imageContainer || !this.baseImageWidth || !this.baseImageHeight) return;
-
         const container = this.$refs.imageContainer;
-        const scaledWidth = this.baseImageWidth * this.zoomLevel;
-        const scaledHeight = this.baseImageHeight * this.zoomLevel;
+        if (!container || !this.baseImageWidth || !this.baseImageHeight) return;
 
-        // How much the scaled image overflows its container
-        const overflowX = Math.max(0, scaledWidth - container.clientWidth);
-        const overflowY = Math.max(0, scaledHeight - container.clientHeight);
+        const limitX = Math.max(0, (this.baseImageWidth * this.zoomLevel - container.clientWidth) / 2);
+        const limitY = Math.max(0, (this.baseImageHeight * this.zoomLevel - container.clientHeight) / 2);
 
-        // The pan limits are half the overflow, as transform-origin for pan is effectively center
-        const limitX = overflowX / 2;
-        const limitY = overflowY / 2;
-
-        if (scaledWidth <= container.clientWidth) {
-            this.currentImageX = 0; // No horizontal pan if image fits or is smaller
-        } else {
-            this.currentImageX = Math.max(-limitX, Math.min(limitX, this.currentImageX));
-        }
-
-        if (scaledHeight <= container.clientHeight) {
-            this.currentImageY = 0; // No vertical pan if image fits or is smaller
-        } else {
-            this.currentImageY = Math.max(-limitY, Math.min(limitY, this.currentImageY));
-        }
+        this.translateX = Math.max(-limitX, Math.min(limitX, this.translateX));
+        this.translateY = Math.max(-limitY, Math.min(limitY, this.translateY));
     },
     cursorStyle() {
         if (this.isDragging) return 'grabbing';
         if (this.isZoomed()) return 'grab';
-        return 'auto';
+        return 'zoom-in';
     },
 
-    // Called when image element @load event fires or when zoom needs reset
+    // 图片加载完成或切换时记录未缩放尺寸
     updateBaseDimensions() {
-        this.$nextTick(() => { // Ensure image is rendered
-            if (this.$refs.lightboxImage) {
-                // Get the dimensions of the image as it's contained within its parent, at scale 1
-                // To do this accurately, temporarily ensure scale is 1 and translate is 0
-                const tempZoom = this.zoomLevel;
-                const tempX = this.currentImageX;
-                const tempY = this.currentImageY;
-
-                this.zoomLevel = 1;
-                this.currentImageX = 0;
-                this.currentImageY = 0;
-
-                this.$nextTick(() => {
-                    if(this.$refs.lightboxImage) {
-                        this.baseImageWidth = this.$refs.lightboxImage.clientWidth;
-                        this.baseImageHeight = this.$refs.lightboxImage.clientHeight;
-                    }
-                    // Restore original zoom ONLY if it was intentional,
-                    // otherwise it's a reset scenario. For simplicity, new image always resets.
-                    if (this.isZoomed() && tempZoom !== 1) { // if it was already zoomed
-                        this.zoomLevel = tempZoom;
-                        this.currentImageX = tempX; // Pan might need re-clamping
-                        this.currentImageY = tempY;
-                        this.clampPan(); // re-clamp pan after potential base dimension change
-                    } else {
-                        // If it wasn't zoomed or new image, keep it reset
-                        this.zoomLevel = 1;
-                        this.currentImageX = 0;
-                        this.currentImageY = 0;
-                    }
-                });
+        this.$nextTick(() => {
+            const img = this.$refs.lightboxImage;
+            if (img) {
+                this.baseImageWidth = img.clientWidth;
+                this.baseImageHeight = img.clientHeight;
             }
         });
     },

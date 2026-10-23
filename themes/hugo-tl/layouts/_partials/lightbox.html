@@ -3,8 +3,9 @@
         @keydown.escape.window="closeLightbox()"
         @keydown.left.window="prevImage()"
         @keydown.right.window="nextImage()"
-        @mouseup="stopDrag()" @touchend="stopDrag()"
-        @mousemove="performDrag($event)" @touchmove="performDrag($event)"
+        @keydown.window="onKeydown($event)"
+        @mouseup.window="stopDrag()" @touchend="onTouchEnd($event)"
+        @mousemove.window="performDrag($event)" @touchmove="performDrag($event)"
         class="container mx-auto"
 >
     <!-- 灯箱模态框 -->
@@ -38,16 +39,18 @@
                 <img
                         :src="currentImageSrc"
                         :alt="currentImageAlt"
-                        class="lightbox-image max-w-full max-h-[calc(90vh-120px)] object-contain rounded"
+                        class="lightbox-image max-w-full max-h-[calc(90vh-120px)] object-contain rounded select-none"
                         :class="{ 'dragging': isDragging }"
                         :style="{
-                            transform: `translateX(${currentImageX}px) translateY(${currentImageY}px) scale(${zoomLevel})`,
-                            transformOrigin: transformOrigin,
+                            transform: `translateX(${translateX}px) translateY(${translateY}px) scale(${zoomLevel})`,
+                            transformOrigin: '50% 50%',
                             cursor: cursorStyle()
                         }"
                         @wheel.prevent="handleWheel($event)"
-                        @mousedown="initDrag($event)" @touchstart.passive="initDrag($event)"
+                        @dblclick.prevent="handleDblClick($event)"
+                        @mousedown="startPan($event)" @touchstart.passive="startPan($event)"
                         @load="updateBaseDimensions()"
+                        draggable="false"
                         x-ref="lightboxImage"
                         x-transition:enter="transition ease-out duration-150"
                         x-transition:enter-start="transform scale-95"
@@ -58,7 +61,7 @@
                 >
                 <div x-show="!isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
-                    {{ T "ui.scroll_to_zoom" | default "使用滚轮缩放" }}
+                    {{ T "ui.scroll_to_zoom" | default "使用滚轮缩放" }} · {{ T "ui.dblclick_to_zoom" | default "双击放大" }}
                 </div>
                 <div x-show="isZoomed() && isOpen && !isDragging"
                      class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-tl-info text-tl-info-content text-xs px-2 py-1 rounded transition-opacity duration-300 pointer-events-none">
@@ -78,11 +81,33 @@
                 </button>
             </div>
 
-            <!-- 图片描述和导航 -->
-            <div class="flex items-center justify-between pt-2 border-t border-tl-base-300">
-                <p class="text-sm" x-text="currentImageAlt"></p>
-                <span x-show="hasMultiple" x-cloak class="text-xs text-tl-base-content/50"
-                      x-text="(currentIndex + 1) + ' / ' + images.length"></span>
+            <!-- 图片描述和缩放工具栏 -->
+            <div class="flex items-center justify-between gap-3 pt-2 border-t border-tl-base-300">
+                <p class="text-sm truncate" x-text="currentImageAlt"></p>
+                <div class="flex items-center gap-1 shrink-0">
+                    <span class="w-11 text-center text-xs text-tl-base-content/50" x-text="Math.round(zoomLevel * 100) + '%'"></span>
+                    <button @click="zoomOut()"
+                            class="w-7 h-7 flex items-center justify-center rounded-md text-lg leading-none hover:bg-tl-base-200 transition-colors"
+                            :disabled="!isZoomed()"
+                            :class="!isZoomed() && 'opacity-40'"
+                            :aria-label="{{ T `ui.zoom_out` | default `缩小` }}">
+                        −
+                    </button>
+                    <button @click="zoomIn()"
+                            class="w-7 h-7 flex items-center justify-center rounded-md text-lg leading-none hover:bg-tl-base-200 transition-colors"
+                            :disabled="zoomLevel >= maxZoom"
+                            :class="zoomLevel >= maxZoom && 'opacity-40'"
+                            :aria-label="{{ T `ui.zoom_in` | default `放大` }}">
+                        +
+                    </button>
+                    <button x-show="isZoomed()" x-cloak @click="resetView()"
+                            class="h-7 px-1.5 flex items-center justify-center rounded-md text-xs font-medium hover:bg-tl-base-200 transition-colors"
+                            :aria-label="{{ T `ui.reset_zoom` | default `重置缩放` }}">
+                        1:1
+                    </button>
+                    <span x-show="hasMultiple" x-cloak class="ml-1 text-xs text-tl-base-content/50"
+                          x-text="(currentIndex + 1) + ' / ' + images.length"></span>
+                </div>
             </div>
         </div>
     </div>

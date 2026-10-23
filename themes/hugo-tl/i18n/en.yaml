@@ -74,6 +74,10 @@ ui:
   back_to_top: Back to Top
   scroll_to_zoom: Scroll to zoom
   drag_to_pan: Drag to pan
+  dblclick_to_zoom: Double-click to zoom
+  zoom_in: Zoom in
+  zoom_out: Zoom out
+  reset_zoom: Reset zoom
 
 theme:
   title: Theme

@@ -74,6 +74,10 @@ ui:
   back_to_top: 返回顶部
   scroll_to_zoom: 使用滚轮缩放
   drag_to_pan: 按住拖动
+  dblclick_to_zoom: 双击放大
+  zoom_in: 放大
+  zoom_out: 缩小
+  reset_zoom: 重置缩放
 
 theme:
   title: 主题
