@@ -1,48 +1,77 @@
 <article class="group relative overflow-hidden bg-linear-to-br from-tl-primary/10 via-tl-base-200 to-tl-base-100 rounded-2xl p-8 transition-all duration-300 border-2 border-tl-primary/20 hover:border-tl-primary/50 hover:shadow-xl hover:shadow-tl-primary/10 hover:-translate-y-1 lg:col-span-2">
-    <div class="flex flex-col h-full justify-between">
-        <div>
-            <div class="flex items-center gap-2 mb-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-primary/10 text-tl-primary text-xs font-semibold tracking-wide uppercase">
-                    最新推荐
-                </span>
-                {{ if .Params.categories }}
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-base-300/50 text-tl-base-content/70 text-xs">
-                    {{ index .Params.categories 0 }}
-                </span>
+    {{/* 封面图：与 summary.html 一致，cover 参数优先，否则取页面 bundle 第一张图（featured 卡更大用 800px 缩略图） */}}
+    {{- $coverURL := "" -}}
+    {{- with .Params.cover -}}
+    {{- $u := urls.Parse . -}}
+    {{- if or $u.IsAbs (strings.HasPrefix . "/") -}}
+    {{- $coverURL = . | relURL -}}
+    {{- else -}}
+    {{- with $.Resources.GetMatch (strings.TrimPrefix "./" .) -}}{{- $coverURL = .RelPermalink -}}{{- end -}}
+    {{- end -}}
+    {{- else -}}
+    {{- with $.Resources.ByType "image" -}}{{- with index . 0 -}}{{- $coverURL = (.Resize "800x450 fill q80 webp").RelPermalink -}}{{- end -}}{{- end -}}
+    {{- end -}}
+
+    <div class="flex h-full flex-col gap-6 md:flex-row">
+        <div class="flex min-w-0 flex-1 flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-primary/10 text-tl-primary text-xs font-semibold tracking-wide uppercase">
+                        最新推荐
+                    </span>
+                    {{ if .Params.categories }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-tl-base-300/50 text-tl-base-content/70 text-xs">
+                        {{ index .Params.categories 0 }}
+                    </span>
+                    {{ end }}
+                </div>
+
+                <a href="{{ .RelPermalink }}" class="block group">
+                    <h2 class="text-2xl lg:text-3xl font-bold group-hover:text-tl-primary transition-colors duration-200 mb-4 leading-tight">
+                        {{ .Title }}
+                    </h2>
+                {{/* 摘要转纯文本：<!--more--> 前的富文本（标题/图片等块级元素）会截断 line-clamp 容器导致卡片变形 */}}
+                {{- $summary := "" -}}
+                {{- with .Summary -}}{{- $summary = trim (plainify . | htmlUnescape) "\n\r\t " | replaceRE `\s+` " " | truncate 200 -}}{{- end -}}
+                {{ if $summary }}
+                <p class="text-base lg:text-lg leading-relaxed mb-6 line-clamp-4 text-tl-base-content/80">
+                    {{ $summary }}
+                </p>
                 {{ end }}
+                </a>
             </div>
 
-            <a href="{{ .RelPermalink }}" class="block group">
-                <h2 class="text-2xl lg:text-3xl font-bold group-hover:text-tl-primary transition-colors duration-200 mb-4 leading-tight">
-                    {{ .Title }}
-                </h2>
-            {{/* 摘要转纯文本：<!--more--> 前的富文本（标题/图片等块级元素）会截断 line-clamp 容器导致卡片变形 */}}
-            {{- $summary := "" -}}
-            {{- with .Summary -}}{{- $summary = trim (plainify . | htmlUnescape) "\n\r\t " | replaceRE `\s+` " " | truncate 200 -}}{{- end -}}
-            {{ if $summary }}
-            <p class="text-base lg:text-lg leading-relaxed mb-6 line-clamp-4 text-tl-base-content/80">
-                {{ $summary }}
-            </p>
-            {{ end }}
-            </a>
+            <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/70">
+                <span class="flex items-center gap-1.5">
+                    {{ partial "icons/icon" (dict "path" "common/about" "className" "w-4 h-4" ) }}
+                    {{ .Params.author }}
+                </span>
+                <span class="flex items-center gap-1.5">
+                    {{ partial "icons/icon" (dict "path" "post/date" "className" "w-4 h-4" ) }}
+                    {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
+                </span>
+                {{ if .Params.tags }}
+                <div class="flex items-center gap-2 ml-auto">
+                    {{ range first 3 .Params.tags }}
+                    <span class="bg-tl-base-300/50 hover:bg-tl-base-300 px-2.5 py-1 rounded-lg text-xs transition-colors duration-200">
+                        {{ . }}
+                    </span>
+                    {{ end }}
+                </div>
+                {{ end }}
+            </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-4 text-sm text-tl-base-content/70">
-            <span class="flex items-center gap-1.5">
-                {{ partial "icons/icon" (dict "path" "common/about" "className" "w-4 h-4" ) }}
-                {{ .Params.author }}
-            </span>
-            <span class="flex items-center gap-1.5">
-                {{ partial "icons/icon" (dict "path" "post/date" "className" "w-4 h-4" ) }}
-                {{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
-            </span>
-            {{ if .Params.tags }}
-            <div class="flex items-center gap-2 ml-auto">
-                {{ range first 3 .Params.tags }}
-                <span class="bg-tl-base-300/50 hover:bg-tl-base-300 px-2.5 py-1 rounded-lg text-xs transition-colors duration-200">
-                    {{ . }}
-                </span>
-                {{ end }}
+        {{/* 右侧图区：md 起与文字等高铺满，移动端固定高度；无图时用占位块保持布局平衡 */}}
+        <div class="shrink-0 md:w-2/5">
+            {{ if $coverURL }}
+            <a href="{{ .RelPermalink }}" class="block h-48 overflow-hidden rounded-xl border border-tl-base-300/40 md:h-full" tabindex="-1" aria-hidden="true">
+                <img src="{{ $coverURL }}" alt="{{ .Title }}" loading="lazy" decoding="async"
+                     class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </a>
+            {{ else }}
+            <div class="flex h-48 items-center justify-center overflow-hidden rounded-xl border border-tl-base-300/40 bg-linear-to-br from-tl-base-200 to-tl-base-100 md:h-full" aria-hidden="true">
+                {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-7xl text-tl-primary/15" "processAttrs" false ) }}
             </div>
             {{ end }}
         </div>

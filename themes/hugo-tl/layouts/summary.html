@@ -1,5 +1,5 @@
-<article class="group relative overflow-hidden bg-linear-to-br from-tl-base-200 to-tl-base-100 rounded-xl p-6 transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1 h-full flex flex-col">
-    {{/* 封面图：cover 参数优先，否则取页面 bundle 的第一张图片资源（转 webp 缩略图减体积），无图则退回纯文字卡片 */}}
+<article class="group relative overflow-hidden bg-linear-to-br from-tl-base-200 to-tl-base-100 rounded-xl p-6 transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1">
+    {{/* 封面图：cover 参数优先，否则取页面 bundle 的第一张图片资源（转 webp 缩略图减体积） */}}
     {{- $coverURL := "" -}}
     {{- with .Params.cover -}}
     {{- $u := urls.Parse . -}}
@@ -16,30 +16,32 @@
         <img src="{{ $coverURL }}" alt="{{ .Title }}" loading="lazy" decoding="async"
              class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105">
     </a>
+    {{ else }}
+    {{/* 无图占位：与封面图同高，保证卡片头图区结构一致 */}}
+    <div class="mb-4 flex h-44 items-center justify-center overflow-hidden rounded-lg border border-tl-base-300/40 bg-linear-to-br from-tl-base-200 to-tl-base-100" aria-hidden="true">
+        {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-6xl text-tl-primary/15" "processAttrs" false ) }}
+    </div>
     {{ end }}
-    <div class="relative flex flex-col h-full">
-        <div class="flex items-start justify-between mb-3">
-            <div class="flex-1 min-w-0">
-                <a href="{{ .RelPermalink }}" class="block group">
-                    <h2 class="text-lg font-bold group-hover:text-tl-primary transition-colors duration-200 mb-3 leading-tight line-clamp-2">
-                        {{ .Title }}
-                    </h2>
-                </a>
-            </div>
-        </div>
+    {{/* 卡片内容流式布局：网格父级 items-start 取消同行等高拉伸，标题/摘要/日期紧凑排布无弹性空白 */}}
+    <div class="relative">
+        <a href="{{ .RelPermalink }}" class="block group">
+            <h2 class="text-lg font-bold group-hover:text-tl-primary transition-colors duration-200 mb-2.5 leading-tight line-clamp-2">
+                {{ .Title }}
+            </h2>
+        </a>
 
         {{/* 摘要转纯文本：<!--more--> 前的富文本（标题/图片等块级元素）会截断 line-clamp 容器导致卡片变形 */}}
         {{- $summary := "" -}}
         {{- with .Summary -}}{{- $summary = trim (plainify . | htmlUnescape) "\n\r\t " | replaceRE `\s+` " " | truncate 150 -}}{{- end -}}
         {{ if $summary }}
-        <a href="{{ .RelPermalink }}" class="block group flex-1">
-            <p class="text-sm leading-relaxed mb-4 line-clamp-3 text-tl-base-content/70 group-hover:text-tl-base-content/90 transition-colors duration-200">
+        <a href="{{ .RelPermalink }}" class="block group mb-4">
+            <p class="text-sm leading-relaxed line-clamp-3 text-tl-base-content/70 group-hover:text-tl-base-content/90 transition-colors duration-200">
                 {{ $summary }}
             </p>
         </a>
         {{ end }}
 
-        <div class="flex flex-col gap-3 mt-auto pt-3 border-t border-tl-base-300/30">
+        <div class="flex flex-col gap-2.5 pt-3 border-t border-tl-base-300/30">
             <div class="flex flex-wrap items-center gap-2 text-xs text-tl-base-content/60">
                 <a href="{{ .RelPermalink }}" class="flex items-center gap-1 hover:text-tl-primary transition-colors">
                     {{ partial "icons/icon" (dict "path" "post/date" "className" "w-3.5 h-3.5" ) }}

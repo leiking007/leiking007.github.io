@@ -66,8 +66,8 @@
                 </div>
             </div>
 
-            {{/* 文章网格：分页大小读取站点配置 tag_paginate */}}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {{/* 文章网格：分页大小读取站点配置 tag_paginate；items-start 取消同行等高拉伸 */}}
+            <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
                 {{ range (.Paginate .Pages (index .Site.Params.pagination "tag_paginate" | default 10)).Pages }}
                     {{ .Render "summary" }}
                 {{ end }}
