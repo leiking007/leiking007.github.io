@@ -19,3 +19,8 @@
     </div>
 </section>
 {{ end }}
+{{ define "script" }}
+{{/* 花密组件独立入口：crypto-js 仅在该页面加载，不打包进全站主 JS */}}
+{{- $flowerjs := resources.Get "ts/flower.ts" | js.Build (dict "minify" hugo.IsProduction) | resources.Fingerprint "sha256" }}
+<script type="text/javascript" src="{{ $flowerjs.RelPermalink }}" integrity="{{ $flowerjs.Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{ end }}

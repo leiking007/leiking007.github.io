@@ -4,6 +4,7 @@ import {execSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {dirname, resolve} from 'node:path';
 import {existsSync} from 'node:fs';
+import {vendorLibs} from './vendor.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // 通过 config 定位根目录
@@ -35,6 +36,9 @@ function runCommand(dir, cmd, desc) {
   }
 }
 
+
+// 0. 复制 vendor 前端库（katex / mermaid）
+vendorLibs();
 
 // 1. 执行 build:css（Tailwind CSS 编译）
 const buildCssCmd = 'npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/style.css -m';

@@ -2,7 +2,7 @@ import Alpine from "alpinejs/dist/module.esm.js"
 import AlpineFocus from '@alpinejs/focus/dist/module.esm.js'
 import collapse from '@alpinejs/collapse/dist/module.esm.js'
 import {postCodeBlock, tocHighlight} from "./alpine-data/post"
-import {backToTop,imageLightbox, readingProgress, flowerPasswordGenerator, themeSwitcher, searchLauncher} from "./alpine-data/common"
+import {backToTop, imageLightbox, readingProgress, themeSwitcher, searchLauncher} from "./alpine-data/common"
 
 declare global {
     interface Window {
@@ -29,9 +29,6 @@ Alpine.data('imageLightbox', imageLightbox);
 
 // 阅读进度条
 Alpine.data('readingProgress', readingProgress);
-
-// 花密生成器
-Alpine.data('flowerPasswordGenerator', flowerPasswordGenerator);
 
 // 主题切换
 Alpine.data('themeSwitcher', themeSwitcher);

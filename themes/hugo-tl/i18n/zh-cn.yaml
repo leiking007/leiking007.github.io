@@ -49,6 +49,8 @@ widget:
     title: 常用工具
   search:
     title: 搜索
+    shortcut: 搜索 (Ctrl+K)
+    modal_title: 全站搜索
   about:
     title: 关于
 
@@ -71,6 +73,8 @@ pagination:
 
 ui:
   close: 关闭
+  menu: 菜单
+  rss_feed: RSS 订阅
   back_to_top: 返回顶部
   scroll_to_zoom: 使用滚轮缩放
   drag_to_pan: 按住拖动

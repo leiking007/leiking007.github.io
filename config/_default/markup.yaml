@@ -8,6 +8,22 @@ defaultMarkdownHandler: goldmark
 goldmark:
   renderer:
     unsafe: true
+  extensions:
+    # 数学公式 passthrough：启用后 $..$ / \(..\) 行内、$$..$$ / \[.. \] 块级公式
+    # 经主题 render-passthrough hook 调用 Hugo 内置 KaTeX 构建时渲染（页面 front matter 需 math: true 引入样式）
+    # 提示：$..$ 行内定界符在正文中出现两个以上美元符号时可能误判，介意可删除 inline 中 "- - $" "- $" 两行
+    passthrough:
+      enabled: true
+      block:
+        - - $$\n
+          - \n$$
+        - - \[
+          - \]
+      inline:
+        - - \(
+          - \)
+        - - $
+          - $
 # https://xyproto.github.io/splash/docs/
 highlight:
   anchorLineNos: false

@@ -49,6 +49,8 @@ widget:
     title: Tools
   search:
     title: Search
+    shortcut: Search (Ctrl+K)
+    modal_title: Site Search
   about:
     title: About
 
@@ -71,6 +73,8 @@ pagination:
 
 ui:
   close: Close
+  menu: Menu
+  rss_feed: RSS Feed
   back_to_top: Back to Top
   scroll_to_zoom: Scroll to zoom
   drag_to_pan: Drag to pan

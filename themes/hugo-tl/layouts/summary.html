@@ -1,4 +1,22 @@
 <article class="group relative overflow-hidden bg-linear-to-br from-tl-base-200 to-tl-base-100 rounded-xl p-6 transition-all duration-300 border border-tl-base-300/50 hover:border-tl-primary/40 hover:shadow-lg hover:shadow-tl-primary/5 hover:-translate-y-1 h-full flex flex-col">
+    {{/* 封面图：cover 参数优先，否则取页面 bundle 的第一张图片资源（转 webp 缩略图减体积），无图则退回纯文字卡片 */}}
+    {{- $coverURL := "" -}}
+    {{- with .Params.cover -}}
+    {{- $u := urls.Parse . -}}
+    {{- if or $u.IsAbs (strings.HasPrefix . "/") -}}
+    {{- $coverURL = . | relURL -}}
+    {{- else -}}
+    {{- with $.Resources.GetMatch (strings.TrimPrefix "./" .) -}}{{- $coverURL = .RelPermalink -}}{{- end -}}
+    {{- end -}}
+    {{- else -}}
+    {{- with $.Resources.ByType "image" -}}{{- with index . 0 -}}{{- $coverURL = (.Resize "640x360 fill q80 webp").RelPermalink -}}{{- end -}}{{- end -}}
+    {{- end -}}
+    {{ if $coverURL }}
+    <a href="{{ .RelPermalink }}" class="block mb-4 overflow-hidden rounded-lg border border-tl-base-300/40" tabindex="-1" aria-hidden="true">
+        <img src="{{ $coverURL }}" alt="{{ .Title }}" loading="lazy" decoding="async"
+             class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105">
+    </a>
+    {{ end }}
     <div class="relative flex flex-col h-full">
         <div class="flex items-start justify-between mb-3">
             <div class="flex-1 min-w-0">

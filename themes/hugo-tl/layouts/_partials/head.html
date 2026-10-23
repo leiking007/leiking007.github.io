@@ -7,6 +7,11 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ "favicon-16x16.png" | relURL }}">
 
+{{/* KaTeX 样式：页面 front matter 配置 math: true 时按需引入（vendor 产物由构建脚本从 node_modules 复制） */}}
+{{- if .Params.math }}
+<link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
+{{- end }}
+
 {{/* SEO */}}
 {{- partial "seo.html" . -}}
 

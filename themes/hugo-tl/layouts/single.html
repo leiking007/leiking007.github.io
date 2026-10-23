@@ -17,15 +17,7 @@
     <div class="z-0 min-w-0">
         <div class="post-body prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
             <div class="my-3">
-                <h1 class="mb-1" id="title">{{ .Title }}
-                    {{ if .Params.tags }}
-                    {{ range (.GetTerms "tags") }}
-                    <small>
-                        <a class="text-sm" href='{{ .RelPermalink }}'>{{- .LinkTitle -}}</a>
-                    </small>
-                    {{ end }}
-                    {{ end }}
-                </h1>
+                <h1 class="mb-1" id="title">{{ .Title }}</h1>
                 <section class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-tl-base-content/60">
                     {{ with .Params.author }}
                     <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "common/about" "className" "w-4 h-4" ) }}{{ . }}</span>
@@ -36,6 +28,13 @@
                     {{ end }}
                     <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/bi" "className" "w-4 h-4" ) }}{{- T "article.word_count" .WordCount -}}</span>
                     <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/time" "className" "w-4 h-4" ) }}{{- T "article.reading_time" .ReadingTime -}}</span>
+                    {{ with .GetTerms "tags" }}
+                    <span class="flex flex-wrap items-center gap-1.5">
+                        {{ range . }}
+                        <a href="{{ .RelPermalink }}" class="bg-tl-base-300/40 hover:bg-tl-base-300/70 hover:text-tl-primary px-2 py-0.5 rounded-md text-xs transition-colors duration-200">{{ .LinkTitle }}</a>
+                        {{ end }}
+                    </span>
+                    {{ end }}
                 </section>
             </div>
             <div>
@@ -94,4 +93,22 @@
     </div>
 </section>
 
+{{ end }}
+{{ define "script" }}
+<script>
+    (function () {
+        // Mermaid 图表按需加载：页面存在 .mermaid 容器时才拉取资源渲染
+        var els = document.querySelectorAll('.mermaid');
+        if (!els.length) return;
+        // 配色跟随主题：暗色主题使用 dark
+        var theme = document.documentElement.classList.contains('theme-dark') ? 'dark' : 'default';
+        var s = document.createElement('script');
+        s.src = '{{ "lib/mermaid/mermaid.min.js" | relURL }}';
+        s.onload = function () {
+            window.mermaid.initialize({ startOnLoad: false, theme: theme, securityLevel: 'loose' });
+            window.mermaid.run({ nodes: els });
+        };
+        document.body.appendChild(s);
+    })();
+</script>
 {{ end }}

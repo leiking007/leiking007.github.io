@@ -1,5 +1,6 @@
 {{/*  {{ transform.Highlight .Inner .Type "style=monokai, lineNos=false" }}  */}}
-{{/*  不加配置，默认使用yaml中配置  */}}
+{{/*  行号默认开启，站点 params.codeLineNumbers 设为 false 可关闭  */}}
+{{- $lineNos := .Page.Site.Params.codeLineNumbers | default true -}}
 <div x-data="postCodeBlock('{{ T `code.copied` | default `copied` }}')" class="font-mono text-base not-prose my-4 rounded-lg border border-tl-base-300/50 overflow-hidden shadow-sm">
     <div class="px-3 py-2 flex justify-between items-center bg-tl-base-300/60">
         <span class="cursor-default text-xs text-tl-base-content/70">{{ .Type }}</span>
@@ -22,6 +23,6 @@
          x-collapse
          x-collapse.duration.500ms
          x-ref="codeBlock">
-        {{ transform.Highlight .Inner .Type "noClasses=false"}}
+        {{ transform.Highlight .Inner .Type (printf "noClasses=false, lineNos=%t, lineNumbersInTable=false" $lineNos) }}
     </div>
 </div>

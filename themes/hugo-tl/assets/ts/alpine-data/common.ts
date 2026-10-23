@@ -1,5 +1,3 @@
-import * as CryptoJS from 'crypto-js';
-
 declare const PagefindUI: any;
 
 const backToTop = () => ({
@@ -34,13 +32,16 @@ const imageLightbox = () => ({
     pinchActive: false,
     pinchStartDist: 0,
     pinchStartScale: 1,
+    // 单指滑动切图状态（未放大时）
+    swipeStartX: null as number | null,
+    swipeStartY: null as number | null,
     // 图片未缩放时的尺寸（平移边界计算用）
     baseImageWidth: 0,
     baseImageHeight: 0,
     init() {
-        // 收集文章内图片（排除灯箱自身元素），支持多图切换
+        // 仅收集带 data-lightbox 标记的图片（render-image hook 与 hero 图输出该标记），避免误绑页面其他图片
         this.images = Array.from(document.getElementsByTagName("img")).filter(
-            (img) => !img.closest('[x-data~="imageLightbox"]')
+            (img) => img.hasAttribute("data-lightbox") && !img.closest('[x-data~="imageLightbox"]')
         );
         for (let img of this.images) {
             img.addEventListener("click", () => {
@@ -170,6 +171,10 @@ const imageLightbox = () => ({
                 this.pinchStartScale = this.zoomLevel;
             } else if (event.touches.length === 1 && this.isZoomed()) {
                 this.beginDrag(event.touches[0]);
+            } else if (event.touches.length === 1) {
+                // 未放大：记录滑动起点，touchend 时判定左右滑动切图
+                this.swipeStartX = event.touches[0].clientX;
+                this.swipeStartY = event.touches[0].clientY;
             }
             return;
         }
@@ -212,7 +217,19 @@ const imageLightbox = () => ({
     },
     onTouchEnd(event) {
         if (event.touches.length < 2) this.pinchActive = false;
-        if (event.touches.length === 0) this.isDragging = false;
+        if (event.touches.length === 0) {
+            this.isDragging = false;
+            // 未放大时单指左右快滑切换图片（水平位移超过 50px 且远大于垂直位移）
+            if (this.swipeStartX != null && this.isOpen && this.hasMultiple) {
+                const dx = event.changedTouches[0].clientX - this.swipeStartX;
+                const dy = event.changedTouches[0].clientY - this.swipeStartY;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                    dx < 0 ? this.nextImage() : this.prevImage();
+                }
+            }
+            this.swipeStartX = null;
+            this.swipeStartY = null;
+        }
     },
     getTouchDist(touches) {
         return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
@@ -253,47 +270,6 @@ const imageLightbox = () => ({
     },
 })
 
-
-const flowerPasswordGenerator = () => ({
-    memoryPassword: 'tl123456',  // 记忆密码, 默认为 'tl123456'
-    distinguishCode: '',
-    init() {
-        const update = () => {
-            this.$refs.passwdRef.innerText = this.generatePassword()
-        }
-        this.$watch('memoryPassword', update)
-        this.$watch('distinguishCode', update)
-    },
-    generatePassword() {
-        // 在此处编写生成密码的逻辑
-        const memoryPassword = this.memoryPassword.trim();
-        const distinguishCode = this.distinguishCode.trim();
-        if (memoryPassword && distinguishCode) {
-            // 生成密码的逻辑
-            const hashPassword = CryptoJS.SHA256(memoryPassword);
-            const hashCode = CryptoJS.SHA256(distinguishCode);
-            // 将哈希值转换为字符串
-            const hashPasswordStr = hashPassword.toString(CryptoJS.enc.Hex);
-            const hashCodeStr = hashCode.toString(CryptoJS.enc.Hex);
-            const passwdArr: String[] = []
-            for (let i = 0; i < 6; i++) {
-                passwdArr.push(hashPasswordStr[i * 3])
-                passwdArr.push(hashCodeStr[i * 7])
-            }
-            if (!isNaN(Number(passwdArr[0])) && passwdArr[0].trim() !== '') {
-                passwdArr[0] = "K"
-            } else {
-                passwdArr[0] = passwdArr[0].toUpperCase()
-            }
-            return passwdArr.join('')
-        }
-        return '';
-    },
-    clearInputs() {
-        this.memoryPassword = '';
-        this.distinguishCode = '';
-    }
-})
 
 const themeSwitcher = () => ({
     open: false,
@@ -338,6 +314,7 @@ const readingProgress = () => ({
 
 /**
  * 搜索弹窗：首次打开时才加载 pagefind UI 资源，避免每个页面都拉取搜索脚本
+ * 支持 Ctrl/Cmd+K 全局快捷键唤起，加载完成后自动聚焦输入框
  * @param base pagefind 资源目录（由模板注入 relURL，兼容子路径部署）
  */
 const searchLauncher = (base: string = '/search/') => ({
@@ -346,6 +323,13 @@ const searchLauncher = (base: string = '/search/') => ({
     init() {
         this.$watch('open', (val: boolean) => {
             if (val) this.loadPagefind()
+        })
+        // Ctrl/Cmd + K 唤起搜索
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+                e.preventDefault()
+                this.openSearch()
+            }
         })
     },
     openSearch() {
@@ -368,9 +352,11 @@ const searchLauncher = (base: string = '/search/') => ({
                 showImages: false,
                 excerptLength: 15
             })
+            // 弹窗打开后聚焦搜索输入框
+            document.querySelector<HTMLInputElement>('#search input')?.focus()
         }
         document.body.appendChild(js)
     },
 })
 
-export {backToTop, imageLightbox, readingProgress, flowerPasswordGenerator, themeSwitcher, searchLauncher}
+export {backToTop, imageLightbox, readingProgress, themeSwitcher, searchLauncher}

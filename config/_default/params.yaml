@@ -5,6 +5,8 @@ dateFormat : 2006-01-02   # 2006/01/02 15:04:05
 toc: true
 github: "https://github.com/leiking007"   # 页脚 GitHub 链接，不配置则不显示
 # heroImage: /images/my-hero.jpg   # 首页 hero 图，不配置时使用主题默认图
+externalLinksNewTab: true   # 正文外链新窗口打开，false 关闭
+codeLineNumbers: true       # 代码块行号，false 关闭
 pagination:
   posts_paginate: 20
   tag_paginate: 10

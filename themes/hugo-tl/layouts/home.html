@@ -20,7 +20,24 @@
           {{ end }}
         </div>
         <div class="items-center justify-end hidden col-span-1 md:flex">
-          <img data-lightbox class="w-4/5 rounded-xl shadow-2xl shadow-tl-primary/10 transition-transform duration-500 hover:scale-105" src='{{ .Site.Params.heroImage | default (relURL "images/background-2.jpg") }}' alt="{{ .Site.Title }}">
+          {{/* hero 图：站点配置优先（原样输出），否则用主题内置图做 1200px 缩放；首屏大图 fetchpriority 提升加载优先级，输出实际宽高避免布局偏移 */}}
+          {{- $heroSrc := "" -}}
+          {{- $heroW := 0 -}}
+          {{- $heroH := 0 -}}
+          {{- with .Site.Params.heroImage -}}
+          {{- $heroSrc = . | relURL -}}
+          {{- else -}}
+          {{- with resources.Get "images/background-2.jpg" -}}
+          {{- $resized := .Resize "1200x q80" -}}
+          {{- $heroSrc = $resized.RelPermalink -}}
+          {{- $heroW = $resized.Width -}}
+          {{- $heroH = $resized.Height -}}
+          {{- end -}}
+          {{- end -}}
+          <img data-lightbox fetchpriority="high" decoding="async"
+               {{- with $heroW }} width="{{ . }}" height="{{ $heroH }}"{{ end }}
+               class="w-4/5 rounded-xl shadow-2xl shadow-tl-primary/10 transition-transform duration-500 hover:scale-105"
+               src='{{ $heroSrc }}' alt="{{ $.Site.Title }}">
         </div>
       </div>
     </div>

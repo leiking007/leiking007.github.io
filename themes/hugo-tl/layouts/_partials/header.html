@@ -60,8 +60,10 @@
             </ul>
             <!--     移动端菜单       -->
             <div class="lg:hidden" x-data="{open:false}">
-                <button x-on:click="open = true" class="block">
-                    {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
+                <button x-on:click="open = true" class="block p-1" aria-label="{{ T `ui.menu` | default `菜单` }}">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
                 </button>
                 {{ define "_partials/header/mobile_title.html" }}
                         <a href="{{.Site.Home.RelPermalink}}">{{ .Site.Title }}</a>
@@ -136,14 +138,15 @@
                     </template>
                 </div>
             </div>
-            <!--搜索按钮：点击时才懒加载 pagefind 资源-->
-            <button type="button" x-on:click="openSearch()" class="flex items-center"
+            <!--搜索按钮：点击时才懒加载 pagefind 资源，支持 Ctrl/Cmd+K 唤起-->
+            <button type="button" x-on:click="openSearch()"
+                    class="flex items-center" title="{{ T `widget.search.shortcut` | default `搜索 (Ctrl+K)` }}"
                     aria-label="{{ T `widget.search.title` | default `搜索` }}">
                 {{ partial "icons/icon" (dict "path" "common/search" "className" "text-2xl hover:text-tl-primary" ) }}
             </button>
             {{ partial "modal.html" (dict
                 "id"     "searchModal"
-                "title"  "全站搜索"
+                "title"  (T "widget.search.modal_title" | default "全站搜索")
                 "size"   "md"
                 "position" "top"
                 "content" `<div id="search"></div>`

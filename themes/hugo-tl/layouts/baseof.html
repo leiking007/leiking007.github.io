@@ -30,6 +30,8 @@
      x-show="visible"
      x-init="init"
      x-on:click="scrollToTop"
+     x-on:keydown.enter.prevent="scrollToTop"
+     x-on:keydown.space.prevent="scrollToTop"
      x-transition.duration.500ms
      role="button"
      tabindex="0"

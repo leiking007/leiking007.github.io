@@ -4,6 +4,7 @@ import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { existsSync, watch } from 'node:fs';
+import { vendorLibs } from './vendor.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let root = __dirname;
@@ -108,6 +109,9 @@ function watchPublic() {
 }
 
 try {
+  // 0. 复制 vendor 前端库（katex / mermaid）
+  vendorLibs();
+
   const commands = [
     // 1. Tailwind CSS 监听编译
     runCommand(

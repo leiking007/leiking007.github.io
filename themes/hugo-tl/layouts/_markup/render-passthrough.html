@@ -1,0 +1,8 @@
+{{/* KaTeX 数学公式：transform.ToMath 在构建时渲染（零前端 JS），输出 htmlAndMathml 兼容无 JS 环境 */}}
+{{/* 需要 Hugo >= 0.132，且站点 markup 配置启用 goldmark extensions.passthrough */}}
+{{- $opts := dict "output" "htmlAndMathml" "displayMode" (eq .Type "block") -}}
+{{- with try (transform.ToMath .Inner $opts) -}}
+    {{- .Inner -}}
+{{- else -}}
+    {{- errorf "KaTeX 公式渲染失败（页面 %s）：%s" .Page.Path .Err -}}
+{{- end -}}

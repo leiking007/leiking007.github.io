@@ -1,0 +1,4 @@
+{{/* Mermaid 图表代码块：输出占位容器，前端在 single.html 中检测到 .mermaid 后按需加载 mermaid 资源渲染（避免全站引入大体积库） */}}
+<div class="mermaid not-prose my-4 rounded-lg border border-tl-base-300/50 overflow-x-auto p-4 bg-tl-base-100 text-center">
+    {{- .Inner | strings.TrimSpace -}}
+</div>

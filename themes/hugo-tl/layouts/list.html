@@ -52,10 +52,10 @@
         {{ end }}
     </div>
 
-    {{/* 时间轴 */}}
+    {{/* 时间轴：按年份折叠展示，最近一年默认展开 */}}
     <div class="max-w-4xl mx-auto relative">
-        {{- range $paginator.Pages.GroupByDate "2006" }}
-        <div class="relative pl-16 sm:pl-36 pb-12 last:pb-0">
+        {{- range $i, $group := $paginator.Pages.GroupByDate "2006" }}
+        <div class="relative pl-16 sm:pl-36 pb-12 last:pb-0" x-data="{ open: {{ eq $i 0 }} }">
             {{/* 年份标题 - 左侧固定位置 */}}
             <div class="absolute left-0 top-0 w-14 sm:w-28 text-right">
                 <span class="text-2xl sm:text-3xl font-bold text-tl-primary">{{ .Key }}</span>
@@ -67,22 +67,26 @@
             {{/* 连接线 */}}
             <div class="absolute left-[4.15rem] sm:left-[7.85rem] top-8 bottom-0 w-px bg-gradient-to-b from-tl-primary/30 to-transparent"></div>
 
-            {{/* 文章数量 */}}
-            <div class="text-sm text-tl-base-content/50 mb-4 pl-2">
+            {{/* 文章数量：点击折叠/展开该年份 */}}
+            <div class="flex w-fit cursor-pointer select-none items-center gap-1.5 pl-2 text-sm text-tl-base-content/50 hover:text-tl-primary transition-colors mb-4"
+                 x-on:click="open = !open"
+                 x-on:keydown.enter.prevent="open = !open"
+                 x-on:keydown.space.prevent="open = !open"
+                 role="button" tabindex="0" :aria-expanded="open">
                 {{ len .Pages }} 篇文章
+                <svg class="w-4 h-4 transition-transform duration-300" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
             </div>
 
             {{/* 文章列表 */}}
-            <div class="space-y-3">
+            <div class="space-y-3" x-show="open" x-collapse.duration.300ms>
                 {{- range .Pages }}
                 <a href="{{ .RelPermalink }}" class="group flex items-start gap-4 p-4 rounded-xl bg-linear-to-br from-tl-base-200/50 to-tl-base-100/50 border border-tl-base-300/30 hover:border-tl-primary/30 hover:shadow-md hover:shadow-tl-primary/5 transition-all duration-300">
                     {{/* 日期 */}}
                     <div class="flex-shrink-0 text-center min-w-[3.5rem]">
                         <div class="text-lg font-bold text-tl-base-content/70 group-hover:text-tl-primary transition-colors">
                             {{ .Date.Format "01-02" }}
-                        </div>
-                        <div class="text-xs text-tl-base-content/40">
-                            {{ .Date.Format "Mon" }}
                         </div>
                     </div>
 

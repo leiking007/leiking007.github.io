@@ -246,3 +246,10 @@ body {
     pointer-events: none;
 }
 
+/* KaTeX 公式：块级公式居中，超宽横向滚动 */
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: .25rem 0;
+}
+
