@@ -21,7 +21,9 @@
     "@parcel/watcher-darwin-arm64": "2.5.1",
     "@parcel/watcher-darwin-x64": "2.5.1",
     "@parcel/watcher-linux-x64-glibc": "2.5.1",
-    "@parcel/watcher-linux-x64-musl": "2.5.1"
+    "@parcel/watcher-linux-x64-musl": "2.5.1",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.1.17",
+    "lightningcss-linux-x64-gnu": "1.30.2"
   },
   "description": "Note",
   "homepage": "",
