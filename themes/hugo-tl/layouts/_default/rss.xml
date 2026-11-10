@@ -1,0 +1,24 @@
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ .Title | default .Site.Title | html }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ .Site.Params.description | default .Site.Params.describe | default .Site.Title | html }}</description>
+    <generator>Hugo</generator>
+    <language>{{ .Site.LanguageCode }}</language>
+    {{ with .Site.Copyright }}<copyright>{{ . | html }}</copyright>{{ end }}
+    {{ with .OutputFormats.Get "rss" }}<atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml" />{{ end }}
+    {{/* 只输出摘要，避免全文 RSS 让 index.xml 膨胀到数百 KB */}}
+    {{- $pages := .RegularPages -}}
+    {{- if .IsHome -}}{{- $pages = .Site.RegularPages -}}{{- end -}}
+    {{ range first 50 $pages }}
+    <item>
+      <title>{{ .Title | html }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      <guid>{{ .Permalink }}</guid>
+      <description>{{ with .Description }}{{ . | html }}{{ else }}{{ .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | truncate 200 | html }}{{ end }}</description>
+    </item>
+    {{ end }}
+  </channel>
+</rss>

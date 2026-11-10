@@ -2,7 +2,7 @@
 {{- $pages := where .Data.Pages.ByDate.Reverse "Type" "in" .Site.MainSections }}
 {{- $paginator := .Paginate $pages (index .Site.Params.pagination "posts_paginate" | default 20) }}
 {{- $total := len $pages }}
-<section class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
+<main class="mx-auto mt-6 max-w-7xl gap-6 px-4 md:px-6">
     {{/* 页面标题区 */}}
     <div class="mb-10 text-center">
         <div class="flex items-center justify-center gap-3 mb-4">
@@ -129,5 +129,5 @@
 
     {{/* 分页 */}}
     {{ partial "pagination.html" . }}
-</section>
+</main>
 {{ end }}

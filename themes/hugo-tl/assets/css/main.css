@@ -246,6 +246,19 @@ body {
     pointer-events: none;
 }
 
+/* 尊重系统“减少动态效果”偏好 */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* KaTeX 公式：块级公式居中，超宽横向滚动 */
 .katex-display {
     overflow-x: auto;

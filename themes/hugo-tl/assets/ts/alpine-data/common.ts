@@ -3,9 +3,18 @@ declare const PagefindUI: any;
 const backToTop = () => ({
     visible: false,
     init() {
+        // rAF 节流：滚动事件只标记，实际状态更新合并到下一帧
+        let ticking = false
+        const update = () => {
+            this.visible = window.scrollY > 200
+            ticking = false
+        }
         window.addEventListener('scroll', () => {
-            this.visible = window.scrollY > 200;
-        }, {passive: true});
+            if (ticking) return
+            ticking = true
+            requestAnimationFrame(update)
+        }, {passive: true})
+        update()
     },
     scrollToTop() {
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -43,11 +52,28 @@ const imageLightbox = () => ({
         this.images = Array.from(document.getElementsByTagName("img")).filter(
             (img) => img.hasAttribute("data-lightbox") && !img.closest('[x-data~="imageLightbox"]')
         );
+        // 无图片页面不注册任何全局监听
+        if (!this.images.length) return
         for (let img of this.images) {
             img.addEventListener("click", () => {
                 this.openWith(img)
             })
         }
+        document.addEventListener('keydown', (event) => {
+            if (!this.isOpen) return
+            this.onKeydown(event)
+            if (event.key === 'Escape') {
+                this.closeLightbox()
+            } else if (event.key === 'ArrowLeft') {
+                this.prevImage()
+            } else if (event.key === 'ArrowRight') {
+                this.nextImage()
+            }
+        })
+        document.addEventListener('mouseup', () => this.stopDrag())
+        document.addEventListener('mousemove', (event) => this.performDrag(event))
+        document.addEventListener('touchmove', (event) => this.performDrag(event), {passive: false})
+        document.addEventListener('touchend', (event) => this.onTouchEnd(event))
     },
     openWith(img) {
         this.imgEle = img
@@ -302,13 +328,19 @@ const themeSwitcher = () => ({
 const readingProgress = () => ({
     progress: 0,
     init() {
-        const onScroll = () => {
+        let ticking = false
+        const update = () => {
             const doc = document.documentElement;
             const total = doc.scrollHeight - doc.clientHeight;
             this.progress = total > 0 ? Math.min(100, Math.round((doc.scrollTop / total) * 100)) : 0;
+            ticking = false
         };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
+        window.addEventListener('scroll', () => {
+            if (ticking) return
+            ticking = true
+            requestAnimationFrame(update)
+        }, { passive: true });
+        update()
     },
 })
 

@@ -42,40 +42,73 @@ const tocHighlight = () => ({
 })
 
 /**
- * 代码块
- * @param copiedText 复制成功提示文案（由模板注入 i18n 文案）
+ * 代码块（全站单例）：通过事件委托处理复制与折叠，
+ * 避免长文章中每个代码块都创建一个 Alpine 组件。
  */
-const postCodeBlock = (copiedText: string = 'copied') => ({
-    showCode: true,  // 是否显示代码块
-    copyInnerHTML: '',
-    copiedText,
-    /** 复制代码 */
-    async copyCode() {
-        const codeBlock = this.$refs.codeBlock as HTMLElement | undefined
-        const copyBtn = this.$refs.copyBtn as HTMLElement | undefined
-        if (!codeBlock || !copyBtn) return
+const postCodeBlocks = () => ({
+    init() {
+        this.$el.addEventListener('click', (event: MouseEvent) => {
+            const target = event.target as HTMLElement | null
+            if (!target) return
+            const copyBtn = target.closest<HTMLElement>('[data-copy-code]')
+            if (copyBtn) {
+                event.preventDefault()
+                this.copyCode(copyBtn)
+                return
+            }
+            const toggleBtn = target.closest<HTMLElement>('[data-toggle-code]')
+            if (toggleBtn) {
+                event.preventDefault()
+                this.toggleCode(toggleBtn)
+            }
+        })
+    },
+    /** 复制代码：移除行号节点后取纯文本 */
+    async copyCode(btn: HTMLElement) {
+        const block = btn.closest<HTMLElement>('[data-codeblock]')
+        const codeEle = block?.querySelector('code')
+        if (!block || !codeEle) return
 
-        // 提取代码文本：克隆后移除行号节点，兼容行号/非行号两种 chroma 输出
-        const codeEle = codeBlock.querySelector('code')
-        if (!codeEle) return
         const clone = codeEle.cloneNode(true) as HTMLElement
         clone.querySelectorAll('.ln, .lnt').forEach((el) => el.remove())
         const text = (clone.textContent ?? '').replace(/\n+$/, '')
 
         try {
             await navigator.clipboard.writeText(text)
-            if (!this.copyInnerHTML) {
-                this.copyInnerHTML = copyBtn.innerHTML
+            if (!btn.dataset.original) {
+                btn.dataset.original = btn.innerHTML
             }
-            copyBtn.innerHTML = this.copiedText
+            btn.textContent = block.dataset.copiedText || 'copied'
             setTimeout(() => {
-                copyBtn.innerHTML = this.copyInnerHTML
+                if (btn.dataset.original) btn.innerHTML = btn.dataset.original
             }, 1000)
         } catch {
             // 剪贴板不可用（非安全上下文等），静默失败
         }
     },
+    /** 折叠/展开代码内容，并切换箭头方向 */
+    toggleCode(btn: HTMLElement) {
+        const block = btn.closest<HTMLElement>('[data-codeblock]')
+        const content = block?.querySelector<HTMLElement>('[data-code-content]')
+        if (!content) return
+
+        const down = btn.querySelector<HTMLElement>('[data-icon="down"]')
+        const left = btn.querySelector<HTMLElement>('[data-icon="left"]')
+        const collapsed = content.hasAttribute('hidden')
+
+        if (collapsed) {
+            content.removeAttribute('hidden')
+            btn.setAttribute('aria-expanded', 'true')
+            down?.classList.remove('hidden')
+            left?.classList.add('hidden')
+        } else {
+            content.setAttribute('hidden', '')
+            btn.setAttribute('aria-expanded', 'false')
+            down?.classList.add('hidden')
+            left?.classList.remove('hidden')
+        }
+    },
 })
 
 
-export {tocHighlight, postCodeBlock}
+export {tocHighlight, postCodeBlocks}

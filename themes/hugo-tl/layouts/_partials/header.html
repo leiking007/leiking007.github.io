@@ -30,7 +30,7 @@
                         <ul class="py-2 text-sm">
                             {{- range .Params.sub -}}
                             <li class="text-nowrap">
-                                <a href="{{ .url }}"
+                                <a href="{{ .url | relLangURL }}"
                                    {{ if eq (default false .newTab) true }}target="_blank" {{ end }}
                                    class="block px-4 py-2 hover:text-tl-primary ">
                                     {{ with .Pre }}
@@ -65,48 +65,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                {{ define "_partials/header/mobile_title.html" }}
-                        <a href="{{.Site.Home.RelPermalink}}">{{ .Site.Title }}</a>
-                {{ end }}
-                {{ define "_partials/header/mobile_content.html" }}
-                        <div class="p-2 space-y-2">
-                                {{ $currentPage := . }}
-                                {{ range .Site.Menus.main }}
-                                {{- if .Params.sub -}}
-                                <div class="text-sm font-medium">
-                                    {{ with .Pre }}
-                                        {{ partial "icons/icon" (dict "path" . ) }}
-                                    {{ end }}
-                                    {{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
-                                    <ul class="ml-6 mt-2">
-                                        {{- range .Params.sub -}}
-                                        <li>
-                                            <a href="{{ .url }}"
-                                               {{ if eq (default false .newTab) true }}target="_blank" {{ end }}
-                                               class="block mt-1">
-                                                {{ with .Pre }}
-                                                    {{ partial "icons/icon" (dict "path" . ) }}
-                                                {{ end }}
-                                                {{ .name }}
-                                            </a>
-                                        </li>
-                                        {{- end -}}
-                                    </ul>
-                                </div>
-                                {{ else }}
-                                <a href="{{ .URL | relLangURL }}"
-                                   {{ if eq (default false .Params.newTab) true }}target="_blank" {{ end }}
-                                   class="block rounded-sm">
-                                    {{ with .Pre }}
-                                        {{ partial "icons/icon" (dict "path" . ) }}
-                                    {{ end }}
-                                    {{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
-                                </a>
-                                {{ end }}
-
-                                {{ end }}
-                            </div>
-                {{ end }}
                 {{ partial "modal.html" (dict
                     "id"     "mobileModal"
                     "title"  (partial "header/mobile_title.html" .)

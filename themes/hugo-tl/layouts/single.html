@@ -13,7 +13,7 @@
 {{/*  TableOfContents 为空时仅输出约 35 字符的空 nav，用 100 作为"存在实际目录"的阈值  */}}
 {{- $hasTOC := ge (len .TableOfContents) 100 -}}
 {{- $tocEnable := and $hasTOC $pageTocEnable $TOCManuallyEnable -}}
-<section class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6">
+<main class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6">
     <div class="z-0 min-w-0">
         <div class="post-body prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
             <div class="my-3">
@@ -91,7 +91,7 @@
         </div>
         {{ end }}
     </div>
-</section>
+</main>
 
 {{ end }}
 {{ define "script" }}

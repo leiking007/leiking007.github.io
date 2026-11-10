@@ -20,5 +20,3 @@ module:
       target: assets/alpinejs
     - source: node_modules/@alpinejs
       target: assets/@alpinejs
-    - source: node_modules/crypto-js
-      target: assets/crypto-js

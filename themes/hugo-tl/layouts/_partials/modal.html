@@ -62,11 +62,11 @@
       </header>
 
       <!-- Body -->
-      <main class="p-4 overflow-y-auto">
+      <div class="p-4 overflow-y-auto">
         {{ with .content }}
             {{- . | safeHTML -}}
         {{ end }}
-      </main>
+      </div>
     </div>
   </div>
 </div>

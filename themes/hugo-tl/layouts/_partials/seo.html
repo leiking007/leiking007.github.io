@@ -1,4 +1,5 @@
 {{- $description := .Description | default (trim (.Summary | plainify) "\n\r\t ") | default .Site.Params.describe | default .Site.Params.subtitle -}}
+{{- $title := .Title | default .Site.Title -}}
 {{- $ogType := "website" -}}
 {{- if .IsPage -}}{{- $ogType = "article" -}}{{- end -}}
 {{/* og:image：页面 cover（页面资源自动裁剪 1200x630）> 站点默认 hero 图（同样裁剪）> 站点配置的 heroImage URL，均未配置则不输出 */}}
@@ -18,7 +19,7 @@
 <link rel="canonical" href="{{ .Permalink }}">
 
 <meta property="og:site_name" content="{{ .Site.Title }}">
-<meta property="og:title" content="{{ .Title | default .Site.Title }}">
+<meta property="og:title" content="{{ $title }}">
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:type" content="{{ $ogType }}">
@@ -27,6 +28,7 @@
 {{- end }}
 {{- with $ogImage }}
 <meta property="og:image" content="{{ . }}">
+<meta property="og:image:alt" content="{{ $title }}">
 {{- end }}
 {{- if .IsPage }}
 <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
@@ -34,9 +36,13 @@
 {{- end }}
 
 <meta name="twitter:card" content="{{ if $ogImage }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $description }}">
 {{- with $ogImage }}
 <meta name="twitter:image" content="{{ . }}">
 {{- end }}
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1d232a" media="(prefers-color-scheme: dark)">
 
 {{- with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}">

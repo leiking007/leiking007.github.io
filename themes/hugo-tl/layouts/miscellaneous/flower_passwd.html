@@ -20,7 +20,7 @@
 </section>
 {{ end }}
 {{ define "script" }}
-{{/* 花密组件独立入口：crypto-js 仅在该页面加载，不打包进全站主 JS */}}
+{{/* 花密组件独立入口：Web Crypto 实现 SHA-256，不额外打包加密库 */}}
 {{- $flowerjs := resources.Get "ts/flower.ts" | js.Build (dict "minify" hugo.IsProduction) | resources.Fingerprint "sha256" }}
 <script type="text/javascript" src="{{ $flowerjs.RelPermalink }}" integrity="{{ $flowerjs.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}

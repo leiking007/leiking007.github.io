@@ -49,7 +49,7 @@
                                 {{ if .Pages }}
                                 <span class="flex items-center gap-1.5">
                                     {{ partial "icons/icon" (dict "path" "post/time" "className" "w-4 h-4" ) }}
-                                    更新于 {{ (index .Pages 0).Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
+                                    {{ T "term.updated_at" | default "更新于" }} {{ (index .Pages 0).Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}
                                 </span>
                                 {{ end }}
                             </div>

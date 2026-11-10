@@ -11,9 +11,6 @@ copyright: copyright@
 
 enableEmoji: true
 
-pagination:
-  pagerSize: 18
-
 summaryLength: 70  # 摘要长度（0 会导致 .Summary 恒为空）
 
 uglyURLs: false  # 默认 false;启用时，创建的 URL 格式是 /filename.html 而不是 /filename/

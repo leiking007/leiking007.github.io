@@ -17,7 +17,7 @@
     {{- partial "head.html" . -}}
     {{- block "head" . -}}{{- end -}}
 </head>
-<body class="bg-tl-base-200 text-tl-base-content">
+<body class="bg-tl-base-200 text-tl-base-content" x-data="postCodeBlocks">
 <div id="app" class="min-h-screen">
     {{- partial "header.html" . -}}
     {{- block "main" . }}{{- end -}}

@@ -1,28 +1,24 @@
-{{/*  {{ transform.Highlight .Inner .Type "style=monokai, lineNos=false" }}  */}}
-{{/*  行号默认开启，站点 params.codeLineNumbers 设为 false 可关闭  */}}
+{{/* 行号默认开启，站点 params.codeLineNumbers 设为 false 可关闭 */}}
 {{- $lineNos := .Page.Site.Params.codeLineNumbers | default true -}}
-<div x-data="postCodeBlock('{{ T `code.copied` | default `copied` }}')" class="font-mono text-base not-prose my-4 rounded-lg border border-tl-base-300/50 overflow-hidden shadow-sm">
+{{/* 代码块统一由 body 上的 postCodeBlocks 组件通过事件委托处理，避免每个代码块实例化一个 Alpine 组件 */}}
+<div class="font-mono text-base not-prose my-4 rounded-lg border border-tl-base-300/50 overflow-hidden shadow-sm"
+     data-codeblock
+     data-copied-text="{{ T `code.copied` | default `copied` }}">
     <div class="px-3 py-2 flex justify-between items-center bg-tl-base-300/60">
         <span class="cursor-default text-xs text-tl-base-content/70">{{ .Type }}</span>
         <span class="flex">
-            <span x-on:click="copyCode" x-ref="copyBtn" class="cursor-copy mr-2 inline-block">
+            <button type="button" data-copy-code class="cursor-copy mr-2 inline-flex items-center"
+                    aria-label="{{ T `code.copy` | default `复制代码` }}">
                 {{ partial "icons/icon" (dict "path" "post/copy" ) }}
-            </span>
-            <span x-on:click="showCode = !showCode" class="cursor-pointer mr-2 inline-block">
-                <span x-show="showCode">
-                    {{ partial "icons/icon" (dict "path" "common/arrow-down" ) }}
-                </span>
-                <span x-show="!showCode">
-                    {{ partial "icons/icon" (dict "path" "common/arrow-left" ) }}
-                </span>
-            </span>
+            </button>
+            <button type="button" data-toggle-code class="cursor-pointer mr-2 inline-flex items-center"
+                    aria-expanded="true" aria-label="{{ T `code.collapse` | default `折叠代码` }}">
+                <span data-icon="down">{{ partial "icons/icon" (dict "path" "common/arrow-down" ) }}</span>
+                <span data-icon="left" class="hidden">{{ partial "icons/icon" (dict "path" "common/arrow-left" ) }}</span>
+            </button>
         </span>
     </div>
-    <div x-show="showCode"
-         x-cloak
-         x-collapse
-         x-collapse.duration.500ms
-         x-ref="codeBlock">
+    <div data-code-content>
         {{ transform.Highlight .Inner .Type (printf "noClasses=false, lineNos=%t, lineNumbersInTable=false" $lineNos) }}
     </div>
 </div>

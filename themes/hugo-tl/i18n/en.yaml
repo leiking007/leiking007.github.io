@@ -31,6 +31,7 @@ term:
   posts_under: "posts under"
   posts_count: "{{ . }} posts"
   posts_label: Posts
+  updated_at: Updated on
 
 tags:
   total_tags: "{{ . }} tags"
@@ -61,6 +62,8 @@ search:
 
 code:
   copied: Copied
+  copy: Copy code
+  collapse: Collapse code
 
 footer:
   builtWith: Built with {{ .Generator }}
@@ -82,6 +85,8 @@ ui:
   zoom_in: Zoom in
   zoom_out: Zoom out
   reset_zoom: Reset zoom
+  prev_image: Previous image
+  next_image: Next image
 
 theme:
   title: Theme

@@ -31,6 +31,7 @@ term:
   posts_under: 下的文章
   posts_count: "{{ . }} 篇"
   posts_label: 文章
+  updated_at: 更新于
 
 tags:
   total_tags: 共 {{ . }} 个标签
@@ -61,6 +62,8 @@ search:
 
 code:
   copied: 已复制
+  copy: 复制代码
+  collapse: 折叠代码
 
 footer:
   builtWith: Built with {{ .Generator }}
@@ -82,6 +85,8 @@ ui:
   zoom_in: 放大
   zoom_out: 缩小
   reset_zoom: 重置缩放
+  prev_image: 上一张
+  next_image: 下一张
 
 theme:
   title: 主题

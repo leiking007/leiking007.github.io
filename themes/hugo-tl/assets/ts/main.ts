@@ -1,7 +1,7 @@
 import Alpine from "alpinejs/dist/module.esm.js"
 import AlpineFocus from '@alpinejs/focus/dist/module.esm.js'
 import collapse from '@alpinejs/collapse/dist/module.esm.js'
-import {postCodeBlock, tocHighlight} from "./alpine-data/post"
+import {postCodeBlocks, tocHighlight} from "./alpine-data/post"
 import {backToTop, imageLightbox, readingProgress, themeSwitcher, searchLauncher} from "./alpine-data/common"
 
 declare global {
@@ -21,8 +21,8 @@ Alpine.data('backToTop', backToTop);
 // 文章页代码高亮
 Alpine.data('tocHighlight', tocHighlight);
 
-// 文章页代码块
-Alpine.data("postCodeBlock", postCodeBlock);
+// 文章页代码块（全站单例，事件委托）
+Alpine.data("postCodeBlocks", postCodeBlocks);
 
 // 图片灯箱
 Alpine.data('imageLightbox', imageLightbox);
