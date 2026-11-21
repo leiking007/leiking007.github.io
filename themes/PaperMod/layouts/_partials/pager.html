@@ -1,0 +1,62 @@
+{{- /*
+  通用分页按钮
+  参数：
+    total   (int)    总页数
+    current (int)    当前页
+    urls    (slice)  各页链接，下标从 0 开始（服务端渲染时必填）
+    client  (bool)   是否由前端接管翻页（标签页），为 true 时输出 data-role / data-page
+    label   (string) 无障碍标签
+*/ -}}
+{{- $total := .total | int }}
+{{- $current := .current | default 1 | int }}
+{{- $client := .client | default false }}
+{{- $urls := .urls | default slice }}
+{{- $label := .label | default "分页" }}
+
+{{- if gt $total 1 }}
+{{- $nums := slice }}
+{{- if or $client (le $total 7) }}
+{{- $nums = seq 1 $total }}
+{{- else }}
+{{- $nums = slice 1 $total $current }}
+{{- if gt $current 1 }}{{ $nums = $nums | append (sub $current 1) }}{{ end }}
+{{- if lt $current $total }}{{ $nums = $nums | append (add $current 1) }}{{ end }}
+{{- $nums = sort (uniq $nums) }}
+{{- end }}
+<nav class="tag-pager" aria-label="{{ $label }}">
+  {{- if $client }}
+  <a class="tag-pager-btn{{ if le $current 1 }} is-disabled{{ end }}" href="#" data-role="prev" aria-label="上一页"
+    {{- if le $current 1 }} aria-disabled="true"{{ end }}>«</a>
+  {{- else if gt $current 1 }}
+  <a class="tag-pager-btn" href="{{ index $urls (sub $current 2) }}" aria-label="上一页">«</a>
+  {{- else }}
+  <span class="tag-pager-btn is-disabled" aria-hidden="true">«</span>
+  {{- end }}
+  {{- $prevNum := 0 }}
+  {{- range $nums }}
+  {{- if and (gt $prevNum 0) (gt (sub . $prevNum) 1) }}
+  <span class="tag-pager-gap">…</span>
+  {{- end }}
+  {{- if eq . $current }}
+  {{- if $client }}
+  <a class="tag-pager-btn is-active" href="#" data-page="{{ . }}" aria-current="page">{{ . }}</a>
+  {{- else }}
+  <span class="tag-pager-btn is-active" aria-current="page">{{ . }}</span>
+  {{- end }}
+  {{- else if $client }}
+  <a class="tag-pager-btn" href="#" data-page="{{ . }}">{{ . }}</a>
+  {{- else }}
+  <a class="tag-pager-btn" href="{{ index $urls (sub . 1) }}">{{ . }}</a>
+  {{- end }}
+  {{- $prevNum = . }}
+  {{- end }}
+  {{- if $client }}
+  <a class="tag-pager-btn{{ if ge $current $total }} is-disabled{{ end }}" href="#" data-role="next" aria-label="下一页"
+    {{- if ge $current $total }} aria-disabled="true"{{ end }}>»</a>
+  {{- else if lt $current $total }}
+  <a class="tag-pager-btn" href="{{ index $urls $current }}" aria-label="下一页">»</a>
+  {{- else }}
+  <span class="tag-pager-btn is-disabled" aria-hidden="true">»</span>
+  {{- end }}
+</nav>
+{{- end }}

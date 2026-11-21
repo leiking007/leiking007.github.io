@@ -1,0 +1,317 @@
+{{- if not (.Param "hideFooter") }}
+<footer class="footer">
+    {{- if not site.Params.footer.hideCopyright }}
+        {{- if site.Copyright }}
+        <span>{{ site.Copyright | markdownify }}</span>
+        {{- else }}
+        <span>&copy; {{ now.Year }} <a href="{{ "" | relLangURL }}">{{ site.Title }}</a></span>
+        {{- end }}
+        {{- print " · "}}
+    {{- end }}
+
+    {{- with site.Params.footer.text }}
+        {{ . | markdownify }}
+        {{- print " · "}}
+    {{- end }}
+
+    {{/*
+        - The "Powered by Hugo" text is intentionally left at the end of the footer to give it more prominence.
+        - We kindly encourage you to keep this line. Keeping this credit helps open source projects like PaperMod and Hugo reach more people, supports the open source ecosystem, and shows appreciation for the work that goes into these tools.
+        - If you choose to remove it, please consider adding a link to the PaperMod GitHub repository somewhere on your site to give credit to the project and its contributors.
+        - Support us by sponsoring the project on GitHub Sponsors: https://github.com/sponsors/adityatelange
+    */}}
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+{{- end }}
+
+{{- if (not site.Params.disableScrollToTop) }}
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+{{- end }}
+
+{{- partial "extend_footer.html" . }}
+
+{{- /* 代码块：长代码默认折叠，可展开/收起 */ -}}
+{{- if (eq .Kind "page") }}
+<script>
+    (() => {
+        const MAX_HEIGHT = 360;
+
+        document.querySelectorAll(".post-content .highlight").forEach((block) => {
+            const chroma = block.querySelector(":scope > .chroma");
+            if (!chroma || chroma.scrollHeight <= MAX_HEIGHT + 40) return;
+
+            block.classList.add("code-collapsible", "code-collapsed");
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "code-toggle";
+            btn.setAttribute("aria-expanded", "false");
+            btn.textContent = "展开代码";
+
+            btn.addEventListener("click", () => {
+                const collapsed = block.classList.toggle("code-collapsed");
+                btn.setAttribute("aria-expanded", String(!collapsed));
+                btn.textContent = collapsed ? "展开代码" : "收起代码";
+                if (collapsed) block.scrollIntoView({ block: "nearest" });
+            });
+
+            block.appendChild(btn);
+        });
+    })();
+</script>
+{{- end }}
+
+{{- /* 标签页：点击标签云在下方展示该标签文章，并支持前端分页 */ -}}
+{{- if eq .Kind "taxonomy" }}
+<script>
+    (() => {
+        const root = document.getElementById("tag-posts");
+        if (!root) return;
+
+        const cloud = document.getElementById("tag-cloud");
+        const groups = Array.from(root.querySelectorAll(".tag-posts-group"));
+        if (!groups.length) return;
+
+        const pagerSize = Math.max(1, parseInt(root.dataset.pagerSize, 10) || 5);
+        const state = { tag: null, page: 1 };
+
+        const findGroup = (tag) => groups.find((group) => group.dataset.tag === tag);
+
+        const updateUrl = () => {
+            const params = new URLSearchParams(window.location.search);
+            params.set("tag", state.tag);
+            if (state.page > 1) params.set("page", String(state.page));
+            else params.delete("page");
+            history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+        };
+
+        const renderPager = (group) => {
+            const cards = Array.from(group.querySelectorAll(".post-entry"));
+            const totalPages = Math.max(1, Math.ceil(cards.length / pagerSize));
+            if (state.page > totalPages) state.page = totalPages;
+
+            cards.forEach((card, index) => {
+                card.hidden = Math.floor(index / pagerSize) + 1 !== state.page;
+            });
+
+            const nav = group.querySelector(".tag-pager");
+            if (!nav) return;
+
+            nav.querySelectorAll("[data-page]").forEach((el) => {
+                const active = parseInt(el.dataset.page, 10) === state.page;
+                el.classList.toggle("is-active", active);
+                if (active) el.setAttribute("aria-current", "page");
+                else el.removeAttribute("aria-current");
+            });
+
+            nav.querySelectorAll("[data-role]").forEach((el) => {
+                const disabled = el.dataset.role === "prev" ? state.page <= 1 : state.page >= totalPages;
+                el.classList.toggle("is-disabled", disabled);
+                if (disabled) el.setAttribute("aria-disabled", "true");
+                else el.removeAttribute("aria-disabled");
+            });
+        };
+
+        const activate = (tag, page = 1) => {
+            const group = findGroup(tag) || groups[0];
+            if (!group) return;
+
+            state.tag = group.dataset.tag;
+            state.page = Math.max(1, parseInt(page, 10) || 1);
+
+            groups.forEach((item) => {
+                item.hidden = item !== group;
+            });
+
+            if (cloud) {
+                cloud.querySelectorAll(".tag-cloud-item").forEach((link) => {
+                    const active = link.dataset.tag === state.tag;
+                    link.classList.toggle("is-active", active);
+                    if (active) link.setAttribute("aria-current", "true");
+                    else link.removeAttribute("aria-current");
+                });
+            }
+
+            renderPager(group);
+            updateUrl();
+        };
+
+        if (cloud) {
+            cloud.addEventListener("click", (event) => {
+                const link = event.target.closest(".tag-cloud-item");
+                if (!link) return;
+                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                activate(link.dataset.tag, 1);
+            });
+        }
+
+        root.addEventListener("click", (event) => {
+            const button = event.target.closest(".tag-pager-btn");
+            if (!button || !root.contains(button)) return;
+            event.preventDefault();
+            if (button.classList.contains("is-disabled")) return;
+
+            const group = button.closest(".tag-posts-group");
+            if (!group) return;
+
+            if (button.dataset.role === "prev") state.page -= 1;
+            else if (button.dataset.role === "next") state.page += 1;
+            else if (button.dataset.page) state.page = parseInt(button.dataset.page, 10);
+            else return;
+
+            renderPager(group);
+            updateUrl();
+            group.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        activate(params.get("tag"), parseInt(params.get("page"), 10) || 1);
+    })();
+</script>
+{{- end }}
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        // Set the scroll position
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        // Save once scrolling settles, not on every event
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            // Move keyboard focus to the target like native anchor navigation,
+            // so the next Tab continues from there instead of from this link
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+
+{{- if (not site.Params.disableScrollToTop) }}
+<script>
+    var toplink = document.getElementById("top-link");
+    var scrollTicking = false;
+    // At most one check per frame
+    window.addEventListener("scroll", function () {
+        if (scrollTicking) {
+            return;
+        }
+        scrollTicking = true;
+        requestAnimationFrame(function () {
+            const scrollThreshold = window.innerHeight;
+            const shown = document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold;
+            toplink.classList.toggle("hidden", !shown);
+            scrollTicking = false;
+        });
+    }, { passive: true });
+
+</script>
+{{- end }}
+
+{{- if (not site.Params.disableThemeToggle) }}
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+{{- end }}
+
+{{- if (and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (.Param "ShowCodeCopyButtons")) }}
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '{{- i18n "code_copy" | default "copy" }}';
+
+        function copyingDone() {
+            copybutton.innerHTML = '{{- i18n "code_copied" | default "copied!" }}';
+            setTimeout(() => {
+                copybutton.innerHTML = '{{- i18n "code_copy" | default "copy" }}';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            // td containing LineNos
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            // table containing LineNos and code
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            // code blocks not having highlight as parent class
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+{{- end }}

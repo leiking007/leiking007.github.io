@@ -1,0 +1,6 @@
+调试
+{{- infof "[DEBUG svg-attrs] $attrs = %s" $attrs -}}
+{{- warnf "[DEBUG svg-attrs] $attrs = %s" $attrs -}}
+{{- errorf "[DEBUG svg-attrs] $attrs = %s" $attrs -}}
+注释
+{{/* 移除所有的fill属性 */}}

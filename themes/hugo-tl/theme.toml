@@ -1,0 +1,12 @@
+name = "hugo-tl"
+license = "MIT"
+licenselink = "https://github.com/leiking007/leiking007.github.io/blob/master/themes/hugo-tl/LICENSE"
+description = "A personal blog theme built with Tailwind CSS v4 and Alpine.js: 4 switchable color themes, Pagefind full-text search, syntax highlighting and image lightbox."
+homepage = "https://leiking007.github.io/"
+tags = ["blog", "tailwindcss", "alpinejs", "pagefind", "dark-mode"]
+features = ["multi-theme", "search", "responsive", "syntax-highlighting", "lightbox"]
+min_version = "0.146.0"
+
+[author]
+  name = "lei"
+  homepage = "https://leiking007.github.io/"

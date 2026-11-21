@@ -1,0 +1,115 @@
+<header class="lg:sticky top-0 z-100 flex h-16  py-3 shadow-sm bg-tl-base-100 ">
+    <div class="mx-auto flex h-full w-full max-w-360 justify-between px-4 lg:px-6">
+        <div class="flex h-full gap-6">
+            <div class="hidden lg:block mr-2 h-full">
+                <a href="{{.Site.Home.RelPermalink}}" class="flex items-center space-x-3">
+                    {{ partial "icons/icon" (dict "path" "common/logo" "className" "text-3xl" "processAttrs" false ) }}
+                    <span class="self-center text-2xl font-semibold whitespace-nowrap ">{{ .Site.Title }}</span>
+                </a>
+            </div>
+            <!--    大屏菜单        -->
+            <ul class="hidden items-center gap-8 lg:flex">
+                {{ $currentPage := . }}
+                {{ range .Site.Menus.main }}
+                {{/* 判断当前页面url 和 菜单链接url是否相等，激活菜单 */}}
+                {{ $active := eq (.URL | relLangURL) ($currentPage.RelPermalink | relLangURL) }}
+                {{- if .Params.sub -}}
+                <!-- 下拉菜单配置 -->
+                <li x-data="{ open: false }" x-on:mouseenter="open = true" x-on:mouseleave="open = false"
+                    class="relative cursor-pointer text-sm font-medium">
+                    <button x-on:click="open =!open"
+                            class="flex items-center justify-between py-2 px-3 rounded-sm border-0 p-0 w-auto">
+                        {{ with .Pre }}
+                            {{ partial "icons/icon" (dict "path" . ) }}
+                        {{ end }}{{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
+                        {{ partial "icons/icon" (dict "path" "common/arrow-down" ) }}
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div x-show="open" x-cloak x-transition.duration.500ms
+                         class="z-50 absolute top-12 left-8 font-normal bg-tl-base-100">
+                        <ul class="py-2 text-sm">
+                            {{- range .Params.sub -}}
+                            <li class="text-nowrap">
+                                <a href="{{ .url | relLangURL }}"
+                                   {{ if eq (default false .newTab) true }}target="_blank" {{ end }}
+                                   class="block px-4 py-2 hover:text-tl-primary ">
+                                    {{ with .Pre }}
+                                        {{ partial "icons/icon" (dict "path" . ) }}
+                                    {{ end }}
+                                    {{ .name }}
+                                </a>
+                            </li>
+                            {{- end -}}
+                        </ul>
+                    </div>
+                </li>
+                {{ else }}
+                <li class="relative cursor-pointer text-sm font-medium">
+                    <a href="{{ .URL | relLangURL }}"
+                       {{ if eq (default false .Params.newTab) true }}target="_blank" {{ end }}
+                       class="inline-block py-2 px-3 rounded-sm border-0 hover:text-tl-primary p-0 {{ if $active }} text-tl-primary {{ end }}">
+                        {{/* default DEFAULT input 如果获取的i8in为空，则默认设置.Name */}}
+                        {{ with .Pre }}
+                            {{ partial "icons/icon" (dict "path" . ) }}
+                        {{ end }}
+                        {{ lower .Identifier | printf "widget.%s.title" | T | default .Name }}
+                    </a>
+                </li>
+                {{ end }}
+                {{ end }}
+            </ul>
+            <!--     移动端菜单       -->
+            <div class="lg:hidden" x-data="{open:false}">
+                <button x-on:click="open = true" class="block p-1" aria-label="{{ T `ui.menu` | default `菜单` }}">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                {{ partial "modal.html" (dict
+                    "id"     "mobileModal"
+                    "title"  (partial "header/mobile_title.html" .)
+                    "size"   "md"
+                    "position" "top"
+                    "content" (partial "header/mobile_content.html" .)
+                ) }}
+            </div>
+        </div>
+        <div x-data="searchLauncher('{{ "search/" | relURL }}')" class="flex items-center">
+            <!--主题切换-->
+            <div x-data="themeSwitcher" x-init="init" class="relative flex items-center mr-3">
+                <button type="button" @click="open = !open" :aria-expanded="open"
+                        class="flex items-center justify-center w-8 h-8 rounded-full hover:text-tl-primary transition-colors"
+                        aria-label="{{ T `theme.title` | default `主题` }}">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364l-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0l-1.06-1.06M6.696 6.696l-1.06-1.06M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+                <div x-show="open" x-cloak x-transition.duration.200ms @click.outside="open = false"
+                     class="absolute right-0 top-10 z-50 w-36 p-1.5 rounded-lg shadow-lg bg-tl-base-100 border border-tl-base-300/50">
+                    <template x-for="t in themes" :key="t.id">
+                        <button type="button" @click="apply(t.id); open = false"
+                                class="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm hover:bg-tl-base-200 transition-colors"
+                                :class="{ 'text-tl-primary font-medium': current === t.id }">
+                            <span class="w-4 h-4 rounded-full border border-tl-base-300" :style="`background: ${t.color}`"></span>
+                            <span x-text="t.label"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+            <!--搜索按钮：点击时才懒加载 pagefind 资源，支持 Ctrl/Cmd+K 唤起-->
+            <button type="button" x-on:click="openSearch()"
+                    class="flex items-center" title="{{ T `widget.search.shortcut` | default `搜索 (Ctrl+K)` }}"
+                    aria-label="{{ T `widget.search.title` | default `搜索` }}">
+                {{ partial "icons/icon" (dict "path" "common/search" "className" "text-2xl hover:text-tl-primary" ) }}
+            </button>
+            {{ partial "modal.html" (dict
+                "id"     "searchModal"
+                "title"  (T "widget.search.modal_title" | default "全站搜索")
+                "size"   "md"
+                "position" "top"
+                "content" `<div id="search"></div>`
+                ) }}
+        </div>
+    </div>
+</header>
+

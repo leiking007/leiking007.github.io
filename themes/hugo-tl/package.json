@@ -1,0 +1,42 @@
+{
+  "author": "lei",
+  "type": "module",
+  "scripts": {
+    "build": "node script/build.js",
+    "dev": "node script/dev.js"
+  },
+  "dependencies": {
+    "@alpinejs/collapse": "^3.14.9",
+    "@alpinejs/focus": "^3.14.9",
+    "@tailwindcss/cli": "^4.1.10",
+    "alpinejs": "^3.14.9",
+    "crypto-js": "^4.2.0",
+    "katex": "^0.16.22",
+    "mermaid": "^11.12.0",
+    "tailwindcss": "^4.1.10"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "pagefind": "^1.3.0"
+  },
+  "description": "Note",
+  "homepage": "",
+  "license": "ISC",
+  "main": "",
+  "name": "note",
+  "version": "1.0.0",
+  "keywords": [
+    "hugo",
+    "alpinejs",
+    "pagefind",
+    "markdown",
+    "note"
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": "http:"
+  }
+}

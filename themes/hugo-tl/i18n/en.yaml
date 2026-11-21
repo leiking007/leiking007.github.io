@@ -1,0 +1,92 @@
+article:
+  table_of_contents: Table of Contents
+  last_updated_on: Last updated on
+  word_count: "{{ . }} words"
+  reading_time: "{{ . }} min read"
+  previous_article: Previous
+  next_article: Next
+  heading_anchor: Link to this heading
+
+notFound:
+  title: 404 Error
+  subtitle: Page not found
+  back_home: Back to Home
+  start_game: Play a Game
+
+home:
+  latest_posts: Latest Posts
+  view_all: View All
+
+list:
+  total_posts: "{{ . }} posts in total"
+  stat_total: Total Posts
+  stat_year_span: Year Span
+  stat_latest: Latest Post
+
+taxonomy:
+  total_terms: "{{ . }} categories"
+
+term:
+  total_posts: "{{ . }} posts in total"
+  posts_under: "posts under"
+  posts_count: "{{ . }} posts"
+  posts_label: Posts
+  updated_at: Updated on
+
+tags:
+  total_tags: "{{ . }} tags"
+
+widget:
+  posts:
+    title: Archives
+  archives:
+    title: Archives
+    counter_archives: "{{ . }} posts in total"
+  tags:
+    title: Tags
+  categories:
+    title: Categories
+  tools:
+    title: Tools
+  search:
+    title: Search
+    shortcut: Search (Ctrl+K)
+    modal_title: Site Search
+  about:
+    title: About
+
+search:
+  title: Search
+  placeholder: Type to search...
+  resultTitle: "#PAGES_COUNT results (in #TIME_SECONDS seconds)"
+
+code:
+  copied: Copied
+  copy: Copy code
+  collapse: Collapse code
+
+footer:
+  builtWith: Built with {{ .Generator }}
+  designedBy: Theme {{ .Theme }} designed by {{ .DesignedBy }}
+
+pagination:
+  info: "Page {{ .page }} of {{ .total }}"
+  prev: Previous
+  next: Next
+
+ui:
+  close: Close
+  menu: Menu
+  rss_feed: RSS Feed
+  back_to_top: Back to Top
+  scroll_to_zoom: Scroll to zoom
+  drag_to_pan: Drag to pan
+  dblclick_to_zoom: Double-click to zoom
+  zoom_in: Zoom in
+  zoom_out: Zoom out
+  reset_zoom: Reset zoom
+  prev_image: Previous image
+  next_image: Next image
+
+theme:
+  title: Theme

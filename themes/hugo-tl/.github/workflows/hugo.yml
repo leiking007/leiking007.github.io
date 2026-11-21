@@ -1,0 +1,79 @@
+# 用于构建 Hugo 网站并部署到 GitHub Pages 的工作流
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.160.1
+      TZ: Asia/Shanghai
+      NODE_VERSION: 22.x
+      NODE_DEPENDENCIES_DIR: themes/hugo-tl/
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: 安装 Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          hugo version
+
+      - name: 设置 Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.NODE_DEPENDENCIES_DIR }}package-lock.json
+
+      - name: 安装 Node.js 依赖
+        run: npm ci --prefix ${{ env.NODE_DEPENDENCIES_DIR }}
+
+      - name: 配置 Git
+        run: git config core.quotepath false
+
+      - name: 构建
+        run: npm run build --prefix ${{ env.NODE_DEPENDENCIES_DIR }}
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

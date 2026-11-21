@@ -1,0 +1,48 @@
+import Alpine from "alpinejs/dist/module.esm.js"
+import AlpineFocus from '@alpinejs/focus/dist/module.esm.js'
+import collapse from '@alpinejs/collapse/dist/module.esm.js'
+import {postCodeBlocks, tocHighlight} from "./alpine-data/post"
+import {backToTop, imageLightbox, readingProgress, themeSwitcher, searchLauncher} from "./alpine-data/common"
+
+declare global {
+    interface Window {
+        Alpine: Alpine
+    }
+}
+
+// 聚焦元素插件
+Alpine.plugin(AlpineFocus)
+// 折叠插件
+Alpine.plugin(collapse)
+
+// 返回顶部按钮
+Alpine.data('backToTop', backToTop);
+
+// 文章页代码高亮
+Alpine.data('tocHighlight', tocHighlight);
+
+// 文章页代码块（全站单例，事件委托）
+Alpine.data("postCodeBlocks", postCodeBlocks);
+
+// 图片灯箱
+Alpine.data('imageLightbox', imageLightbox);
+
+// 阅读进度条
+Alpine.data('readingProgress', readingProgress);
+
+// 主题切换
+Alpine.data('themeSwitcher', themeSwitcher);
+
+// 搜索弹窗（懒加载 pagefind）
+Alpine.data('searchLauncher', searchLauncher);
+
+window.Alpine = Alpine
+
+window.addEventListener('DOMContentLoaded', () => {
+    Alpine.start()
+})
+
+
+
+
+

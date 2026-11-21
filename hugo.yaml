@@ -1,0 +1,76 @@
+baseURL: 'http://pages.leilife.site/'
+languageCode: 'zh-cn'
+defaultContentLanguage: 'zh'
+title: 'Note'
+theme: 'PaperMod'
+enableRobotsTXT: true
+hasCJKLanguage: true
+
+pagination:
+  pagerSize: 10
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+params:
+  env: 'production'
+  description: '一个使用 Hugo + PaperMod 搭建的站点'
+  author: 'tangl'
+  mainSections: ['posts']
+  archivesPagerSize: 10
+  tagsPagerSize: 7
+  defaultTheme: 'auto'
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowCodeCopyButtons: true
+  ShowPostNavLinks: false
+  ShowBreadCrumbs: false
+  ShowRSSButtonInSectionTermList: true
+  ShowToc: true
+  TocOpen: false
+  DateFormat: '2006-01-02'
+
+  homeInfoParams:
+    Title: '你好，欢迎 👋'
+    Content: '这里是使用 Hugo 与 PaperMod 主题搭建的个人站点。'
+
+  socialIcons:
+    - name: 'github'
+      url: 'https://github.com/adityatelange/hugo-PaperMod'
+
+menu:
+  main:
+    - identifier: 'home'
+      name: '首页'
+      url: '/'
+      weight: 10
+    - identifier: 'archives'
+      name: '归档'
+      url: '/archives/'
+      weight: 30
+    - identifier: 'tags'
+      name: '标签'
+      url: '/tags/'
+      weight: 40
+    - identifier: 'search'
+      name: '搜索'
+      url: '/search/'
+      weight: 50
+    - identifier: 'about'
+      name: '关于'
+      url: '/about/'
+      weight: 60
+
+outputs:
+  home: ['HTML', 'RSS', 'JSON']
+  section: ['HTML', 'RSS']
+
+markup:
+  highlight:
+    noClasses: false
+    lineNos: true
+    lineNumbersInTable: true
+  goldmark:
+    renderer:
+      unsafe: true

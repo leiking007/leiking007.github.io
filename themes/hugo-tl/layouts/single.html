@@ -1,0 +1,114 @@
+{{ define "main" }}
+{{/*  阅读进度条  */}}
+<div x-data="readingProgress"
+     class="reading-progress"
+     :style="'width:' + progress + '%'"
+     aria-hidden="true"></div>
+{{/*  站点配置的toc：设置为false 时关闭，未设置或 true 时开启  */}}
+{{- $TOCManuallyEnable := ne $.Site.Params.toc false -}}
+
+{{/*  文章配置的toc：设置为false 时关闭，未设置或 true 时开启  */}}
+{{- $pageTocEnable := ne .Params.toc false -}}
+
+{{/*  TableOfContents 为空时仅输出约 35 字符的空 nav，用 100 作为"存在实际目录"的阈值  */}}
+{{- $hasTOC := ge (len .TableOfContents) 100 -}}
+{{- $tocEnable := and $hasTOC $pageTocEnable $TOCManuallyEnable -}}
+<main class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] md:px-6">
+    <div class="z-0 min-w-0">
+        <div class="post-body prose max-w-none prose-h1:my-4 prose-h2:my-3 prose-h3:my-2 prose-table:block prose-table:overflow-x-auto">
+            <div class="my-3">
+                <h1 class="mb-1" id="title">{{ .Title }}</h1>
+                <section class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-tl-base-content/60">
+                    {{ with .Params.author }}
+                    <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "common/about" "className" "w-4 h-4" ) }}{{ . }}</span>
+                    {{ end }}
+                    <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/date" "className" "w-4 h-4" ) }}{{ .Date.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
+                    {{ if not (.Lastmod.Equal .Date) }}
+                    <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/date" "className" "w-4 h-4" ) }}{{ T "article.last_updated_on" }} {{ .Lastmod.Format (default "2006-01-02" .Site.Params.DateFormat) }}</span>
+                    {{ end }}
+                    <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/bi" "className" "w-4 h-4" ) }}{{- T "article.word_count" .WordCount -}}</span>
+                    <span class="flex items-center gap-1.5">{{ partial "icons/icon" (dict "path" "post/time" "className" "w-4 h-4" ) }}{{- T "article.reading_time" .ReadingTime -}}</span>
+                    {{ with .GetTerms "tags" }}
+                    <span class="flex flex-wrap items-center gap-1.5">
+                        {{ range . }}
+                        <a href="{{ .RelPermalink }}" class="bg-tl-base-300/40 hover:bg-tl-base-300/70 hover:text-tl-primary px-2 py-0.5 rounded-md text-xs transition-colors duration-200">{{ .LinkTitle }}</a>
+                        {{ end }}
+                    </span>
+                    {{ end }}
+                </section>
+            </div>
+            <div>
+                {{  if $tocEnable }}
+                <div x-data="{ open: false }" class="md:hidden sticky top-4 z-10 bg-tl-base-100">
+                    <div x-on:click="open = !open" x-transition.duration.500ms class="m-0 p-1 text-2xl cursor-pointer">{{- T "article.table_of_contents" | default "tableOfContents" -}}</div>
+                    <div x-show="open" x-transition @click.outside="open = false" class="prose prose-a:no-underline prose-li:list-none prose-ul:my-1 prose-li:my-0 max-h-[70vh] overflow-y-auto">
+                        {{ .TableOfContents }}
+                    </div>
+                </div>
+                {{ end }}
+                <article data-type="content" data-pagefind-body>
+                    {{ .Content }}
+                </article>
+            </div>
+            <aside class="my-8" id="meta">
+                <nav class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {{ with .PrevInSection }}
+                    <a href="{{ .RelPermalink }}"
+                       class="group flex flex-col gap-1.5 rounded-xl border border-tl-base-300/50 bg-tl-base-100 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-tl-primary/40 hover:shadow-md">
+                        <span class="flex items-center gap-1 text-xs text-tl-base-content/50">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            {{- T "article.previous_article" | default "上一篇" -}}
+                        </span>
+                        <span class="line-clamp-2 text-sm font-medium text-tl-base-content/80 transition-colors group-hover:text-tl-primary">{{ .Title }}</span>
+                    </a>
+                    {{ else }}
+                    <div class="hidden sm:block"></div>
+                    {{ end }}
+                    {{ with .NextInSection }}
+                    <a href="{{ .RelPermalink }}"
+                       class="group flex flex-col gap-1.5 rounded-xl border border-tl-base-300/50 bg-tl-base-100 p-4 text-right transition-all duration-300 hover:-translate-y-0.5 hover:border-tl-primary/40 hover:shadow-md">
+                        <span class="flex items-center justify-end gap-1 text-xs text-tl-base-content/50">
+                            {{- T "article.next_article" | default "下一篇" -}}
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                        <span class="line-clamp-2 text-sm font-medium text-tl-base-content/80 transition-colors group-hover:text-tl-primary">{{ .Title }}</span>
+                    </a>
+                    {{ end }}
+                </nav>
+            </aside>
+        </div>
+    </div>
+    <div class="z-0 hidden w-full flex-col gap-6 md:flex">
+        {{ if $tocEnable }}
+        <div class="sticky top-20 z-[5] w-full rounded-xl border border-tl-base-300/50 bg-tl-base-100 p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="h-4 w-1 rounded-full bg-tl-primary"></div>
+                <h4 class="text-base font-semibold">{{- T "article.table_of_contents" | default "tableOfContents" -}}</h4>
+            </div>
+            <div class="toc" x-data="tocHighlight">
+                {{ .TableOfContents }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</main>
+
+{{ end }}
+{{ define "script" }}
+<script>
+    (function () {
+        // Mermaid 图表按需加载：页面存在 .mermaid 容器时才拉取资源渲染
+        var els = document.querySelectorAll('.mermaid');
+        if (!els.length) return;
+        // 配色跟随主题：暗色主题使用 dark
+        var theme = document.documentElement.classList.contains('theme-dark') ? 'dark' : 'default';
+        var s = document.createElement('script');
+        s.src = '{{ "lib/mermaid/mermaid.min.js" | relURL }}';
+        s.onload = function () {
+            window.mermaid.initialize({ startOnLoad: false, theme: theme, securityLevel: 'loose' });
+            window.mermaid.run({ nodes: els });
+        };
+        document.body.appendChild(s);
+    })();
+</script>
+{{ end }}

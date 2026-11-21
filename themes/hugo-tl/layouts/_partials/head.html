@@ -1,0 +1,21 @@
+{{/* style：由 Tailwind CLI 生成（npm run dev/build 产物），Hugo 再做指纹与完整性校验 */}}
+{{- $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" type="text/css" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+
+{{/* favicon（主题 static 内置，站点可通过同名文件覆盖） */}}
+<link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ "favicon-16x16.png" | relURL }}">
+
+{{/* KaTeX 样式：页面 front matter 配置 math: true 时按需引入（vendor 产物由构建脚本从 node_modules 复制） */}}
+{{- if .Params.math }}
+<link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
+{{- end }}
+
+{{/* SEO */}}
+{{- partial "seo.html" . -}}
+
+{{/* js：Alpine 组件入口，defer 不阻塞首屏 */}}
+{{- $opts := dict "minify" hugo.IsProduction -}}
+{{- $mainjs := resources.Get "ts/main.ts" | js.Build $opts | resources.Fingerprint "sha256" -}}
+<script type="text/javascript" src="{{ $mainjs.RelPermalink }}" integrity="{{ $mainjs.Data.Integrity }}" crossorigin="anonymous" defer></script>

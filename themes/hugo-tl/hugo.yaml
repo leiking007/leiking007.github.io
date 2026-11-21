@@ -1,0 +1,22 @@
+module:
+  # 以下是默认 mount
+  mounts:
+    - source: content
+      target: content
+    - source: static
+      target: static
+    - source: layouts
+      target: layouts
+    - source: data
+      target: data
+    - source: assets
+      target: assets
+    - source: i18n
+      target: i18n
+    - source: archetypes
+      target: archetypes
+#   ------------ js 依赖：仅挂载运行时用到的包（js.Build 将导入映射到 assets 根下的同名目录） ------------
+    - source: node_modules/alpinejs
+      target: assets/alpinejs
+    - source: node_modules/@alpinejs
+      target: assets/@alpinejs

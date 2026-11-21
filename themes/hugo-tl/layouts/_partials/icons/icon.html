@@ -1,0 +1,47 @@
+{{/* This partial creates a inline SVG with the given context.
+    path: the icon name. Required.
+    className: the class name.
+    processAttrs: true时处理attrs,false时不处理；默认为true
+  */}}
+  {{- $path := string .path }}
+  {{- $processAttrs := default true .processAttrs -}}
+  {{- $res := dict "path" $path }}
+  {{- $icon := partialCached "icons/functions/svg-resource" $res $res -}}
+  {{- if not $icon -}}
+      {{- warnf "[icons] %s doesn't exist." $path -}}
+  {{- end -}}
+  {{- with $icon -}}
+    {{- $size := default "1em" $.size }}
+    {{- $width := default $size $.width }}
+    {{- $height := default $size $.height }}
+    {{- $ctx := dict
+          "Content"      .Content
+          "processAttrs" $processAttrs
+    -}}
+    {{- $attrs := partial "icons/functions/svg-attrs" $ctx -}}
+    {{/* Set the class name. */}}
+    {{- with $.className -}}
+      {{- $class := . -}}
+      {{- with $attrs.Get "class" -}}
+        {{- $class = printf "%s %s" . $class -}}
+      {{- end -}}
+      {{ $attrs.Set "class" $class -}}
+    {{- end -}}
+    {{/* Override the height. */}}
+    {{- with $height -}}
+      {{ $attrs.Set "height" . -}}
+    {{- end -}}
+    {{/* Override the width. */}}
+    {{- with $width -}}
+      {{ $attrs.Set "width" . -}}
+    {{- end -}}
+    {{- $attrsHTML := partialCached "icons/functions/svg-attrs-to-html" $attrs $attrs.Values -}}
+    {{- $newSvg := printf "<svg %s>" $attrsHTML -}}
+    {{- $svgContent := $icon.Content -}}
+    {{- if $processAttrs -}}
+        {{/* 移除所有的fill属性 */}}
+        {{- $svgContent = replaceRE `\sfill="[^"]*"` "" $svgContent -}}
+    {{- end -}}
+    {{/* 将原有的svg标签替换成新的svg标签 */}}
+    {{- replaceRE `<svg([^>])+>` $newSvg $svgContent 1 | safeHTML -}}
+  {{- end -}}

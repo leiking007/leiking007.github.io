@@ -1,0 +1,6 @@
+{{/* 正文链接：外链默认新窗口打开（站点 params.externalLinksNewTab 设为 false 可关闭），并补充安全 rel */}}
+{{- $url := urls.Parse .Destination -}}
+{{- $siteHost := "" -}}
+{{- with .Page.Site.BaseURL -}}{{- $siteHost = (urls.Parse .).Host -}}{{- end -}}
+{{- $isExternal := and $url.Host (ne $url.Host $siteHost) -}}
+<a href="{{ .Destination | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if and $isExternal (.Page.Site.Params.externalLinksNewTab | default true) }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .Text | safeHTML }}</a>

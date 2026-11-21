@@ -1,0 +1,17 @@
+.env
+.idea
+.env.build
+.hugo_build.lock
+resources/
+.git
+/public/**
+node_modules/
+themes/hugo-tl/assets/css/style.css
+# vendor 前端库构建产物（build/dev 时由 script/vendor.js 从 node_modules 复制）
+themes/hugo-tl/static/lib/katex/
+themes/hugo-tl/static/lib/mermaid/
+yarn.lock
+.yarn
+
+# 敏感文件
+*.kdbx

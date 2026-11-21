@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "zh" }}" class="scroll-pt-20 theme-light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // 优先应用本地保存的主题，避免刷新闪烁
+        (function () {
+            var t = localStorage.getItem('tl-theme');
+            if (t && /^theme-[a-z-]+$/.test(t)) {
+                document.documentElement.classList.remove('theme-light');
+                document.documentElement.classList.add(t);
+            }
+        })();
+    </script>
+    <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} · {{ end }}{{ .Site.Title }}{{ end }}{{ end }}</title>
+    {{- partial "head.html" . -}}
+    {{- block "head" . -}}{{- end -}}
+</head>
+<body class="bg-tl-base-200 text-tl-base-content" x-data="postCodeBlocks">
+<div id="app" class="min-h-screen">
+    {{- partial "header.html" . -}}
+    {{- block "main" . }}{{- end -}}
+</div>
+{{/* footer/lightbox 内容仅依赖站点级配置与 i18n，用常量 variant 跨页面共享缓存 */}}
+{{- partialCached "footer.html" . "site-footer" -}}
+{{- partialCached "lightbox.html" . "site-lightbox" -}}
+<div x-data="backToTop"
+     x-cloak
+     x-show="visible"
+     x-init="init"
+     x-on:click="scrollToTop"
+     x-on:keydown.enter.prevent="scrollToTop"
+     x-on:keydown.space.prevent="scrollToTop"
+     x-transition.duration.500ms
+     role="button"
+     tabindex="0"
+     aria-label="{{ T `ui.back_to_top` | default `返回顶部` }}"
+     class="fixed bottom-12 right-12 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-tl-base-300/50 bg-tl-base-100/80 shadow-md backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-tl-primary/40 hover:text-tl-primary hover:shadow-lg">
+    {{ partial "icons/icon" (dict "path" "common/top" "className" "text-2xl" ) }}
+</div>
+</body>
+{{- block "script" . }}{{- end -}}
+</html>
