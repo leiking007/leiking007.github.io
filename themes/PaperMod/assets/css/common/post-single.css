@@ -136,6 +136,11 @@ details li ul {
     display: inline-block;
 }
 
+/* 文章顶部标签与上方 meta 信息的间距 */
+.post-tags-header {
+    margin-top: 10px;
+}
+
 .post-tags a,
 .share-buttons,
 .paginav {
