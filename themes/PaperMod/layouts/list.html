@@ -93,6 +93,12 @@
 </article>
 {{- end }}
 
+{{- if .IsHome }}
+<p class="home-more">
+  <a href="{{ "/archives/" | relLangURL }}">查看全部文章{{ partial "icon.html" (dict "name" "chevron-right" "size" 15) }}</a>
+</p>
+{{- end }}
+
 {{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">
   <nav class="pagination">

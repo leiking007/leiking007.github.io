@@ -1,0 +1,14 @@
+{{- /* 支持 GitHub 风格提示块：> [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] / [!CAUTION] */ -}}
+{{- $text := .Text -}}
+{{- $alertType := .AlertType -}}
+{{- if $alertType -}}
+{{- $labels := dict "note" "提示" "tip" "技巧" "important" "重要" "warning" "警告" "caution" "注意" -}}
+<div class="md-alert md-alert-{{ $alertType }}">
+  <p class="md-alert-title">{{ .AlertTitle | default (index $labels $alertType) }}</p>
+  {{ $text }}
+</div>
+{{- else -}}
+<blockquote>
+  {{ $text }}
+</blockquote>
+{{- end -}}

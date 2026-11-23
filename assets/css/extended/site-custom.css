@@ -1,0 +1,304 @@
+/*
+  站点级样式增强（在主题 core + custom 之后加载）
+  包含：吸顶阴影、阅读进度、目录高亮、图片预览、表格滚动、
+        移动端字号、标签页紧凑列表、提示块、主题切换过渡
+*/
+
+/* ===== 吸顶导航：滚动后阴影 ===== */
+.header {
+    transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.header.is-scrolled {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .header.is-scrolled {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== 阅读进度条 ===== */
+.reading-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    z-index: 50;
+    pointer-events: none;
+}
+
+/* ===== 右侧目录：当前小节高亮 ===== */
+.post-toc-side #TableOfContents a.is-active {
+    color: var(--primary);
+    border-inline-start-color: var(--primary);
+    font-weight: 500;
+}
+
+/* ===== 文章图片点击放大 ===== */
+.post-content img.zoomable {
+    cursor: zoom-in;
+}
+
+html.lightbox-open {
+    overflow: hidden;
+}
+
+.image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.86);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.image-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.image-lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    transform: scale(0.98);
+    transition: transform 0.18s ease;
+}
+
+.image-lightbox.is-open img {
+    transform: scale(1);
+}
+
+.image-lightbox.no-motion,
+.image-lightbox.no-motion img {
+    transition: none;
+}
+
+.image-lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    color: #fff;
+    font-size: 26px;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.14);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.image-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+/* ===== 触屏设备：代码复制按钮常显 ===== */
+@media (hover: none) {
+    .copy-code {
+        display: block;
+    }
+}
+
+/* ===== 宽表格横向滚动 ===== */
+.table-wrapper {
+    max-width: 100%;
+    margin-bottom: var(--content-gap);
+    overflow-x: auto;
+}
+
+.table-wrapper > table {
+    margin-bottom: 0;
+}
+
+/* ===== 首页“查看全部”入口 ===== */
+.home-more {
+    display: flex;
+    justify-content: center;
+    margin-top: calc(var(--gap) * 1.5);
+}
+
+.home-more a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    color: var(--secondary);
+    font-size: 14px;
+    line-height: 1.4;
+    text-decoration: none;
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.home-more a:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ===== 提示块（GitHub 风格 alerts） ===== */
+.md-alert {
+    margin: 1rem 0;
+    padding: 12px 16px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-inline-start: 4px solid var(--secondary);
+    border-radius: var(--radius);
+}
+
+.md-alert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.md-alert > :last-child {
+    margin-bottom: 0;
+}
+
+.md-alert-note {
+    border-inline-start-color: #3b82f6;
+}
+
+.md-alert-note .md-alert-title {
+    color: #2563eb;
+}
+
+.md-alert-tip {
+    border-inline-start-color: #10b981;
+}
+
+.md-alert-tip .md-alert-title {
+    color: #059669;
+}
+
+.md-alert-important {
+    border-inline-start-color: #8b5cf6;
+}
+
+.md-alert-important .md-alert-title {
+    color: #7c3aed;
+}
+
+.md-alert-warning {
+    border-inline-start-color: #f59e0b;
+}
+
+.md-alert-warning .md-alert-title {
+    color: #d97706;
+}
+
+.md-alert-caution {
+    border-inline-start-color: #ef4444;
+}
+
+.md-alert-caution .md-alert-title {
+    color: #dc2626;
+}
+
+[data-theme="dark"] .md-alert-note .md-alert-title {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .md-alert-tip .md-alert-title {
+    color: #34d399;
+}
+
+[data-theme="dark"] .md-alert-important .md-alert-title {
+    color: #a78bfa;
+}
+
+[data-theme="dark"] .md-alert-warning .md-alert-title {
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .md-alert-caution .md-alert-title {
+    color: #f87171;
+}
+
+/* ===== 标题层级微调 ===== */
+.md-content h5 {
+    font-size: 15px;
+}
+
+.md-content h6 {
+    color: var(--secondary);
+    font-size: 14px;
+}
+
+/* ===== 深浅色切换过渡 ===== */
+body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.post-entry,
+.tag-pager-btn,
+.tag-cloud,
+.post-tags a,
+details.toc {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.post-entry {
+    transition: transform 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* ===== 移动端适配 ===== */
+@media (max-width: 768px) {
+    .post-title {
+        font-size: 28px;
+        line-height: 1.35;
+    }
+
+    .md-content h1 {
+        margin: 32px auto 22px;
+        font-size: 28px;
+    }
+
+    .md-content h2 {
+        margin: 28px auto 18px;
+        font-size: 24px;
+    }
+
+    .md-content h3 {
+        font-size: 20px;
+    }
+
+    .entry-header h2 {
+        font-size: 20px;
+    }
+
+    .first-entry {
+        min-height: auto;
+    }
+
+    .first-entry .entry-header h2 {
+        font-size: 30px;
+    }
+
+    /* 导航横向滚动提示 */
+    .menu {
+        scrollbar-width: none;
+        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 18px), transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 18px), transparent 100%);
+    }
+
+    .menu::-webkit-scrollbar {
+        display: none;
+    }
+}

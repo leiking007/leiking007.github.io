@@ -3,6 +3,8 @@ import * as params from '@params';
 const resList = document.getElementById('searchResults');
 const sInput = document.getElementById('searchInput');
 const searchBox = document.getElementById('searchbox');
+const statusEl = document.getElementById('searchStatus');
+const initialPlaceholder = sInput?.placeholder ?? '';
 
 let fuse;
 let currentElement = null;
@@ -44,11 +46,18 @@ const debounce = (fn, delay) => {
     };
 };
 
+const setStatus = (text) => {
+    if (statusEl) {
+        statusEl.textContent = text;
+    }
+};
+
 const reset = () => {
     currentElement = null;
     firstResult = null;
     lastResult = null;
     resList.innerHTML = '';
+    setStatus('');
     sInput.value = '';
     sInput.focus();
 };
@@ -65,12 +74,15 @@ const setActiveResult = (element) => {
     currentElement = element;
 };
 
-const renderResults = (results) => {
+const renderResults = (results, query = '') => {
     if (!Array.isArray(results) || results.length === 0) {
         resList.innerHTML = '';
         firstResult = lastResult = currentElement = null;
+        setStatus(query ? `没有找到与「${query}」相关的内容` : '');
         return;
     }
+
+    setStatus(`找到 ${results.length} 篇相关内容`);
 
     const fragment = document.createDocumentFragment();
 
@@ -120,7 +132,7 @@ const performSearch = () => {
 
     const searchOptions = params.fuseOpts?.limit ? { limit: params.fuseOpts.limit } : undefined;
     const results = searchOptions ? fuse.search(query, searchOptions) : fuse.search(query);
-    renderResults(results);
+    renderResults(results, query);
 };
 
 const initSearch = async () => {
@@ -128,8 +140,7 @@ const initSearch = async () => {
         return;
     }
 
-    sInput.disabled = false;
-    sInput.focus();
+    sInput.placeholder = '搜索索引加载中…';
 
     try {
         const response = await fetch('../index.json');
@@ -141,8 +152,14 @@ const initSearch = async () => {
         if (data) {
             fuse = new Fuse(data, buildFuseOptions());
         }
+
+        sInput.disabled = false;
+        sInput.placeholder = initialPlaceholder;
+        sInput.focus();
     } catch (error) {
         console.error(error);
+        sInput.placeholder = '搜索索引加载失败';
+        setStatus('搜索索引加载失败，请刷新页面重试');
     }
 };
 
@@ -163,6 +180,15 @@ document.addEventListener('keydown', (event) => {
 
     if (key === 'Escape') {
         reset();
+        return;
+    }
+
+    if (key === 'Enter' && active === sInput) {
+        const link = firstResult?.querySelector('.entry-link');
+        if (link) {
+            event.preventDefault();
+            link.click();
+        }
         return;
     }
 
