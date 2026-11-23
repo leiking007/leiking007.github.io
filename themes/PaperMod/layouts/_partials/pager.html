@@ -26,11 +26,11 @@
 <nav class="tag-pager" aria-label="{{ $label }}">
   {{- if $client }}
   <a class="tag-pager-btn{{ if le $current 1 }} is-disabled{{ end }}" href="#" data-role="prev" aria-label="上一页"
-    {{- if le $current 1 }} aria-disabled="true"{{ end }}>«</a>
+    {{- if le $current 1 }} aria-disabled="true"{{ end }}>{{ partial "icon.html" (dict "name" "chevron-left" "size" 16) }}</a>
   {{- else if gt $current 1 }}
-  <a class="tag-pager-btn" href="{{ index $urls (sub $current 2) }}" aria-label="上一页">«</a>
+  <a class="tag-pager-btn" href="{{ index $urls (sub $current 2) }}" aria-label="上一页">{{ partial "icon.html" (dict "name" "chevron-left" "size" 16) }}</a>
   {{- else }}
-  <span class="tag-pager-btn is-disabled" aria-hidden="true">«</span>
+  <span class="tag-pager-btn is-disabled" aria-hidden="true">{{ partial "icon.html" (dict "name" "chevron-left" "size" 16) }}</span>
   {{- end }}
   {{- $prevNum := 0 }}
   {{- range $nums }}
@@ -52,11 +52,11 @@
   {{- end }}
   {{- if $client }}
   <a class="tag-pager-btn{{ if ge $current $total }} is-disabled{{ end }}" href="#" data-role="next" aria-label="下一页"
-    {{- if ge $current $total }} aria-disabled="true"{{ end }}>»</a>
+    {{- if ge $current $total }} aria-disabled="true"{{ end }}>{{ partial "icon.html" (dict "name" "chevron-right" "size" 16) }}</a>
   {{- else if lt $current $total }}
-  <a class="tag-pager-btn" href="{{ index $urls $current }}" aria-label="下一页">»</a>
+  <a class="tag-pager-btn" href="{{ index $urls $current }}" aria-label="下一页">{{ partial "icon.html" (dict "name" "chevron-right" "size" 16) }}</a>
   {{- else }}
-  <span class="tag-pager-btn is-disabled" aria-hidden="true">»</span>
+  <span class="tag-pager-btn is-disabled" aria-hidden="true">{{ partial "icon.html" (dict "name" "chevron-right" "size" 16) }}</span>
   {{- end }}
 </nav>
 {{- end }}

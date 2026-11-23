@@ -12,12 +12,7 @@
     {{- if and (or (eq .Kind `term`) (eq .Kind `section`)) (.Param "ShowRssButtonInSectionTermList") }}
     {{- with .OutputFormats.Get "rss" }}
     <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" height="23">
-        <path d="M4 11a9 9 0 0 1 9 9" />
-        <path d="M4 4a16 16 0 0 1 16 16" />
-        <circle cx="5" cy="19" r="1" />
-      </svg>
+      {{- partial "icon.html" (dict "name" "rss" "size" 23) }}
     </a>
     {{- end }}
     {{- end }}
@@ -53,7 +48,7 @@
 {{- end }}
 
 {{- if .IsHome }}
-<h2 class="home-section-title">{{ i18n "latest_posts" | default "最新文章" }}</h2>
+<h2 class="home-section-title">{{ partial "icon.html" (dict "name" "newspaper" "size" 18) }}{{ i18n "latest_posts" | default "最新文章" }}</h2>
 {{- end }}
 
 {{- $term := .Data.Term }}
@@ -103,7 +98,7 @@
   <nav class="pagination">
     {{- if $paginator.HasPrev }}
     <a class="prev" href="{{ $paginator.Prev.URL | relLangURL }}">
-      «&nbsp;{{ i18n "prev_page" }}&nbsp;
+      {{- partial "icon.html" (dict "name" "chevron-left" "size" 15) }}&nbsp;{{ i18n "prev_page" }}&nbsp;
       {{- if (.Param "ShowPageNums") }}
       {{- sub $paginator.PageNumber 1 }}/{{ $paginator.TotalPages }}
       {{- end }}
@@ -114,7 +109,7 @@
       {{- i18n "next_page" }}&nbsp;
       {{- if (.Param "ShowPageNums") }}
       {{- add 1 $paginator.PageNumber }}/{{ $paginator.TotalPages }}
-      {{- end }}&nbsp;»
+      {{- end }}&nbsp;{{ partial "icon.html" (dict "name" "chevron-right" "size" 15) }}
     </a>
     {{- end }}
   </nav>

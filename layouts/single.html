@@ -33,7 +33,7 @@
     {{- with ($.GetTerms $tags) }}
     <ul class="post-tags post-tags-header">
       {{- range . }}
-      <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      <li><a href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "tag" "size" 13) }}{{ .LinkTitle }}</a></li>
       {{- end }}
     </ul>
     {{- end }}
@@ -79,7 +79,7 @@
 {{- if ge (len $headers) 1 }}
 <aside class="post-toc-side">
   <div class="post-toc-sticky">
-    <p class="post-toc-title">{{ i18n "toc" | default "目录" }}</p>
+    <p class="post-toc-title">{{ partial "icon.html" (dict "name" "list-tree" "size" 15) }}{{ i18n "toc" | default "目录" }}</p>
     {{- .TableOfContents -}}
   </div>
 </aside>

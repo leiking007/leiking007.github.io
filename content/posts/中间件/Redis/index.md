@@ -548,7 +548,7 @@ public static void main(String[] args) {
            }
        }
    }
-   
+   ```
 
 3. 测试，`从连接池获取到的jedis连接需要关闭`
 

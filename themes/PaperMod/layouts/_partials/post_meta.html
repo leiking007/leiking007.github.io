@@ -1,20 +1,24 @@
 {{- $meta := slice }}
 
 {{- if not .Date.IsZero -}}
-    {{- $meta = $meta | append (printf "<span title='%s'>%s</span>" (.Date | time.Format "2006-01-02T15:04:05-07:00") (.Date | time.Format (default ":date_long" site.Params.DateFormat))) }}
+    {{- $icon := partial "icon.html" (dict "name" "calendar" "size" 14) }}
+    {{- $meta = $meta | append (printf "<span title='%s'>%s%s</span>" (.Date | time.Format "2006-01-02T15:04:05-07:00") $icon (.Date | time.Format (default ":date_long" site.Params.DateFormat))) }}
 {{- end }}
 
 {{- if (.Param "ShowReadingTime") -}}
-    {{- $meta = $meta | append (printf "<span>%s</span>" (i18n "read_time" .ReadingTime | default (printf "%d min" .ReadingTime))) }}
+    {{- $icon := partial "icon.html" (dict "name" "clock" "size" 14) }}
+    {{- $meta = $meta | append (printf "<span>%s%s</span>" $icon (i18n "read_time" .ReadingTime | default (printf "%d min" .ReadingTime))) }}
 {{- end }}
 
 {{- if (.Param "ShowWordCount") -}}
-    {{- $meta = $meta | append (printf "<span>%s</span>" (i18n "words" .WordCount | default (printf "%d words" .WordCount))) }}
+    {{- $icon := partial "icon.html" (dict "name" "text" "size" 14) }}
+    {{- $meta = $meta | append (printf "<span>%s%s</span>" $icon (i18n "words" .WordCount | default (printf "%d words" .WordCount))) }}
 {{- end }}
 
 {{- if not (.Param "hideAuthor") -}}
     {{- with (partial "author.html" .) }}
-        {{- $meta = $meta | append (printf "<span>%s</span>" .) }}
+        {{- $icon := partial "icon.html" (dict "name" "user-round" "size" 14) }}
+        {{- $meta = $meta | append (printf "<span>%s%s</span>" $icon .) }}
     {{- end }}
 {{- end }}
 

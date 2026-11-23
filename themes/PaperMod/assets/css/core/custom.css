@@ -261,16 +261,6 @@
     color: var(--primary);
 }
 
-/* 左侧强调竖条 */
-.home-section-title::before {
-    content: "";
-    flex: none;
-    width: 4px;
-    height: 1.1em;
-    border-radius: 2px;
-    background: var(--primary);
-}
-
 /* 右侧延伸细线 */
 .home-section-title::after {
     content: "";
@@ -429,6 +419,19 @@
         min-width: 0;
     }
 
+    /* 没有右侧目录时（如关于页）不预留目录列，正文恢复单列宽度 */
+    .post-layout:not(:has(> .post-toc-side)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .main:has(> .post-layout:not(:has(> .post-toc-side))) {
+        max-width: var(--main-width);
+    }
+
+    main:has(> .post-layout:not(:has(> .post-toc-side))) + .footer {
+        max-width: var(--main-width);
+    }
+
     /* 宽屏使用右侧目录，隐藏正文上方的折叠目录 */
     .toc-inline {
         display: none;
@@ -513,4 +516,66 @@ pre,
 samp,
 .chroma {
     font-family: var(--font-mono);
+}
+
+/* ===== Lucide 图标 ===== */
+
+.lucide {
+    display: inline-block;
+    flex: none;
+    vertical-align: -0.15em;
+}
+
+/* 顶部导航菜单 */
+.menu a > .lucide {
+    margin-right: 6px;
+    vertical-align: -2px;
+}
+
+/* 文章元信息：日期、阅读时长、字数、作者 */
+.post-meta .lucide,
+.archive-meta .lucide {
+    margin-right: 5px;
+    vertical-align: -2px;
+    opacity: 0.85;
+}
+
+/* 文章顶部标签 */
+.post-tags-header a .lucide {
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
+/* 目录标题 */
+.post-toc-title .lucide {
+    margin-right: 6px;
+    vertical-align: -3px;
+}
+
+/* 首页区块标题与标签文章标题 */
+.home-section-title .lucide,
+.tag-posts-title .lucide {
+    align-self: center;
+}
+
+/* 代码块复制按钮 */
+.copy-code .lucide {
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
+/* 代码块展开/收起按钮 */
+.code-toggle .lucide {
+    margin-right: 5px;
+    vertical-align: -2px;
+    transition: transform 0.2s ease;
+}
+
+.code-toggle.is-open .lucide {
+    transform: rotate(180deg);
+}
+
+/* 分页按钮 */
+.tag-pager-btn .lucide {
+    vertical-align: 0;
 }

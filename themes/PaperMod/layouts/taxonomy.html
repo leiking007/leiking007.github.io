@@ -62,7 +62,7 @@
   {{- $pagerSize := site.Params.tagsPagerSize | default 5 }}
   {{- $totalPages := int (math.Ceil (div (float (len $pages)) (float $pagerSize))) }}
   <section class="tag-posts-group" data-tag="{{ $name }}" hidden>
-    <h2 class="tag-posts-title">{{ .LinkTitle }}<span class="tag-posts-count">共 {{ $count }} 篇</span></h2>
+    <h2 class="tag-posts-title">{{ partial "icon.html" (dict "name" "tags" "size" 17) }}{{ .LinkTitle }}<span class="tag-posts-count">共 {{ $count }} 篇</span></h2>
     <div class="tag-posts-list">
       {{- range $pages }}
       {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
