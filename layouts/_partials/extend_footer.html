@@ -13,8 +13,10 @@
             window.addEventListener('scroll', updateHeader, { passive: true });
         }
 
-        /* 阅读进度条：仅文章详情页 */
-        if (document.querySelector('.post-layout')) {
+        /* 阅读进度条：仅文章详情页（mainSections），关于页等独立页面不显示 */
+        const postLayout = document.querySelector('.post-layout');
+        const readingSections = ['{{ delimit site.MainSections "','" }}'];
+        if (postLayout && readingSections.includes(postLayout.dataset.section)) {
             const progress = document.createElement('div');
             progress.className = 'reading-progress';
             progress.setAttribute('aria-hidden', 'true');

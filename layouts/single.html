@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-<div class="post-layout">
+<div class="post-layout" data-section="{{ .Section }}">
 <article class="post-single">
   <header class="post-header">
     {{ partial "breadcrumbs.html" . }}
