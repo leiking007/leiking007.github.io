@@ -3,7 +3,7 @@ title: "JDBC"
 date: 2020-06-09
 lastmod: 2020-06-09
 draft: false
-tags: ['JavaEE','数据库']
+tags: ["JavaSE", "数据库"]
 categories: ["Java编程"]
 author: "lei"
 ---

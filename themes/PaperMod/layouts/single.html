@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-<div class="post-layout">
+<div class="post-layout" data-section="{{ .Section }}">
 <article class="post-single">
   <header class="post-header">
     {{ partial "breadcrumbs.html" . }}
@@ -28,6 +28,15 @@
       {{- partial "post_canonical.html" . -}}
     </div>
     {{- end }}
+    {{/* 标签从文末移到文章顶部 */}}
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    {{- with ($.GetTerms $tags) }}
+    <ul class="post-tags post-tags-header">
+      {{- range . }}
+      <li><a href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "tag" "size" 13) }}{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
   </header>
   {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
   {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
@@ -47,20 +56,18 @@
 
   {{- partial "extend_post_content.html" . }}
 
+  {{- $showNav := .Param "ShowPostNavLinks" }}
+  {{- $showShare := and site.Params.ShowShareButtons (ne .Params.disableShare true) }}
+  {{- if or $showNav $showShare }}
   <footer class="post-footer">
-    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
-    <ul class="post-tags">
-      {{- range ($.GetTerms $tags) }}
-      <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
-      {{- end }}
-    </ul>
-    {{- if (.Param "ShowPostNavLinks") }}
+    {{- if $showNav }}
     {{- partial "post_nav_links.html" . }}
     {{- end }}
-    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
+    {{- if $showShare }}
     {{- partial "share_icons.html" . -}}
     {{- end }}
   </footer>
+  {{- end }}
 
   {{- if (.Param "comments") }}
   {{- partial "comments.html" . }}
@@ -72,7 +79,7 @@
 {{- if ge (len $headers) 1 }}
 <aside class="post-toc-side">
   <div class="post-toc-sticky">
-    <p class="post-toc-title">{{ i18n "toc" | default "目录" }}</p>
+    <p class="post-toc-title">{{ partial "icon.html" (dict "name" "list-tree" "size" 15) }}{{ i18n "toc" | default "目录" }}</p>
     {{- .TableOfContents -}}
   </div>
 </aside>

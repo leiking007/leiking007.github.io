@@ -3,7 +3,7 @@ title: "FastDFS"
 date: 2021-05-14
 lastmod: 2021-05-24
 draft: false
-tags: ['服务器']
+tags: ["中间件"]
 categories: ["中间件"]
 author: "lei"
 ---

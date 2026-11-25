@@ -3,7 +3,7 @@ title: "Rust"
 date: 2026-01-03
 lastmod: 2026-01-03
 draft: false
-tags: ['Rust']
+tags: ["Rust"]
 categories: ["Rust编程"]
 author: "lei"
 ---

@@ -3,7 +3,7 @@ title: "MyBatis妙用"
 date: 2023-01-17
 lastmod: 2023-01-17
 draft: false
-tags: ['数据库']
+tags: ["MyBatis"]
 categories: ["Java编程"]
 author: "lei"
 ---

@@ -3,7 +3,7 @@ title: "IDEA连接Docker开发"
 description: ""
 date: 2024-04-07
 lastmod: 2024-04-07
-tags: ["配置"]
+tags: ["Docker", "开发工具"]
 categories: ["服务器运维"]
 author: "lei"
 draft: false

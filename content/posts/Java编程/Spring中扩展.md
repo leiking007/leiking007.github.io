@@ -3,7 +3,7 @@ title: "Spring中扩展"
 date: 2025-07-10
 lastmod: 2025-07-10
 draft: false
-tags: ['spring']
+tags: ["Spring"]
 categories: ["Java编程"]
 author: "lei"
 summary: "本文介绍 Spring 扩展相关内容，包括 AutowireCapableBeanFactory 的使用、SessionFixationProtectionStrategy 的工作流程，以及 PathMatcher、PathPatternParser 和 ConversionService 的相关知识。"

@@ -3,7 +3,7 @@ title: "Python离线部署"
 date: 2025-04-25
 lastmod: 2025-04-25
 draft: false
-tags: ['Python']
+tags: ["Python", "Docker"]
 categories: ["服务器运维"]
 author: "lei"
 summary: "介绍 Python 项目两种离线部署方式：基于 Docker 构建镜像（含依赖）并导出导入，以及通过虚拟环境和离线包安装依赖，适用于无网络环境。"

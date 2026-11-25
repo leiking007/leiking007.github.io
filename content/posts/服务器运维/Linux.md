@@ -3,7 +3,7 @@ title: "Linux"
 date: 2022-12-07
 lastmod: 2022-12-07
 draft: false
-tags: ['服务器']
+tags: ["Linux", "运维"]
 categories: ["服务器运维"]
 author: "lei"
 ---

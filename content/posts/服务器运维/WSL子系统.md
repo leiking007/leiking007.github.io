@@ -3,7 +3,7 @@ title: "WSL子系统"
 date: 2025-03-23
 lastmod: 2025-03-23
 draft: false
-tags: ['服务器']
+tags: ["Linux"]
 categories: ["服务器运维"]
 author: "lei"
 ---

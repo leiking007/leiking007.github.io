@@ -3,7 +3,7 @@ title: "SpringSecurity"
 date: 2022-05-31
 lastmod: 2022-05-31
 draft: false
-tags: ["spring"]
+tags: ["Spring"]
 categories: ["Java编程"]
 author: "lei"
 ---

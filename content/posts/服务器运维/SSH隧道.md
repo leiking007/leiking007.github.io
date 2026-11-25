@@ -3,7 +3,7 @@ title: "SSH隧道"
 date: 2026-03-23
 lastmod: 2026-03-23
 draft: false
-tags: ['服务器']
+tags: ["Linux", "网络"]
 categories: ["服务器运维"]
 author: "lei"
 ---

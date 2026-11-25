@@ -3,7 +3,7 @@ title: "python 开发时一些问题"
 date: 2025-10-10
 lastmod: 2025-10-10
 draft: false
-tags: ['python']
+tags: ["Python"]
 categories: ["Python编程"]
 author: "lei"
 summary: "python开发时，遇到的一些问题在此记录！！！"

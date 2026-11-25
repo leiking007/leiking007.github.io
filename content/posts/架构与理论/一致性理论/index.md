@@ -3,7 +3,7 @@ title: "一致性理论"
 date: 2021-05-14
 lastmod: 2021-05-24 12:12:12
 draft: false
-tags: ["理论"]
+tags: ["分布式"]
 categories: ["架构与理论"]
 author: "lei"
 ---

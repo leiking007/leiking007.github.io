@@ -3,7 +3,7 @@ title: "ElasticSearch7"
 date: 2023-11-09
 lastmod: 2023-11-09 12:12:12
 draft: false
-tags: ['中间件']
+tags: ["中间件"]
 categories: ["中间件"]
 author: "lei"
 ---

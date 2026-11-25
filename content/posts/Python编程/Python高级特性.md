@@ -3,7 +3,7 @@ title: "Python高级特性"
 date: 2025-07-14
 lastmod: 2025-07-14
 draft: false
-tags: ['Python']
+tags: ["Python"]
 categories: ["Python编程"]
 author: "lei"
 summary: "介绍 Python 高级特性，包括类变量、类方法、静态方法，推导式（列表、字典、集合），生成器，* 号作用及装饰器，助于高效编程。"

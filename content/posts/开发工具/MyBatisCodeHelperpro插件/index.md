@@ -3,7 +3,7 @@ title: "MyBatisCodeHelperpro插件"
 date: 2023-05-17
 lastmod: 2021-11-11 12:12:12
 draft: false
-tags: ['配置']
+tags: ["MyBatis", "开发工具"]
 categories: ["开发工具"]
 author: "lei"
 ---
