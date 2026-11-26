@@ -3,7 +3,7 @@ title: "分布式ID"
 date: 2023-05-09
 lastmod: 2023-05-09
 draft: false
-tags: ["分布式"]
+tags: ["分布式", "Java基础"]
 categories: ["架构与理论"]
 author: "lei"
 ---

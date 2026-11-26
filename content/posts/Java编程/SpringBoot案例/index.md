@@ -3,7 +3,7 @@ title: "SpringBoot案例"
 date: 2020-07-04
 lastmod: 2020-07-04
 draft: false
-tags: ["Spring"]
+tags: ["Spring", "Spring Boot"]
 categories: ["Java编程"]
 author: "lei"
 ---

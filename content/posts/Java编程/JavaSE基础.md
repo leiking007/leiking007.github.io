@@ -3,7 +3,7 @@ title: "JavaSE基础"
 date: 2020-06-09
 lastmod: 2020-06-09
 draft: false
-tags: ["JavaSE"]
+tags: ["Java基础"]
 categories: ["Java编程"]
 author: "lei"
 summary: "JavaSE 是 Java 生态的基础，核心围绕「面向对象编程」展开，掌握封装、继承、多态三大特性是关键。本文从核心概念、基础语法、OOP 特性、关键字、内部类等维度进行了体系化梳理，并融入了开发规范、最佳实践和避坑指南，适合初学者夯实基础，也适合开发者作为日常参考。"

@@ -3,8 +3,8 @@ title: "JavaScript"
 date: 2020-09-09
 lastmod: 2020-09-09
 draft: false
-tags: ["前端", "JavaScript"]
-categories: ["Web前端"]
+tags: ["前端基础", "JavaScript"]
+categories: ["前端"]
 author: "lei"
 ---
 

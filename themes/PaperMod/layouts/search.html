@@ -1,8 +1,9 @@
 {{- define "main" }}
 
 <header class="page-header">
-    <h1>{{- (printf "%s&nbsp;" .Title ) | htmlUnescape -}}
-        {{- partial "icon.html" (dict "name" "search" "size" 28) }}
+    <h1 class="has-title-icon">
+        {{- partial "icon.html" (dict "name" "search" "size" 24) -}}
+        <span>{{ .Title }}</span>
     </h1>
     {{- if .Description }}
     <div class="post-description">

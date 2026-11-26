@@ -3,7 +3,7 @@ title: "SpringSession"
 date: 2021-05-14
 lastmod: 2021-05-24
 draft: false
-tags: ["Spring"]
+tags: ["Spring", "Spring Boot"]
 categories: ["Java编程"]
 author: "lei"
 ---

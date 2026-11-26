@@ -3,7 +3,7 @@ title: "JavaSE高级"
 date: 2020-06-09
 lastmod: 2020-06-09
 draft: false
-tags: ["JavaSE"]
+tags: ["Java基础", "JVM", "并发编程"]
 categories: ["Java编程"]
 author: "lei"
 ---

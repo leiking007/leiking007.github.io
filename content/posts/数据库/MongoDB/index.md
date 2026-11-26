@@ -3,7 +3,7 @@ title: "MongoDB"
 date: 2024-02-02
 lastmod: 2024-02-02
 draft: false
-tags: ["数据库"]
+tags: ["MongoDB"]
 categories: ["数据库"]
 author: "lei"
 ---

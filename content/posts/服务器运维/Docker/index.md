@@ -3,7 +3,7 @@ title: "Docker"
 description: ""
 date: 2020-11-07
 lastmod: 2020-11-07
-tags: ["Docker", "运维"]
+tags: ["Docker", "部署", "Linux"]
 categories: ["服务器运维"]
 author: "lei"
 draft: false

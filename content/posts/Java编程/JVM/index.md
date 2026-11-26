@@ -3,7 +3,7 @@ title: "JVM"
 date: 2021-06-09
 lastmod: 2021-06-09
 draft: false
-tags: ["JavaSE"]
+tags: ["JVM", "Java基础"]
 categories: ["Java编程"]
 author: "lei"
 ---

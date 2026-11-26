@@ -17,3 +17,257 @@
     border-radius: var(--radius);
     transition: transform 0.1s;
 }
+
+/* ===== 分类目录 ===== */
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+    margin-top: var(--gap);
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: calc(var(--gap) * 0.9);
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--tertiary);
+}
+
+.category-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.category-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.category-card-icon {
+    display: inline-flex;
+    color: var(--secondary);
+}
+
+.category-card-count {
+    flex: none;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    color: var(--secondary);
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.category-card-desc {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--secondary);
+}
+
+.category-card-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category-card-posts li {
+    position: relative;
+    padding-left: 14px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.category-card-posts li::before {
+    content: "";
+    position: absolute;
+    top: 0.65em;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: var(--secondary);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+.category-card-posts a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.category-card-posts a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.category-card-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    align-self: flex-start;
+    margin-top: auto;
+    font-size: 0.85rem;
+    color: var(--secondary);
+}
+
+.category-card-more:hover {
+    color: var(--primary);
+}
+
+@media (max-width: 720px) {
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== 标签云与标签文章列表 ===== */
+
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    margin-top: var(--gap);
+    padding: calc(var(--gap) * 1.1) calc(var(--gap) * 1.2);
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    line-height: 1.4;
+}
+
+.tag-cloud-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 2px 8px;
+    color: var(--secondary);
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.tag-cloud-item:hover {
+    color: var(--primary);
+    background: var(--tertiary);
+}
+
+.tag-cloud-item.is-active {
+    color: var(--theme);
+    background: var(--primary);
+}
+
+.tag-cloud-count {
+    font-size: 0.68em;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+/* 标签文章列表 */
+.tag-posts {
+    margin-top: calc(var(--gap) * 1.5);
+    scroll-margin-top: calc(var(--header-height) + var(--gap));
+}
+
+.tag-posts-group[hidden],
+.tag-posts-group .post-entry[hidden] {
+    display: none;
+}
+
+.tag-posts-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: var(--gap);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--primary);
+}
+
+.tag-posts-count {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--secondary);
+}
+
+/* 分页 */
+.tag-pager {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: var(--gap) 0;
+}
+
+.tag-pager[hidden] {
+    display: none;
+}
+
+.tag-pager-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    color: var(--secondary);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.tag-pager-btn:hover:not(:disabled):not(.is-disabled) {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.tag-pager-btn.is-active {
+    color: var(--theme);
+    background: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+}
+
+.tag-pager-btn:disabled,
+.tag-pager-btn.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.tag-pager-gap {
+    color: var(--secondary);
+}
+
+
+/* 标签文章标题图标 */
+.tag-posts-title .lucide {
+    align-self: center;
+}
+/* 分页按钮图标 */
+.tag-pager-btn .lucide {
+    vertical-align: 0;
+}

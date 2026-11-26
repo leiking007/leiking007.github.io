@@ -3,7 +3,7 @@ title: "nginx"
 date: 2021-05-14
 lastmod: 2021-05-24 12:12:12
 draft: false
-tags: ["网络", "运维"]
+tags: ["Nginx", "Linux", "网络", "部署"]
 categories: ["服务器运维"]
 author: "lei"
 ---

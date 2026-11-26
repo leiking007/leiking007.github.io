@@ -3,7 +3,7 @@ title: "SpringcloudAlibaba"
 date: 2024-05-17
 lastmod: 2024-05-17
 draft: false
-tags: ["Spring"]
+tags: ["Spring", "Spring Cloud", "分布式"]
 categories: ["Java编程"]
 author: "lei"
 ---

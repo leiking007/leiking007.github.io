@@ -3,7 +3,7 @@ title: "paxos算法"
 date: 2021-05-14
 lastmod: 2021-05-24
 draft: false
-tags: ["分布式"]
+tags: ["分布式", "一致性"]
 categories: ["架构与理论"]
 author: "lei"
 ---

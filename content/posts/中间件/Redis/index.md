@@ -3,7 +3,7 @@ title: "Redis"
 date: 2020-11-12
 lastmod: 2020-11-12
 draft: false
-tags: ["中间件"]
+tags: ["Redis", "分布式"]
 categories: ["中间件"]
 author: "lei"
 ---

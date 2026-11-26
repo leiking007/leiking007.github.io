@@ -3,7 +3,7 @@ title: "工作杂项记录"
 date: 2024-09-03
 lastmod: 2024-09-03 12:12:12
 draft: false
-tags: ["中间件", "运维"]
+tags: ["Linux", "SQL", "JavaEE"]
 categories: ["服务器运维"]
 author: "lei"
 summary: oracle锁表、oracle导入导出、weblogic打补丁、Linux扩容swap分区、修改系统时间

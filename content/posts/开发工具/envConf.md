@@ -3,7 +3,7 @@ title: "常用软件配置"
 date: 2021-11-01
 lastmod: 2021-11-11 12:12:12
 draft: false
-tags: ["开发工具"]
+tags: ["工具配置"]
 categories: ["开发工具"]
 author: "lei"
 ---

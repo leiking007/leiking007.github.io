@@ -3,7 +3,7 @@ title: "javaEE"
 date: 2020-12-12
 lastmod: 2020-12-12
 draft: false
-tags: ["JavaEE"]
+tags: ["JavaEE", "Java基础"]
 categories: ["Java编程"]
 author: "lei"
 ---

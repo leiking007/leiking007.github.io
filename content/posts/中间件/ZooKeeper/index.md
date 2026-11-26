@@ -3,7 +3,7 @@ title: "ZooKeeper"
 date: 2020-09-17
 lastmod: 2020-09-17 12:12:12
 draft: false
-tags: ["中间件"]
+tags: ["分布式", "一致性"]
 categories: ["中间件"]
 author: "lei"
 ---

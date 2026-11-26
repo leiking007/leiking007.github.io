@@ -3,7 +3,7 @@ title: "常用SQL"
 date: 2022-03-17
 lastmod: 2022-04-10 12:12:12
 draft: false
-tags: ["数据库"]
+tags: ["SQL", "MySQL"]
 categories: ["数据库"]
 author: "lei"
 ---

@@ -3,7 +3,7 @@ title: "Java多线程"
 date: 2022-04-11
 lastmod: 2022-04-11
 draft: false
-tags: ["JavaSE"]
+tags: ["Java基础", "并发编程"]
 categories: ["Java编程"]
 author: "lei"
 ---

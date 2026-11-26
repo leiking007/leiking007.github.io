@@ -1,109 +1,6 @@
 {{- define "main" }}
 
-{{- if eq .Type "tags" }}
-
-{{- if .Title }}
-<header class="page-header">
-  {{- partial "breadcrumbs.html" . }}
-  <h1>{{ .Title }}</h1>
-  {{- if .Description }}
-  <div class="post-description">
-    {{ .Description | markdownify }}
-  </div>
-  {{- end }}
-</header>
-{{- end }}
-
-{{- if .Content }}
-<div class="post-content md-content">
-  {{ .Content }}
-</div>
-{{- end }}
-
-{{- $terms := .Data.Terms.Alphabetical }}
-
-{{- /* 统计标签文章数范围，用于标签云字号缩放 */ -}}
-{{- $minCount := 0 }}
-{{- $maxCount := 0 }}
-{{- range $i, $t := $terms }}
-  {{- if eq $i 0 }}
-    {{- $minCount = $t.Count }}
-    {{- $maxCount = $t.Count }}
-  {{- end }}
-  {{- if lt $t.Count $minCount }}{{ $minCount = $t.Count }}{{ end }}
-  {{- if gt $t.Count $maxCount }}{{ $maxCount = $t.Count }}{{ end }}
-{{- end }}
-
-<div class="tag-cloud" id="tag-cloud">
-  {{- range $terms }}
-  {{- $name := .Name }}
-  {{- $count := .Count }}
-  {{- with site.GetPage (printf "/%s/%s" $.Type $name) }}
-  {{- $ratio := 0.0 }}
-  {{- if gt $maxCount $minCount }}
-  {{- $ratio = div (float (sub $count $minCount)) (float (sub $maxCount $minCount)) }}
-  {{- end }}
-  {{- $size := add 0.95 (mul 0.6 $ratio) }}
-  <a class="tag-cloud-item" href="{{ .RelPermalink }}" data-tag="{{ $name }}"
-    style="font-size: {{ printf "%.2f" $size }}rem">
-    <span class="tag-cloud-name">{{ .LinkTitle }}</span>
-    <span class="tag-cloud-count">{{ $count }}</span>
-  </a>
-  {{- end }}
-  {{- end }}
-</div>
-
-<div class="tag-posts" id="tag-posts" data-pager-size="{{ site.Params.tagsPagerSize | default 5 }}">
-  {{- range $terms }}
-  {{- $name := .Name }}
-  {{- $count := .Count }}
-  {{- with site.GetPage (printf "/%s/%s" $.Type $name) }}
-  {{- $pages := .Pages.ByDate.Reverse }}
-  {{- $pagerSize := site.Params.tagsPagerSize | default 5 }}
-  {{- $totalPages := int (math.Ceil (div (float (len $pages)) (float $pagerSize))) }}
-  <section class="tag-posts-group" data-tag="{{ $name }}" hidden>
-    <h2 class="tag-posts-title">{{ partial "icon.html" (dict "name" "tags" "size" 17) }}{{ .LinkTitle }}<span class="tag-posts-count">共 {{ $count }} 篇</span></h2>
-    <div class="tag-posts-list">
-      {{- range $pages }}
-      {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
-      <article class="post-entry tag-entry">
-        {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
-        <header class="entry-header">
-          <h2 class="entry-hint-parent">
-            {{- .Title }}
-            {{- if .Draft }}
-            <span class="entry-hint" title="Draft">
-              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
-                <path
-                  d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-              </svg>
-            </span>
-            {{- end }}
-          </h2>
-        </header>
-        {{- if (ne (.Param "hideSummary") true) }}
-        <div class="entry-content">
-          <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
-        </div>
-        {{- end }}
-        {{- if not (.Param "hideMeta") }}
-        <footer class="entry-footer">
-          {{- partial "post_meta.html" . -}}
-        </footer>
-        {{- end }}
-        <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .RelPermalink }}"></a>
-      </article>
-      {{- end }}
-    </div>
-    {{- partial "pager.html" (dict "total" $totalPages "current" 1 "client" true "label" (printf "%s 分页" .LinkTitle)) }}
-  </section>
-  {{- end }}
-  {{- end }}
-</div>
-
-{{- else }}
-
-{{- /* 其他分类（categories）保持主题默认样式 */ -}}
+{{- /* 通用分类法页：未单独定制的 taxonomy 使用此模板 */ -}}
 {{- if .Title }}
 <header class="page-header">
     <h1>{{ .Title }}</h1>
@@ -115,19 +12,21 @@
 </header>
 {{- end }}
 
+{{- if .Content }}
+<div class="post-content md-content">
+    {{ .Content }}
+</div>
+{{- end }}
+
 <ul class="terms-tags">
-    {{- $type := .Type }}
-        {{- range $key, $value := .Data.Terms.Alphabetical }}
-            {{- $name := .Name }}
-            {{- $count := .Count }}
-            {{- with site.GetPage (printf "/%s/%s" $type $name) }}
-            <li>
-                <a href="{{ .RelPermalink }}">{{ .LinkTitle }} <sup><strong><sup>{{ $count }}</sup></strong></sup> </a>
-            </li>
-        {{- end }}
+    {{- range .Data.Terms.Alphabetical }}
+    {{- $count := .Count }}
+    {{- with .Page }}
+    <li>
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }} <sup><strong><sup>{{ $count }}</sup></strong></sup> </a>
+    </li>
+    {{- end }}
     {{- end }}
 </ul>
-
-{{- end }}
 
 {{- end }}{{/* end main */ -}}

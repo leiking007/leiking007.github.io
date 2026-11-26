@@ -3,7 +3,7 @@ title: "PostgreSQL"
 date: 2022-10-09
 lastmod: 2022-10-09
 draft: false
-tags: ["数据库"]
+tags: ["PostgreSQL", "SQL"]
 categories: ["数据库"]
 author: "lei"
 ---

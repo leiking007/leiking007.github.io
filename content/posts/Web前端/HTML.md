@@ -3,8 +3,8 @@ title: "HTML"
 date: 2020-09-09
 lastmod: 2020-09-09
 draft: false
-tags: ["前端"]
-categories: ["Web前端"]
+tags: ["前端基础"]
+categories: ["前端"]
 author: "lei"
 ---
 

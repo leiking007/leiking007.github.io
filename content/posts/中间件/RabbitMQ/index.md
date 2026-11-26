@@ -3,7 +3,7 @@ title: "RabbitMQ"
 date: 2021-10-14
 lastmod: 2021-10-24 12:12:12
 draft: false
-tags: ["中间件"]
+tags: ["RabbitMQ", "分布式"]
 categories: ["中间件"]
 author: "lei"
 ---

@@ -3,7 +3,7 @@ title: "Tomcat"
 date: 2026-06-30
 lastmod: 2026-06-30
 draft: false
-tags: ["JavaEE", "运维"]
+tags: ["JavaEE", "部署"]
 categories: ["服务器运维"]
 author: "lei"
 ---

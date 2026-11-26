@@ -3,7 +3,7 @@ title: "MyBatis"
 date: 2020-03-23
 lastmod: 2020-03-23
 draft: false
-tags: ["MyBatis", "数据库"]
+tags: ["MyBatis", "SQL", "Spring"]
 categories: ["Java编程"]
 author: "lei"
 ---

@@ -3,8 +3,8 @@ title: "TypeScript"
 date: 2022-12-19
 lastmod: 2022-12-19
 draft: false
-tags: ["前端", "TypeScript"]
-categories: ["Web前端"]
+tags: ["前端基础", "JavaScript", "TypeScript"]
+categories: ["前端"]
 author: "lei"
 ---
 

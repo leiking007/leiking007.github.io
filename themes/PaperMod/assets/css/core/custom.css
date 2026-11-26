@@ -1,8 +1,9 @@
 /*
   主题样式定制（站点最终样式，统一维护在主题内）
-  包含：代码高亮配色、代码块折叠、吸顶导航、首页布局、标签云与分页、
-        文章目录侧栏、全站字体、阅读进度、图片预览、提示块、表格滚动、
+  包含：代码高亮配色、代码块折叠、吸顶导航、首页布局、文章目录侧栏、
+        全站字体、阅读进度、图片预览、提示块、表格滚动、
         移动端适配、深浅色切换过渡
+  标签云、分类目录、分页、页面标题图标、文章分类行等样式已直接维护在主题原生 CSS 中。
 */
 
 /* ===== 代码高亮：GitHub Light / GitHub Dark（hugo gen chromastyles 生成） ===== */
@@ -271,129 +272,6 @@
     background: var(--border);
 }
 
-/* ===== 标签云与标签文章列表 ===== */
-
-.tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4rem 1rem;
-    margin-top: var(--gap);
-    padding: calc(var(--gap) * 1.1) calc(var(--gap) * 1.2);
-    background: var(--entry);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    line-height: 1.4;
-}
-
-.tag-cloud-item {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 5px;
-    padding: 2px 8px;
-    color: var(--secondary);
-    border-radius: 6px;
-    transition: color 0.15s ease, background 0.15s ease;
-}
-
-.tag-cloud-item:hover {
-    color: var(--primary);
-    background: var(--tertiary);
-}
-
-.tag-cloud-item.is-active {
-    color: var(--theme);
-    background: var(--primary);
-}
-
-.tag-cloud-count {
-    font-size: 0.68em;
-    font-weight: 500;
-    opacity: 0.75;
-}
-
-/* 标签文章列表 */
-.tag-posts {
-    margin-top: calc(var(--gap) * 1.5);
-    scroll-margin-top: calc(var(--header-height) + var(--gap));
-}
-
-.tag-posts-group[hidden],
-.tag-posts-group .post-entry[hidden] {
-    display: none;
-}
-
-.tag-posts-title {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: var(--gap);
-    font-size: 1.15rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--primary);
-}
-
-.tag-posts-count {
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--secondary);
-}
-
-/* 分页 */
-.tag-pager {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    margin: var(--gap) 0;
-}
-
-.tag-pager[hidden] {
-    display: none;
-}
-
-.tag-pager-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 34px;
-    height: 34px;
-    padding: 0 10px;
-    color: var(--secondary);
-    font: inherit;
-    font-size: 0.9rem;
-    text-decoration: none;
-    background: var(--entry);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-
-.tag-pager-btn:hover:not(:disabled):not(.is-disabled) {
-    color: var(--primary);
-    border-color: var(--primary);
-}
-
-.tag-pager-btn.is-active {
-    color: var(--theme);
-    background: var(--primary);
-    border-color: var(--primary);
-    font-weight: 600;
-}
-
-.tag-pager-btn:disabled,
-.tag-pager-btn.is-disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.tag-pager-gap {
-    color: var(--secondary);
-}
-
 /* ===== 文章详情页：目录粘性布局在右侧 ===== */
 
 .post-layout {
@@ -542,21 +420,14 @@ samp,
     opacity: 0.85;
 }
 
-/* 文章顶部标签 */
-.post-tags-header a .lucide {
-    margin-right: 4px;
-    vertical-align: -2px;
-}
-
 /* 目录标题 */
 .post-toc-title .lucide {
     margin-right: 6px;
     vertical-align: -3px;
 }
 
-/* 首页区块标题与标签文章标题 */
-.home-section-title .lucide,
-.tag-posts-title .lucide {
+/* 首页区块标题图标 */
+.home-section-title .lucide {
     align-self: center;
 }
 
@@ -577,10 +448,7 @@ samp,
     transform: rotate(180deg);
 }
 
-/* 分页按钮 */
-.tag-pager-btn .lucide {
-    vertical-align: 0;
-}
+
 
 /* ===== 以下内容原位于 assets/css/extended/site-custom.css，已并入主题样式 ===== */
 

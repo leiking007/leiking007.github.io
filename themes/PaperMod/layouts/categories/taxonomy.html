@@ -1,0 +1,54 @@
+{{- define "main" }}
+
+<header class="page-header category-index-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1 class="has-title-icon">
+    {{- partial "icon.html" (dict "name" "folder" "size" 24) -}}
+    <span>{{ .Title }}</span>
+  </h1>
+  {{- if .Description }}
+  <div class="post-description">
+    {{ .Description | markdownify }}
+  </div>
+  {{- end }}
+</header>
+
+{{- if .Content }}
+<div class="post-content md-content">
+  {{ .Content }}
+</div>
+{{- end }}
+
+{{- $terms := .Data.Terms.ByCount }}
+<div class="category-grid">
+  {{- range $terms }}
+  {{- $count := .Count }}
+  {{- with .Page }}
+  <article class="category-card">
+    <header class="category-card-header">
+      <a class="category-card-title" href="{{ .RelPermalink }}">
+        <span class="category-card-icon">{{ partial "icon.html" (dict "name" "folder" "size" 20) }}</span>
+        <span>{{ .LinkTitle }}</span>
+      </a>
+      <span class="category-card-count">{{ $count }} 篇</span>
+    </header>
+    {{- if .Description }}
+    <p class="category-card-desc">{{ .Description }}</p>
+    {{- end }}
+    {{- $pages := .Pages.ByDate.Reverse }}
+    {{- with first 3 $pages }}
+    <ul class="category-card-posts">
+      {{- range . }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+    <a class="category-card-more" href="{{ .RelPermalink }}">
+      查看全部{{ partial "icon.html" (dict "name" "chevron-right" "size" 14) }}
+    </a>
+  </article>
+  {{- end }}
+  {{- end }}
+</div>
+
+{{- end }}

@@ -64,3 +64,16 @@ div.highlight:hover .copy-code,
 pre:hover .copy-code {
     display: block;
 }
+
+/* ===== 页面标题图标 ===== */
+
+h1.has-title-icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+h1.has-title-icon .lucide {
+    flex: none;
+}

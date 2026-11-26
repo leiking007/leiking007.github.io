@@ -1,5 +1,6 @@
 ---
 title: "关于"
+titleIcon: "user-round"
 date: 2026-11-21
 draft: false
 hidemeta: true

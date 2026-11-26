@@ -3,7 +3,7 @@ title: "SpringBoot基础"
 date: 2020-07-04
 lastmod: 2020-07-04
 draft: false
-tags: ["Spring"]
+tags: ["Spring", "Spring Boot"]
 categories: ["Java编程"]
 author: "lei"
 ---

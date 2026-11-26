@@ -3,7 +3,7 @@ title: "MySQL"
 date: 2020-09-09
 lastmod: 2020-09-09
 draft: false
-tags: ["数据库"]
+tags: ["MySQL", "SQL"]
 categories: ["数据库"]
 author: "lei"
 ---

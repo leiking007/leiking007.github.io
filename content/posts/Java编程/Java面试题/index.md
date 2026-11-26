@@ -3,7 +3,7 @@ title: "Java面试题"
 date: 2023-06-05
 lastmod: 2023-06-05 12:12:12
 draft: false
-tags: ["JavaSE", "面试题"]
+tags: ["面试题", "Java基础", "JVM", "Spring"]
 categories: ["Java编程"]
 author: "lei"
 ---

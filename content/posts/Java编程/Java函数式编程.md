@@ -3,7 +3,7 @@ title: "Java函数式编程"
 date: 2021-05-14
 lastmod: 2021-05-24 12:12:12
 draft: false
-tags: ["JavaSE"]
+tags: ["Java基础"]
 categories: ["Java编程"]
 author: "lei"
 ---

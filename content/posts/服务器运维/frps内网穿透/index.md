@@ -3,7 +3,7 @@ title: "frps内网穿透"
 date: 2023-07-15
 lastmod: 2023-07-15
 draft: false
-tags: ["网络"]
+tags: ["网络", "部署"]
 categories: ["服务器运维"]
 author: "lei"
 ---

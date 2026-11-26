@@ -3,7 +3,7 @@ title: "模型简易部署"
 description: ""
 date: 2025-03-23
 lastmod: 2025-03-23
-tags: ["AI", "运维"]
+tags: ["部署", "Linux", "Python"]
 categories: ["服务器运维"]
 author: "lei"
 draft: false

@@ -218,3 +218,35 @@ details li ul {
 h1>a>svg {
     display: inline;
 }
+
+/* 文章顶部标签 */
+.post-tags-header a .lucide {
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
+/* 文章详情页分类 */
+.post-categories-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    color: var(--secondary);
+    font-size: 14px;
+}
+
+.post-categories-line a {
+    color: var(--secondary);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 0.3rem;
+}
+
+.post-categories-line a:hover {
+    color: var(--primary);
+}
+
+.post-categories-line .post-categories-sep {
+    opacity: 0.5;
+}

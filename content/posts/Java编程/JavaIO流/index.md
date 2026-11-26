@@ -3,7 +3,7 @@ title: "Java IO流"
 date: 2023-05-28
 lastmod: 2023-05-28
 draft: false
-tags: ["JavaSE"]
+tags: ["Java基础", "IO"]
 categories: ["Java编程"]
 author: "lei"
 ---
